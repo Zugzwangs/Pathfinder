@@ -17,7 +17,7 @@ le nom de la licence.
 package pathfinder;
 
 /**
- * interface minimale pour la gestion de déplacements
+ * interface minimale pour la gestion du comportement
  * des mobs.
  */
 public interface mob {

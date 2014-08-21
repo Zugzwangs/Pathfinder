@@ -1,5 +1,5 @@
 /*
-               LICENCE PUBLIQUE RIEN À BRANLER
+               LICENCE PUBLIQUE RIEN À BRANLOUZER
                      Version 1, Mars 2009
 
 Copyright (C) 2014 Zugzwang
@@ -9,24 +9,25 @@ autorisées, et toute modification est permise à condition de changer
 le nom de la licence. 
 
         CONDITIONS DE COPIE, DISTRIBUTON ET MODIFICATION
-              DE LA LICENCE PUBLIQUE RIEN À BRANLER
+              DE LA LICENCE PUBLIQUE RIEN À BRANLOUZER
 
- 0. Faites ce que vous voulez, j’en ai RIEN À BRANLER.
+ 0. Faites ce que vous voulez, j’en ai RIEN À BRANLOUZER.
  */
 
 package mapViewer;
+import pathfinder.*;
 import java.awt.Color; 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.util.HashSet;
-import java.util.Set;
+//import java.util.HashSet;
+//import java.util.Set;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JButton;
 import java.awt.Dimension;
 import javax.swing.BorderFactory;
-import javax.swing.border.Border;
+//import javax.swing.border.Border;
 import javax.swing.JTextField;
 
 /*
@@ -34,38 +35,40 @@ import javax.swing.JTextField;
 */
 public class mainWindow extends JFrame {
     
-    int map[][];
+    Map map;
     JPanel mapPanel;
     
     public mainWindow(){
         buildWindow();
         setupMap();
-        loadTestMap();
+        buildTestMap();
         refreshMapView();
+        //Et enfin, la rendre visible        
+        this.setVisible(true);
     }
     
-    public void setMapPoint(int x, int y, int value){
-        map[x][y] = value;
-    }
     
     private void setupMap(){
-        map = new int[70][70];      
+        map = new Map(70, 70);    
     }
     
-    private void loadTestMap(){
+    private void buildTestMap(){
+        System.out.println("build de la map de test");
         for (int i=0; i<8; i++)
-            setMapPoint(10+i, 4, 1);
-        
+            {
+            map.setCaseValue(10+i, 4, Map.CASE_OBSTACLE);
+            }
     }
     
     private void refreshMapView(){
         int bound = mapPanel.getComponentCount();
-        for (int i=0; i<bound; i++)
+        System.out.println("bound = " + bound );         
+        for (int i=0; i<bound-1; i++)
             {
-            switch( map[i/bound][bound%70] )
+            switch( map.getCaseValue(i%70, i/70) )
                 {
-                case 0: mapPanel.getComponent(i).setBackground(Color.WHITE);  break;
-                case 1: mapPanel.getComponent(i).setBackground(Color.BLACK);
+                case Map.CASE_OBSTACLE: mapPanel.getComponent(i).setBackground(Color.BLACK);  break;
+                case Map.CASE_FREE:     mapPanel.getComponent(i).setBackground(Color.WHITE);
                 }
             }            
     }
@@ -137,10 +140,12 @@ public class mainWindow extends JFrame {
         JTextField startYField = new JTextField();
         c_control.gridx = 0;
         c_control.gridy = 1;
+        c_control.weightx = 0.5;
         c_control.gridwidth = 1;
         controlPanel.add(startXField, c_control); 
         c_control.gridx = 1; 
         c_control.gridy = 1;
+        c_control.weightx = 0.5;
         c_control.gridwidth = 1;
         controlPanel.add(startYField, c_control);
         
@@ -168,9 +173,6 @@ public class mainWindow extends JFrame {
         c_control.gridwidth = 2;
         controlPanel.add(startButton, c_control);
         
-        
-        //Et enfin, la rendre visible        
-        this.setVisible(true);
     }
 
     public void finalize() throws Throwable {

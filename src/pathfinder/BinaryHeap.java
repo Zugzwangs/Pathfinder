@@ -1,5 +1,5 @@
 /*
-               LICENCE PUBLIQUE RIEN À BRANLER
+               LICENCE PUBLIQUE RIEN À BRANLOUZER
                      Version 1, Mars 2009
 
 Copyright (C) 2014 Zugzwang
@@ -9,10 +9,11 @@ autorisées, et toute modification est permise à condition de changer
 le nom de la licence. 
 
         CONDITIONS DE COPIE, DISTRIBUTON ET MODIFICATION
-              DE LA LICENCE PUBLIQUE RIEN À BRANLER
+              DE LA LICENCE PUBLIQUE RIEN À BRANLOUZER
 
- 0. Faites ce que vous voulez, j’en ai RIEN À BRANLER.
+ 0. Faites ce que vous voulez, j’en ai RIEN À BRANLOUZER.
  */
+
 package pathfinder;
 import java.util.ArrayList;
 

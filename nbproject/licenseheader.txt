@@ -1,0 +1,19 @@
+<#if licenseFirst??>
+${licenseFirst}
+</#if>
+${licensePrefix}               LICENCE PUBLIQUE RIEN À BRANLER
+${licensePrefix}                     Version 1, Mars 2009
+${licensePrefix}
+${licensePrefix}Copyright (C) 2014 Zugzwang
+${licensePrefix}La copie et la distribution de copies exactes de cette licence sont
+${licensePrefix}autorisées, et toute modification est permise à condition de changer
+${licensePrefix}le nom de la licence. 
+${licensePrefix}
+${licensePrefix}        CONDITIONS DE COPIE, DISTRIBUTON ET MODIFICATION
+${licensePrefix}              DE LA LICENCE PUBLIQUE RIEN À BRANLER
+${licensePrefix}
+${licensePrefix} 0. Faites ce que vous voulez, j’en ai RIEN À BRANLER.
+${licensePrefix}
+<#if licenseLast??>
+${licenseLast}
+</#if>

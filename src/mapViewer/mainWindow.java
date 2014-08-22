@@ -16,61 +16,78 @@ le nom de la licence.
 
 package mapViewer;
 import pathfinder.*;
-import java.awt.Color; 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-//import java.util.HashSet;
-//import java.util.Set;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JButton;
-import java.awt.Dimension;
-import javax.swing.BorderFactory;
-//import javax.swing.border.Border;
 import javax.swing.JTextField;
+import javax.swing.BorderFactory;
 
-/*
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 
+import java.awt.Dimension;
+import java.awt.Color; 
+
+import java.awt.event.ActionListener;
+
+/**
+ * 
 */
 public class mainWindow extends JFrame {
     
     Map map;
+    AStar pathFinder;
     JPanel mapPanel;
+    JTextField startXField;
+    JTextField startYField;
+    JTextField endXField;
+    JTextField endYField;
+    JButton startButton;    
     
     public mainWindow(){
         buildWindow();
         setupMap();
         buildTestMap();
         refreshMapView();
+        pathFinder = new AStar(map);        
         //Et enfin, la rendre visible        
         this.setVisible(true);
     }
     
-    
     private void setupMap(){
-        map = new Map(70, 70);    
+        map = new Map(70, 70);
     }
     
     private void buildTestMap(){
-        System.out.println("build de la map de test");
+
         for (int i=0; i<8; i++)
             {
             map.setCaseValue(10+i, 4, Map.CASE_OBSTACLE);
             }
+        map.setStart(45, 60);
+        map.setEnd(4, 11);
     }
     
     private void refreshMapView(){
+        
         int bound = mapPanel.getComponentCount();
-        System.out.println("bound = " + bound );         
         for (int i=0; i<bound-1; i++)
             {
             switch( map.getCaseValue(i%70, i/70) )
                 {
                 case Map.CASE_OBSTACLE: mapPanel.getComponent(i).setBackground(Color.BLACK);  break;
-                case Map.CASE_FREE:     mapPanel.getComponent(i).setBackground(Color.WHITE);
+                case Map.CASE_FREE:     mapPanel.getComponent(i).setBackground(Color.WHITE);  break;
+                case Map.CASE_START:    mapPanel.getComponent(i).setBackground(Color.BLUE);  break;
+                case Map.CASE_END:      mapPanel.getComponent(i).setBackground(Color.RED);  break;    
                 }
-            }            
+            }
+        
+        startXField.setText("" + map.getStartPos().width);
+        startYField.setText("" + map.getStartPos().height);
+
+        endXField.setText("" + map.getEndPos().width);
+        endYField.setText("" + map.getEndPos().height);
     }
     
     private void buildWindow(){
@@ -136,8 +153,8 @@ public class mainWindow extends JFrame {
         c_control.gridwidth = 2;
         c_control.fill = GridBagConstraints.HORIZONTAL;
         controlPanel.add(startLocation, c_control);
-        JTextField startXField = new JTextField();
-        JTextField startYField = new JTextField();
+        startXField = new JTextField();
+        startYField = new JTextField();
         c_control.gridx = 0;
         c_control.gridy = 1;
         c_control.weightx = 0.5;
@@ -155,9 +172,8 @@ public class mainWindow extends JFrame {
         c_control.gridy = 2;
         c_control.gridwidth = 2;
         controlPanel.add(endLocation, c_control); 
-
-        JTextField endXField = new JTextField();
-        JTextField endYField = new JTextField();
+        endXField = new JTextField();
+        endYField = new JTextField();
         c_control.gridy = 3;
         c_control.gridwidth = 1;
         controlPanel.add(endXField, c_control); 
@@ -165,9 +181,8 @@ public class mainWindow extends JFrame {
         c_control.gridwidth = 1;
         controlPanel.add(endYField, c_control);
         
-        
         // les bouttons
-        JButton startButton = new JButton("FIND PATH");
+        startButton = new JButton( new ActionFindPath(this, "FIND PATH") );
         c_control.gridx = 0;
         c_control.gridy = 4;
         c_control.gridwidth = 2;
@@ -175,6 +190,10 @@ public class mainWindow extends JFrame {
         
     }
 
+    public void runPathFinding(){
+        pathFinder.findPath();
+    }
+          
     public void finalize() throws Throwable {
         try {
             System.out.println("on quitte la fenetre principale");

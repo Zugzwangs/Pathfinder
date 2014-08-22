@@ -19,7 +19,7 @@ import mapViewer.mainWindow;
 /**
  *
  */
-public class PathFinder {
+public class MainClass {
     /**
      * @param args the command line arguments
      */

@@ -43,7 +43,7 @@ public class Map {
 
     
     public Map(){
-        internalMap = new ArrayList(100);
+        internalMap = new ArrayList<Integer>(100);
         computedPath = new int[10][10];  
         width  = 10;
         height = 10;
@@ -126,5 +126,13 @@ public class Map {
             endPos.setSize(x, y);
             }        
  
+    }
+
+    public Dimension getStartPos() {
+        return startPos;
+    }
+
+    public Dimension getEndPos() {
+        return endPos;
     }
 }

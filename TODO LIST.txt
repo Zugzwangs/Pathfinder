@@ -1,0 +1,14 @@
+
+* créer une class 'Point' pour remplacer les Dimension de Java.
+
+* mécanisme de swith de la méthode de calcul de l'heuristic, du tie breaker etc..
+
+* il faut un editeur de map (et donc un moyen de les save/load)
+
+* rendre intéractif le positionnement des départ et arrivé
+
+* faire une procédure de pré-computation de la map 
+	- création de la grille de node.
+	- seconde grille de node de 'haut niveau'
+
+* redésigner la séparation des données map/pathfinder

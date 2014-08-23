@@ -135,4 +135,15 @@ public class Map {
     public Dimension getEndPos() {
         return endPos;
     }
+    
+    public void clearPathInfo(){
+        for(int i=0; i<1; i++)
+            {
+            for(int j=0; j<1; j++)
+                {
+                computedPath[i][j] = 0;
+                }
+            }
+        
+    }
 }

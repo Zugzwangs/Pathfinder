@@ -22,13 +22,10 @@ import javax.swing.JPanel;
 import javax.swing.JButton;
 import javax.swing.JTextField;
 import javax.swing.BorderFactory;
-
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-
 import java.awt.Dimension;
 import java.awt.Color; 
-
 import java.awt.event.ActionListener;
 
 /**
@@ -50,8 +47,7 @@ public class mainWindow extends JFrame {
         setupMap();
         buildTestMap();
         refreshMapView();
-        pathFinder = new AStar(map);        
-        //Et enfin, la rendre visible        
+        pathFinder = new AStar(map);               
         this.setVisible(true);
     }
     
@@ -66,7 +62,7 @@ public class mainWindow extends JFrame {
             map.setCaseValue(10+i, 4, Map.CASE_OBSTACLE);
             }
         map.setStart(45, 60);
-        map.setEnd(4, 11);
+        map.setEnd(47, 56);
     }
     
     private void refreshMapView(){
@@ -191,9 +187,22 @@ public class mainWindow extends JFrame {
     }
 
     public void runPathFinding(){
-        pathFinder.findPath();
+        if ( pathFinder.findPath() )
+            {
+            //show the path finded
+            writePath();
+            }
     }
-          
+
+    private void writePath(){
+        for( int i=pathFinder.computed_path.size()-1; i>0; i--)
+            {
+            int _x = pathFinder.computed_path.get(i).X;
+            int _y = pathFinder.computed_path.get(i).Y;
+            mapPanel.getComponent( _y*70 + _x).setBackground(Color.YELLOW);
+            }          
+    }
+    
     public void finalize() throws Throwable {
         try {
             System.out.println("on quitte la fenetre principale");

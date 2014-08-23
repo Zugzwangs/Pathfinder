@@ -69,22 +69,22 @@ public class Node extends Object
         daddy = null;
     }
 
-    public Node(int c, int h, Dimension d, Node n) {
+    public Node(int c, int h, Dimension d, Node parent) {
         cost = c;
         heuristic = h;
         key = cost+heuristic;        
         X = d.width;
         Y = d.height;
-        daddy = n;
+        daddy = parent;
     }    
     
     @Override
     public String toString(){
-        return ( "cost=" + cost + "  heuristic=" + heuristic + "key=" + key + "  X=" + X + "  Y=" + Y + "\n" );
+        return ( "cost=" + cost + "  heuristic=" + heuristic + " key=" + key + "  X=" + X + "  Y=" + Y + "\n" );
     }  
     
+    //maybe useless
     public boolean equals(Node obj) {
         return (this.X==obj.X && this.Y==obj.Y);
     }
-.
 }

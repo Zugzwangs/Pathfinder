@@ -17,6 +17,9 @@
 package pathfinder;
 import java.awt.Dimension;
 import static java.lang.Math.abs;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+import java.util.ArrayList;
 
 /**
  * A* implementation
@@ -26,8 +29,10 @@ public class AStar {
 // const value used to test behavior
 // these value may need to be deported somewhere else later
 // need to design a TieBreaker Object ?
-private int COST_STRAIGHT = 10;
-private int COST_DIAG = 14;
+private final int COST_STRAIGHT = 10;
+private final int COST_DIAG = 14;
+private final int IN_OPEN_LIST = 1;
+private final int IN_CLOSED_LIST = 2; 
 // ********************************************************
     
 //datas A* needs to know about the map
@@ -36,14 +41,16 @@ private Dimension start;
 private Dimension end;
 
 // data structures used by A* research
-BinaryHeap open_list;
-BinaryHeap closed_list;
+private BinaryHeap open_list;
+private ArrayList<Node> closed_list;
+public ArrayList<Node> computed_path;
 
     public AStar(Map currentMap){
         map = currentMap;
         bufferingDataFromMap();
         open_list = new BinaryHeap();
-        closed_list = new BinaryHeap();
+        closed_list = new ArrayList<Node>();
+        computed_path = new ArrayList<Node>();
     }
     
     public void flushCurrentMap(){
@@ -55,38 +62,140 @@ BinaryHeap closed_list;
     private void cleanPreviousSearch(){
         open_list.clear();
         closed_list.clear();
+        computed_path.clear();
+        map.clearPathInfo();
     }
     
     public boolean findPath(){
         cleanPreviousSearch();
         
-        //code for test purpose only
-        System.out.println("********* begin debug *********");
-        //add starting point to open list
-        Node startNode = new Node(0, Manhattan(start, end), start);
-        open_list.insert( startNode );
-        adjacentNodes(startNode);
+        System.out.println("********* begin debug *********"); 
         
-        int i=0;
-        while( i<1000 )
+        System.out.println( "avant la recherche" );        
+        System.out.println( open_list.toString() );
+        System.out.println( closed_list.toString() );        
+        
+        //create starting node and put it to open list
+        Node startNode = nodeFactory(start.width, start.height);
+        closed_list.add(startNode);
+        exploreAdjacentNodes(startNode);
+ 
+        System.out.println( "apres le step 0" );        
+        System.out.println( open_list.toString() );
+        System.out.println( closed_list.toString() ); 
+        
+        // init main loop
+        int i=1;
+        Node tempNode = null;
+        // main loop : look for the best node and explore it's next nodes.
+        while( i<5 && !isEnd(tempNode) )
             {
-            closed_list.insert(open_list.extract());
-            i++;
+            tempNode = open_list.extract();
+            if ( tempNode != null )
+                {
+                closed_list.add(tempNode);            
+                exploreAdjacentNodes(tempNode);          
+                i++;
+
+                System.out.println( "apres le step " + i );        
+                System.out.println( open_list.toString() );
+                System.out.println( closed_list.toString() ); 
+                }
+            else
+                {
+                //open_list is empty => no path exists
+                System.out.println( "can't find path !" );
+                return false;
+                }
             }
-        System.out.println("********* end debug *********");        
-        //code for test purpose only    
         
-        return true;
+        if ( isEnd(tempNode) )
+            {
+            System.out.println( "pathfinding succefull !" );
+            computePath();
+            return true;        
+            }
+        else
+            {
+            System.out.println( "fail ! too much attemps !" ); 
+            return false;
+            }
     }
     
     private int Manhattan(Dimension A, Dimension B){
         return COST_STRAIGHT*( abs(A.width-B.width) + abs(A.height-B.height) );
     } 
     
-    private void adjacentNodes(Node n){
-        
+    private int birdFly(Dimension A, Dimension B){
+        int min_dist = min( abs(A.width-B.width) , abs(A.height-B.height) );
+        int max_dist = max( abs(A.width-B.width) , abs(A.height-B.height) );
+        return( COST_DIAG*min_dist + COST_STRAIGHT*(max_dist-min_dist) );       
     }
-            
+    
+    private int someHeuristicMethode(Dimension A, Dimension B){
+        //code for new heuristic computation 
+        return 0;
+    }
+    
+    private void exploreAdjacentNodes(Node n){
+        pushNodetoOpenList( nodeFactory(n, n.X+1, n.Y-1) );
+        pushNodetoOpenList( nodeFactory(n, n.X+1, n.Y) );
+        pushNodetoOpenList( nodeFactory(n, n.X+1, n.Y+1) );
+        pushNodetoOpenList( nodeFactory(n, n.X, n.Y-1) );
+        pushNodetoOpenList( nodeFactory(n, n.X, n.Y+1) );
+        pushNodetoOpenList( nodeFactory(n, n.X-1, n.Y-1) );
+        pushNodetoOpenList( nodeFactory(n, n.X-1, n.Y) );
+        pushNodetoOpenList( nodeFactory(n, n.X-1, n.Y+1) );      
+    }
+
+    private Node nodeFactory(int x, int y){
+        return( new Node(0, Manhattan(new Dimension(x,y), end), new Dimension(x,y)) );
+    }
+
+    private Node nodeFactory(Node daddy, int x, int y){
+        if ( daddy.X != x && daddy.Y != y )
+            return( new Node(daddy.cost+COST_DIAG, Manhattan(new Dimension(x,y), end), new Dimension(x,y), daddy) );
+        else
+            return( new Node(daddy.cost+COST_STRAIGHT, Manhattan(new Dimension(x,y), end), new Dimension(x,y), daddy) );
+    }
+
+    private void pushNodetoOpenList(Node n){
+        // push a node into open_list only if not already in open or closed list
+        switch( map.computedPath[n.X][n.Y] )
+            {
+            case IN_CLOSED_LIST:
+                return;
+            case IN_OPEN_LIST:
+                {
+                //the node is already in open list => find it 'n recalculate it
+                
+                return;
+                }
+            default:
+                {
+                open_list.insert( n );        
+                map.computedPath[n.X][n.Y] = IN_OPEN_LIST;   
+                }
+            }
+    }
+    
+    private boolean isEnd(Node n){
+        if ( n != null )
+            return(n.X==end.width && n.Y==end.height);
+        else
+            return false;
+    }
+    
+    private void computePath(){
+        Node tempNode = closed_list.get(closed_list.size()-1);
+
+        while ( tempNode.daddy != null )
+            {
+            computed_path.add(tempNode);
+            tempNode = tempNode.daddy;
+            }  
+    }
+    
     private boolean bufferingDataFromMap(){
         start = map.getStartPos();
         end = map.getEndPos();
@@ -95,6 +204,5 @@ BinaryHeap closed_list;
         else 
             return false;
     }
-    
-    
+     
 }

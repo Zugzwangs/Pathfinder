@@ -132,7 +132,7 @@ private int LastNodeIndex;
     public void build()    {}
     
     public String toString(){
-        String S = new String("BinaryHeanp content is :\n");
+        String S = new String("BinaryHeap content is :\n");
         for (int i=1; i<=LastNodeIndex; i++) 
             S += "node n°" + i + " = " + myList.get(i).toString();// + "\n";
         

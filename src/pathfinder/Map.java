@@ -15,8 +15,8 @@ le nom de la licence.
  */
 
 package pathfinder;
-import java.util.ArrayList;
 import java.awt.Dimension;
+import java.util.ArrayList;
 
 /**
  *
@@ -24,12 +24,13 @@ import java.awt.Dimension;
 public class Map {
 
     ArrayList<Integer> internalMap;
-    int[][] computedPath;
+    public int[][] computedPath;
     int width;
     int height;
     Dimension startPos;
     Dimension endPos;
-   
+    public String name;
+    
     public static final int CASE_OBSTACLE = 0;
     public static final int CASE_FREE  = 1;
     public static final int CASE_SLOW  = 2;
@@ -62,7 +63,20 @@ public class Map {
         startPos = new Dimension(-1, -1);
         endPos = new Dimension(-1, -1);  
     }
+    
+    public Map(int w, int h, String mapName){
+        width  = w;
+        height = h; 
+        computedPath = new int[w][h];
+        internalMap = new ArrayList<>(w*h);
+        for(int i=1; i<w*h; i++)
+            internalMap.add(CASE_FREE);
 
+        startPos = new Dimension(-1, -1);
+        endPos = new Dimension(-1, -1);
+        this.name = mapName;
+    }
+    
     public int getWidth() {
         return width;
     }

@@ -88,7 +88,7 @@ public ArrayList<Node> computed_path;
         int i=1;
         Node tempNode = null;
         // main loop : look for the best node and explore it's next nodes.
-        while( i<5 && !isEnd(tempNode) )
+        while( i<500 && !isEnd(tempNode) )
             {
             tempNode = open_list.extract();
             if ( tempNode != null )
@@ -132,6 +132,10 @@ public ArrayList<Node> computed_path;
         return( COST_DIAG*min_dist + COST_STRAIGHT*(max_dist-min_dist) );       
     }
     
+    private int Chebyshev(Dimension A, Dimension B){
+        return( COST_STRAIGHT*max( abs(A.width-B.width) , abs(A.height-B.height) ) );
+    }
+    
     private int someHeuristicMethode(Dimension A, Dimension B){
         //code for new heuristic computation 
         return 0;
@@ -173,8 +177,11 @@ public ArrayList<Node> computed_path;
                 }
             default:
                 {
-                open_list.insert( n );        
-                map.computedPath[n.X][n.Y] = IN_OPEN_LIST;   
+                if ( map.getCaseValue(n.X, n.Y) != map.CASE_OBSTACLE )
+                    {
+                    open_list.insert( n );        
+                    map.computedPath[n.X][n.Y] = IN_OPEN_LIST;                     
+                    }
                 }
             }
     }

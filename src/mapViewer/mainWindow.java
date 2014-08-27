@@ -16,6 +16,7 @@ le nom de la licence.
 
 package mapViewer;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -38,11 +39,17 @@ import pathfinder.*;
  * 
 */
 public class mainWindow extends JFrame {
-    // widget references
-    JTabbedPane mainTabs;
-    JPanel searchTab;
-    JPanel editorTab;
-    JPanel mapPanel;
+    
+    // containers components references
+    JTabbedPane mainTabs;   //Top level container
+    JPanel searchTab;       //First tab container
+    JPanel editorTab;       //Second tab container
+    JPanel mapPanel;        //Left part of first tab
+    JPanel controlPanel;    //Right part of first tab
+    JPanel mapEditorPanel;  //Left part of second tab
+    JPanel controlPanel2;   //Right part of second tab 
+    
+    // Controls components references
     JTextField startXField;
     JTextField startYField;
     JTextField endXField;
@@ -50,14 +57,12 @@ public class mainWindow extends JFrame {
     JButton startButton;  
     JButton emptyBlocks;
     JButton wallBlocks;
-    JButton saveMap;
+    JButton saveMap;   
+    
     // data references
     Map map;
     AStar pathFinder;
- 
-    
-    JPanel mapEditorPanel;
-    
+    private int pen;
     
     public mainWindow(){
         buildWindow();
@@ -66,6 +71,7 @@ public class mainWindow extends JFrame {
         refreshMapView();
         pathFinder = new AStar(map);               
         this.setVisible(true);
+        pen = 0;
     }
     
     private void setupMap(){
@@ -158,7 +164,7 @@ public class mainWindow extends JFrame {
             }
 
         //conteneur de droite (contient les autres controles)
-        JPanel controlPanel = new JPanel();
+        controlPanel = new JPanel();
         controlPanel.setMinimumSize( new Dimension(180, 10) );
         controlPanel.setBackground(Color.LIGHT_GRAY);    
         c.fill = GridBagConstraints.BOTH;
@@ -238,10 +244,7 @@ public class mainWindow extends JFrame {
             {
             for (int j=1; j<=60; j++)
                 {
-                JPanel tempLabel = new JPanel();
-                tempLabel.setBorder( BorderFactory.createLineBorder(Color.BLACK, 1) );
-                tempLabel.setBackground(Color.WHITE);
-                tempLabel.setSize(20, 20);
+                CasePanel tempLabel = new CasePanel();
                 c_mapEditor.gridx = i;
                 c_mapEditor.gridy = j;
                 mapEditorPanel.add(tempLabel, c_mapEditor);   
@@ -249,7 +252,7 @@ public class mainWindow extends JFrame {
             }
         
         //conteneur de droite (contient les autres controles)
-        JPanel controlPanel2 = new JPanel();
+        controlPanel2 = new JPanel();
         controlPanel2.setMinimumSize( new Dimension(180, 10) );
         controlPanel2.setBackground(Color.LIGHT_GRAY);    
         c2.fill = GridBagConstraints.BOTH;
@@ -261,11 +264,11 @@ public class mainWindow extends JFrame {
         GridBagConstraints c_control2 = new GridBagConstraints(); 
         controlPanel2.setLayout(controlLayout2);
         // on construit les controles d'edition de map
-        emptyBlocks = new JButton("empty blocks");
+        emptyBlocks = new JButton( new ActionSetPen(this, "empty blocks", 1) );
         c_control2.gridx = 0;
         c_control2.gridy = 0;         
         controlPanel2.add(emptyBlocks, c_control2);
-        wallBlocks = new JButton("wall blocks");        
+        wallBlocks = new JButton( new ActionSetPen(this, "wall blocks", 0) );        
         c_control2.gridx = 0;
         c_control2.gridy = 1;         
         controlPanel2.add(wallBlocks, c_control2);
@@ -329,20 +332,25 @@ public class mainWindow extends JFrame {
                     {
                     for (int i=0; i<map_width; i++)
                         {
-                        switch ( mapEditorPanel.getComponent(i). )
+                        if ( mapEditorPanel.getComponent(j*map_width+i) instanceof CasePanel )
                             {
-                            case Map.CASE_FREE:
+                            CasePanel tempCase = (CasePanel)mapEditorPanel.getComponent(j*map_width+i);
+                            switch ( tempCase.getValue() )
                                 {
-                                fw.write(Map.CASE_FREE);                                    
-                                break;
+                                case 1:
+                                    {
+                                    fw.write("1");                                    
+                                    break;
+                                    }
+                                case 2:
+                                    {
+                                    fw.write("0");                                    
+                                    break;
+                                    }
+                                default :
+                                    System.out.println(mapEditorPanel.getComponent(i).getBackground().toString());
+                                    fw.write("?");
                                 }
-                            case Map.CASE_OBSTACLE:
-                                {
-                                fw.write(Map.CASE_OBSTACLE);                                    
-                                break;
-                                }
-                            default :
-                                fw.write(Map.CASE_FREE);
                             }
                         }
                     fw.write("\n");
@@ -377,6 +385,10 @@ public class mainWindow extends JFrame {
             map.setCaseValue(i%loadedWidth, i/loadedWidth, 0);
             i++;
             }
+    }
+    
+    public void setPen(int _penValue){
+        this.pen = _penValue;
     }
     
     public void finalize() throws Throwable {

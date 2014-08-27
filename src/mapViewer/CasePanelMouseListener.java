@@ -30,29 +30,33 @@ public class CasePanelMouseListener implements MouseListener{
     
     @Override
     public void mousePressed(MouseEvent e){
-        // my code here
+        
         if ( e.getComponent() instanceof CasePanel )
-            System.out.println("t'a clické sale clown");
+            {
+            CasePanel pressedCase = (CasePanel)e.getComponent();
+            pressedCase.setValueWithCurrentPen();
+            }
+            
     }
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        //throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        //throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public void mouseEntered(MouseEvent e) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        //throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
          //To change body of generated methods, choose Tools | Templates.
-        throw new UnsupportedOperationException("Not supported yet.");
+        //throw new UnsupportedOperationException("Not supported yet.");
     }
 }

@@ -21,10 +21,11 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Writer;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -33,14 +34,13 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import pathfinder.*;
-//import java.awt.event.ActionListener;
 
 /**
  * 
 */
 public class mainWindow extends JFrame {
     
-    // containers components references
+    //containers components references
     JTabbedPane mainTabs;   //Top level container
     JPanel searchTab;       //First tab container
     JPanel editorTab;       //Second tab container
@@ -49,33 +49,45 @@ public class mainWindow extends JFrame {
     JPanel mapEditorPanel;  //Left part of second tab
     JPanel controlPanel2;   //Right part of second tab 
     
-    // Controls components references
+    //controls components references (first tab)
     JTextField startXField;
     JTextField startYField;
     JTextField endXField;
     JTextField endYField;
-    JButton startButton;  
+    JButton startButton;
+
+    //controls components references (second tab)    
     JButton emptyBlocks;
     JButton wallBlocks;
-    JButton saveMap;   
+    JButton saveMap;
+    JButton loadMap;
     
-    // data references
+    //data references
     Map map;
     AStar pathFinder;
-    private int pen;
+    private int gridWidth;
+    private int gridHeight;
     
     public mainWindow(){
+        
+        //init fields
+        gridWidth = 0;
+        gridHeight = 0;   
+        map = new Map(70, 70);        
+        pathFinder = new AStar(map);
+        
+        //run setup methodes
         buildWindow();
         setupMap();
         buildTestMap();
         refreshMapView();
-        pathFinder = new AStar(map);               
+        
+        //finally show the main window
         this.setVisible(true);
-        pen = 0;
     }
     
     private void setupMap(){
-        map = new Map(70, 70);
+
     }
     
     private void buildTestMap(){
@@ -237,19 +249,9 @@ public class mainWindow extends JFrame {
         c2.gridy = 0;
         editorTab.add(mapEditorPanel, c2);
         GridBagLayout mapEditorLayout = new GridBagLayout();
-        GridBagConstraints c_mapEditor = new GridBagConstraints();
         mapEditorPanel.setLayout(mapEditorLayout);      
-        //on crée notre damier en remplissant le mapLayout
-        for(int i=1; i<=60; i++)
-            {
-            for (int j=1; j<=60; j++)
-                {
-                CasePanel tempLabel = new CasePanel();
-                c_mapEditor.gridx = i;
-                c_mapEditor.gridy = j;
-                mapEditorPanel.add(tempLabel, c_mapEditor);   
-                }
-            }
+        // we build a default empty grid for editing
+        buildEmptyGrid(50,50);
         
         //conteneur de droite (contient les autres controles)
         controlPanel2 = new JPanel();
@@ -276,6 +278,10 @@ public class mainWindow extends JFrame {
         c_control2.gridx = 0;
         c_control2.gridy = 2;
         controlPanel2.add(saveMap, c_control2);
+        loadMap = new JButton( new ActionLoadMapForEditing(this, "load map") );
+        c_control2.gridx = 0;
+        c_control2.gridy = 3;
+        controlPanel2.add(loadMap, c_control2);        
     }
 
     public void runPathFinding(){
@@ -319,24 +325,33 @@ public class mainWindow extends JFrame {
             f.createNewFile();
             FileWriter fw = new FileWriter(f);
             try {
-                // setup dimensions
-                //int componentNumber = mapEditorPanel.getComponentCount();                
-                int map_width = 50;
-                int map_height = 50;
-                // write the header
-                fw.write(f.getName() + "\t");  // name
-                fw.write(map_width   + "\t");  // width
-                fw.write(map_height  + "\n");  // height                
-                // write datas into the body
-                for (int j=0; j<map_height; j++)
+                //check consistence between dimension and effective components number 
+                if ( gridWidth*gridHeight != mapEditorPanel.getComponentCount() )
                     {
-                    for (int i=0; i<map_width; i++)
+                    //something wrong => throw exception or trace and leave or try to do partial job
+                    System.out.println("inconsistence between map size and number of CasePanel");
+                    fw.close();
+                    return;
+                    }
+                //write the header
+                fw.write(f.getName() + "\t");  // name
+                fw.write(gridWidth   + "\t");  // width
+                fw.write(gridHeight  + "\n");  // height                
+                //write datas into the body
+                for (int j=0; j<gridHeight; j++)
+                    {
+                    for (int i=0; i<gridWidth; i++)
                         {
-                        if ( mapEditorPanel.getComponent(j*map_width+i) instanceof CasePanel )
+                        if ( mapEditorPanel.getComponent(j*gridWidth+i) instanceof CasePanel )
                             {
-                            CasePanel tempCase = (CasePanel)mapEditorPanel.getComponent(j*map_width+i);
+                            CasePanel tempCase = (CasePanel)mapEditorPanel.getComponent(j*gridWidth+i);
                             switch ( tempCase.getValue() )
                                 {
+                                case 0:
+                                    {
+                                    fw.write("0");                                    
+                                    break;
+                                    }                                
                                 case 1:
                                     {
                                     fw.write("1");                                    
@@ -344,11 +359,10 @@ public class mainWindow extends JFrame {
                                     }
                                 case 2:
                                     {
-                                    fw.write("0");                                    
+                                    fw.write("2");                                    
                                     break;
                                     }
                                 default :
-                                    System.out.println(mapEditorPanel.getComponent(i).getBackground().toString());
                                     fw.write("?");
                                 }
                             }
@@ -358,39 +372,112 @@ public class mainWindow extends JFrame {
                 }
             finally
                 {
-                // release the writer
+                //release the writer
                 fw.close();
                 }
             }  
         catch (IOException e) 
             {
             e.printStackTrace();
-            return;
             }
     }    
 
-    public void loadMap(String mapFilePath){
-        // open in real-only mod the file
-        //???
-        // read header (name, width, height) and rebuild the Map Object
-        int loadedWidth = 12;
-        int loadedHeight = 12;
-        String loadedName = "dfd";
-        pathFinder.flushCurrentMap();
-        map = new Map(loadedWidth, loadedHeight, loadedName);
-        // read map's datas from the file and set the Map Object
-        int i = 0;
-        while ( i<loadedWidth*loadedHeight /* && !EOF() */ )
+    public void loadMapForEditing(File f){
+        
+        try {
+            //create the reader
+            FileReader fr = new FileReader(f);
+            BufferedReader buff = new BufferedReader(fr);
+            try {
+                //read header (first line)
+                String header;
+                if ( (header = buff.readLine()) == null )
+                    {
+                    //choose anathor exception ?? see more about !
+                    throw new IllegalArgumentException("the file is empty. Can't load map.");                    
+                    }
+                
+                //split line to appropriate variables
+                String[] splittedHeader = header.split("\t");
+                if (splittedHeader.length != 3)
+                    {
+                    throw new IllegalArgumentException("header not in correct format");
+                    }
+                String loadedName = splittedHeader[0];
+                int loadedWidth   = Integer.parseInt(splittedHeader[1]);
+                int loadedHeight  = Integer.parseInt(splittedHeader[2]);
+                System.out.println("HEADER : name = " + loadedName + "\t width = " + loadedWidth + "\t height = " + loadedHeight);
+                
+                //build an empty grid with the appropriate size
+                buildEmptyGrid(loadedWidth, loadedHeight);
+                
+                //read the body line by line and set the grid with
+                String line;
+                int j =0; //track the current line number
+                while ( (line = buff.readLine()) != null ) 
+                    {
+                    for(int i=0; i<line.length(); i++)
+                        {
+                        if ( mapEditorPanel.getComponent(j*gridWidth+i) instanceof CasePanel )
+                            {
+                            CasePanel tempCase = (CasePanel)mapEditorPanel.getComponent(j*gridWidth+i);
+                            tempCase.setValue( Character.getNumericValue(line.charAt(i)) );
+                            }
+                        }
+                    j++;
+                    //System.out.println(line);  
+                    }
+                }
+            finally
+                {
+                //release the reader
+                fr.close();
+                }
+            }        
+         catch (IOException e) 
             {
-            map.setCaseValue(i%loadedWidth, i/loadedWidth, 0);
-            i++;
+            e.printStackTrace();
             }
     }
     
-    public void setPen(int _penValue){
-        this.pen = _penValue;
+    public void buildEmptyGrid(int w, int h){
+        // if incorrect size is passed, we do nothing
+        if ( w<0 || h<0 )
+            {
+            System.out.println("error in buildEmptyGrid(int, int) : arguments bad value !");
+            return;
+            }
+        // delete previous grid
+        flushGrid();
+        // keep grid dimension
+        gridWidth = w;
+        gridHeight = h;
+        // create a layout constraint object
+        GridBagConstraints c_mapEditor = new GridBagConstraints();        
+        // build the new grid
+        for(int j=0; j<h; j++)
+            {
+            for (int i=0; i<w; i++)
+                {
+                CasePanel tempLabel = new CasePanel();
+                c_mapEditor.gridx = i;
+                c_mapEditor.gridy = j;
+                mapEditorPanel.add(tempLabel, c_mapEditor);   
+                }
+            }
+        mapEditorPanel.validate();
     }
     
+    public void flushGrid(){
+        mapEditorPanel.removeAll();
+        mapEditorPanel.validate(); // useless ?
+    }
+    
+    public void setPen(int _penValue){
+        CasePanel.setCurrentPen(_penValue);
+    }
+    
+    @Override
     public void finalize() throws Throwable {
         try {
             System.out.println("on quitte la fenetre principale");

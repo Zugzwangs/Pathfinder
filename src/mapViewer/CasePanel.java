@@ -16,7 +16,6 @@
 
 package mapViewer;
 import java.awt.Color;
-import java.awt.event.MouseListener;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
@@ -27,6 +26,7 @@ import javax.swing.JPanel;
 public final class CasePanel extends JPanel{
 
 private int value;
+private static int currentPen = 0;
 
     public CasePanel(){
        super();
@@ -42,6 +42,15 @@ private int value;
        this.setBorder( BorderFactory.createLineBorder(Color.BLACK, 1) );
        this.setValue(_value);
        this.addMouseListener( new CasePanelMouseListener() );
+    }
+
+    public static int getCurrentPen() {
+        return currentPen;
+    }
+
+    public static void setCurrentPen(int currentPen) {
+        //TODO set the currentPen only if value is in range
+        CasePanel.currentPen = currentPen;
     }
     
     public int getValue() {
@@ -76,5 +85,9 @@ private int value;
                 this.setBackground(Color.WHITE);
                 }
             }
+    }
+    
+    public void setValueWithCurrentPen(){
+        setValue(currentPen);
     }
 }

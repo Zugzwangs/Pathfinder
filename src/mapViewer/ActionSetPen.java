@@ -25,7 +25,7 @@ import javax.swing.AbstractAction;
  */
 public class ActionSetPen extends AbstractAction {
 
-private mainWindow fenetre;
+private final mainWindow fenetre;
 private int penValue;
     
     public ActionSetPen(mainWindow W, String t, int _penValue){
@@ -36,6 +36,6 @@ private int penValue;
     
     @Override
     public void actionPerformed(ActionEvent e){
-        //fenetre.monCallBack(_penValue);
+        fenetre.setPen(penValue);
     }
 }

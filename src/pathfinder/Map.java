@@ -94,6 +94,10 @@ public class Map {
     public int getCaseValue(int x, int y){
         return( (Integer)internalMap.get(y*width +x) );        
     }
+
+    public int getCaseValue(Dimension d){
+        return( (Integer)internalMap.get(d.height*width +d.width) );        
+    }    
     
     public boolean isFreeCase(int x, int y){
         return( (Integer)internalMap.get(y*width +x) == CASE_FREE );

@@ -29,12 +29,13 @@ public class AStar {
 // const value used to test behavior
 // these value may need to be deported somewhere else later
 // need to design a TieBreaker Object ?
-private final int COST_STRAIGHT = 10;
-private final int COST_DIAG = 14;
+public static final int COST_STRAIGHT = 10;
+public static final int COST_DIAG = 14;
 
-private final int UNEXPLORED = 0;
-private final int IN_OPEN_LIST = 1;
-private final int IN_CLOSED_LIST = 2; 
+public static final int UNEXPLORED = 0;
+public static final int IN_OPEN_LIST = 1;
+public static final int IN_CLOSED_LIST = 2;
+public static final int ON_PATH = 3;
     
 //datas A* needs to know about the map
 private Map map;
@@ -47,21 +48,19 @@ private Dimension end;
 private BinaryHeap open_list;
 private ArrayList<Node> closed_list;
 public int[][] searchStatus;
-public ArrayList<Node> computed_path;
 
     public AStar(Map currentMap){
         map = currentMap;
-        bufferingDataFromMap();
+        mapWidth  = map.getWidth();
+        mapHeight = map.getHeight();        
         open_list = new BinaryHeap();
         closed_list = new ArrayList<Node>();
         searchStatus = new int[mapWidth][mapHeight];
-        computed_path = new ArrayList<Node>();
     }
     
     private void cleanPreviousSearch(){
         open_list.clear();
         closed_list.clear();
-        computed_path.clear();
         for (int i=0; i<mapWidth; i++)
             {
             for (int j=0; j<mapHeight; j++)
@@ -72,10 +71,13 @@ public ArrayList<Node> computed_path;
     }
     
     public boolean findPath(){
-        cleanPreviousSearch();
         
-        System.out.println("********* begin debug *********"); 
-        System.out.println( "avant la recherche" );        
+        // clean and check if start/end positions are valid.
+        cleanPreviousSearch();
+        if ( !isRouteValid() )
+            return false;
+        
+        System.out.println("********* begin path finding *********");         
         System.out.println( open_list.toString() );
         System.out.println( closed_list.toString() );        
         
@@ -83,16 +85,12 @@ public ArrayList<Node> computed_path;
         Node startNode = nodeFactory(start.width, start.height);
         closed_list.add(startNode);
         exploreAdjacentNodes(startNode);
- 
-        System.out.println( "apres le step 0" );        
-        System.out.println( open_list.toString() );
-        System.out.println( closed_list.toString() ); 
         
         // init main loop
         int i=1;
         Node tempNode = null;
         // main loop : look for the best node and explore it's next nodes.
-        while( i<500 && !isEnd(tempNode) )
+        while( i<50000 && !isEnd(tempNode) )
             {
             tempNode = open_list.extract();
             if ( tempNode != null )
@@ -202,22 +200,28 @@ public ArrayList<Node> computed_path;
     }
     
     private void computePath(){
+        
         Node tempNode = closed_list.get(closed_list.size()-1);
-
         while ( tempNode.daddy != null )
             {
-            computed_path.add(tempNode);
+            searchStatus[tempNode.X][tempNode.Y] = ON_PATH;            
             tempNode = tempNode.daddy;
+            
             }  
     }
     
-    private boolean bufferingDataFromMap(){
+    private boolean isRouteValid(){
         start = map.getStartPos();
         end   = map.getEndPos();
-        mapWidth  = map.getWidth();
-        mapHeight = map.getHeight();
+        // does start/end position are not out of bounds 
         if ( (start.height >=0 && start.width>=0) && (end.height >=0 && end.width>=0) ) 
-            return true;
+            {
+            // does start/end are reachable case
+            if ( map.getCaseValue(start) != Map.CASE_OBSTACLE && map.getCaseValue(start) != Map.CASE_OBSTACLE )
+                return true;
+            else
+                return false;
+            }
         else 
             return false;
     }

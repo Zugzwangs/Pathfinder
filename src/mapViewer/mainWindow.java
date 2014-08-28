@@ -80,6 +80,7 @@ public class mainWindow extends JFrame {
     JButton loadMap;
     
     //data references
+    private static final int DEFAULT_MAP_SIZE = 50;
     Map map;
     AStar pathFinder;
     private int gridWidth;
@@ -90,21 +91,27 @@ public class mainWindow extends JFrame {
         //init fields
         gridWidth = 0;
         gridHeight = 0;   
-        map = new Map(70, 70);        
-        pathFinder = new AStar(map);
         
         //run setup methodes
         buildMenu();
         buildWindow();
         setupMap();
-        refreshMapView();
         
+        ////////////////////////////////////////
+        map.setStart(10, 10);
+        map.setEnd(40, 40);
+        refreshMapView();
+        ////////////////////////////////////////
         //finally show the main window
         this.setVisible(true);
     }
     
     private void setupMap(){
-
+        
+        //we build an empty map       
+        buildEmptyMap(DEFAULT_MAP_SIZE, DEFAULT_MAP_SIZE);
+        map = new Map(DEFAULT_MAP_SIZE, DEFAULT_MAP_SIZE); 
+        pathFinder = new AStar(map);        
     }
       
     private void refreshMapView(){
@@ -112,7 +119,7 @@ public class mainWindow extends JFrame {
         int bound = mapPanel.getComponentCount();
         for (int i=0; i<bound-1; i++)
             {
-            switch( map.getCaseValue(i%70, i/70) )
+            switch( map.getCaseValue(i%map.getWidth(), i/map.getWidth()) )
                 {
                 case Map.CASE_OBSTACLE: mapPanel.getComponent(i).setBackground(Color.BLACK);  break;
                 case Map.CASE_FREE:     mapPanel.getComponent(i).setBackground(Color.WHITE);  break;
@@ -195,8 +202,6 @@ public class mainWindow extends JFrame {
         searchTab.add(mapPanel, c);
         GridBagLayout mapLayout = new GridBagLayout();
         mapPanel.setLayout(mapLayout);
-        // we build an empty map        
-        buildEmptyMap(55, 55);
 
         //conteneur de droite (contient les autres controles)
         controlPanel = new JPanel();
@@ -327,37 +332,28 @@ public class mainWindow extends JFrame {
 
     private void drawPath(){
         
-        for ( int i=0; i<70; i++)
+        for ( int i=0; i<map.getWidth(); i++)
             {
-            for ( int j=0; j<70; j++)
+            for ( int j=0; j<map.getHeight(); j++)
                 {
-                switch( map.computedPath[i][j] )   
+                switch( pathFinder.searchStatus[i][j] )   
                     {
-                    case 1:
-                        mapPanel.getComponent( j*70 + i).setBackground(Color.ORANGE);
+                    case AStar.IN_OPEN_LIST:
+                        mapPanel.getComponent(j*map.getWidth() + i).setBackground(Color.ORANGE);
                         break;
-                    case 2:
-                        mapPanel.getComponent( j*70 + i).setBackground(Color.YELLOW);
+                    case AStar.IN_CLOSED_LIST:
+                        mapPanel.getComponent(j*map.getWidth() + i).setBackground(Color.YELLOW);
+                        break;
+                    case AStar.ON_PATH:
+                        mapPanel.getComponent(j*map.getWidth() + i).setBackground(Color.GREEN);
                         break;
                     }
                 }
             }
-        for( int i=pathFinder.computed_path.size()-1; i>0; i--)
-            {
-            int _x = pathFinder.computed_path.get(i).X;
-            int _y = pathFinder.computed_path.get(i).Y;
-            mapPanel.getComponent( _y*70 + _x).setBackground(Color.GREEN);
-            }
-
     }
 
     public void loadMap(File f){
-        /*
-        map.setStart(45, 60);
-        map.setEnd(12, 2);
-        map.setCaseValue( x, y, Map.CASE_OBSTACLE);
-        */
-        
+
         try {
             //create the reader
             FileReader fr = new FileReader(f);
@@ -380,10 +376,13 @@ public class mainWindow extends JFrame {
                 String loadedName = splittedHeader[0];
                 int loadedWidth   = Integer.parseInt(splittedHeader[1]);
                 int loadedHeight  = Integer.parseInt(splittedHeader[2]);
-                System.out.println("HEADER : name = " + loadedName + "\t width = " + loadedWidth + "\t height = " + loadedHeight);
+                //System.out.println("HEADER : name = " + loadedName + "\t width = " + loadedWidth + "\t height = " + loadedHeight);
                 
-                //build an empty grid with the appropriate size
+                //build an empty grid with the appropriate size AND the Map object
+        
+                flushMap();     // delete previous map               
                 buildEmptyMap(loadedWidth, loadedHeight);
+                map = new Map(loadedWidth, loadedHeight);
                 
                 //read the body line by line and set the map with
                 String line;
@@ -396,6 +395,7 @@ public class mainWindow extends JFrame {
                             {
                             CasePanel tempCase = (CasePanel)mapPanel.getComponent(j*loadedWidth+i);
                             tempCase.setValue( Character.getNumericValue(line.charAt(i)) );
+                            map.setCaseValue(i, j, Character.getNumericValue(line.charAt(i)));
                             }
                         }
                     j++;  
@@ -420,10 +420,7 @@ public class mainWindow extends JFrame {
             {
             System.out.println("error in buildEmptyMap(int, int) : arguments bad value !");
             return;
-            }
-        
-        // delete previous grid
-        flushMap(); 
+            } 
         
         // create a layout constraint object and build the map        
         GridBagConstraints c_map = new GridBagConstraints();
@@ -442,10 +439,12 @@ public class mainWindow extends JFrame {
     
     public void flushMap(){
         mapPanel.removeAll();
+        map = null;
         mapPanel.validate();
     }
     
     public void saveEditedMap(File f){
+        
     //this function may need to run under the AWT Clock ?!
         try {
             //create the writer

@@ -16,20 +16,24 @@ le nom de la licence.
 
 package mapViewer;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+//import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
+//import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
@@ -40,6 +44,18 @@ import pathfinder.*;
 */
 public class mainWindow extends JFrame {
     
+    //menu components references
+    JMenuBar menuBar;
+    JMenu menuFile;
+    JMenu menuSettings;
+    JMenuItem itemSave;
+    JMenuItem itemOpen;   
+    JMenuItem itemExit;
+    JMenu itemAlgo;
+    JMenuItem itemHeuristic;
+    JMenuItem itemAStar;
+    JMenuItem itemDStarLite;
+        
     //containers components references
     JTabbedPane mainTabs;   //Top level container
     JPanel searchTab;       //First tab container
@@ -55,6 +71,7 @@ public class mainWindow extends JFrame {
     JTextField endXField;
     JTextField endYField;
     JButton startButton;
+    JButton loadButton;
 
     //controls components references (second tab)    
     JButton emptyBlocks;
@@ -77,9 +94,9 @@ public class mainWindow extends JFrame {
         pathFinder = new AStar(map);
         
         //run setup methodes
+        buildMenu();
         buildWindow();
         setupMap();
-        buildTestMap();
         refreshMapView();
         
         //finally show the main window
@@ -89,17 +106,7 @@ public class mainWindow extends JFrame {
     private void setupMap(){
 
     }
-    
-    private void buildTestMap(){
-
-        for (int i=0; i<8; i++)
-            {
-            map.setCaseValue(10+i, 4, Map.CASE_OBSTACLE);
-            }
-        map.setStart(45, 60);
-        map.setEnd(12, 2);
-    }
-    
+      
     private void refreshMapView(){
         
         int bound = mapPanel.getComponentCount();
@@ -109,8 +116,8 @@ public class mainWindow extends JFrame {
                 {
                 case Map.CASE_OBSTACLE: mapPanel.getComponent(i).setBackground(Color.BLACK);  break;
                 case Map.CASE_FREE:     mapPanel.getComponent(i).setBackground(Color.WHITE);  break;
-                case Map.CASE_START:    mapPanel.getComponent(i).setBackground(Color.BLUE);  break;
-                case Map.CASE_END:      mapPanel.getComponent(i).setBackground(Color.RED);  break;    
+                case Map.CASE_START:    mapPanel.getComponent(i).setBackground(Color.BLUE);   break;
+                case Map.CASE_END:      mapPanel.getComponent(i).setBackground(Color.RED);    break;    
                 }
             }
         
@@ -121,26 +128,55 @@ public class mainWindow extends JFrame {
         endYField.setText("" + map.getEndPos().height);
     }
     
+    private void buildMenu(){
+        
+        menuBar      = new JMenuBar();
+        menuFile     = new JMenu("File");
+        menuSettings = new JMenu("Settings");
+        itemSave = new JMenuItem("Save map ...");
+        itemSave.setMnemonic(KeyEvent.VK_S);
+        itemOpen = new JMenuItem("Open map ...");
+        itemOpen.setMnemonic(KeyEvent.VK_O);
+        itemExit     = new JMenuItem("Exit");
+        itemExit.setMnemonic(KeyEvent.VK_E);        
+        itemAlgo = new JMenu("Algorithm");
+        itemAlgo.setToolTipText("choose an algorithm wich perform the path finding");
+        itemHeuristic = new JMenuItem("Heuristic");
+        itemHeuristic.setToolTipText("choose the heuristic used");
+        itemAStar = new JMenuItem("A*");
+        itemAStar.setToolTipText("classical algo");
+        itemDStarLite = new JMenuItem("D*-Lite");
+        itemDStarLite.setToolTipText("some words ...");
+        //itemExit.addActionListener();
+        
+        menuFile.add(itemExit);
+        menuFile.addSeparator();
+        menuFile.add(itemSave);
+        menuFile.add(itemOpen);    
+        itemAlgo.add(itemAStar); 
+        itemAlgo.add(itemDStarLite);
+        menuSettings.add(itemHeuristic);
+        menuSettings.add(itemAlgo);
+        menuBar.add(menuFile);
+        menuBar.add(menuSettings);          
+        this.setJMenuBar(menuBar);
+    }
+    
     private void buildWindow(){
         
-        //setup de la géométrie et du comportement de la Window
+        //setup de la géométrie du layout et du comportement de la main window
         this.setTitle("Pathfinding Viewer");
         this.setSize(1000, 900);
         this.setLocationRelativeTo(null);
         this.setResizable(true);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        //ajout du top layout
-        GridBagLayout mainLayout = new GridBagLayout();
-        GridBagConstraints c_main = new GridBagConstraints();
-        this.setLayout( mainLayout );
         
         //creation et insertion du tab panel
         mainTabs = new JTabbedPane();
-        c_main.fill = GridBagConstraints.BOTH;
-        this.add(mainTabs, c_main);
+        this.add(mainTabs);
 
         ////////////////////////////////////////////////////////////////////////        
-        //creation et insertion du premier onglet
+        //creation et insertion du premier onglet                   ////////////
         ////////////////////////////////////////////////////////////////////////        
         searchTab = new JPanel();
         GridBagLayout searchTabLayout = new GridBagLayout();  
@@ -150,7 +186,7 @@ public class mainWindow extends JFrame {
         
         //conteneur de gauche (contient la map)
         mapPanel = new JPanel();
-        mapPanel.setBackground(Color.BLACK);    
+        mapPanel.setBackground(Color.WHITE);    
         c.fill = GridBagConstraints.BOTH;
         c.weightx = 1;
         c.weighty = 1;
@@ -158,22 +194,9 @@ public class mainWindow extends JFrame {
         c.gridy = 0;
         searchTab.add(mapPanel, c);
         GridBagLayout mapLayout = new GridBagLayout();
-        GridBagConstraints c_map = new GridBagConstraints();
         mapPanel.setLayout(mapLayout);
-        //on crée notre damier en remplissant le mapLayout
-        for(int i=1; i<=70; i++)
-            {
-            for (int j=1; j<=70; j++)
-                {
-                JPanel tempLabel = new JPanel();
-                tempLabel.setBorder( BorderFactory.createLineBorder(Color.BLACK, 1) );
-                tempLabel.setBackground(Color.WHITE);
-                tempLabel.setSize(20, 20);
-                c_map.gridx = i;
-                c_map.gridy = j;
-                mapPanel.add(tempLabel, c_map);   
-                }
-            }
+        // we build an empty map        
+        buildEmptyMap(55, 55);
 
         //conteneur de droite (contient les autres controles)
         controlPanel = new JPanel();
@@ -191,7 +214,7 @@ public class mainWindow extends JFrame {
         // on crée les composants I/O 
         // le point de départ
         JLabel startLocation = new JLabel("start position");
-        c_control.insets = new Insets(5, 15, 5, 15); //extern margin 
+        c_control.insets = new Insets(5, 15, 5, 15); //external margin 
         c_control.gridx = 0;
         c_control.gridy = 0;
         c_control.gridwidth = 2;
@@ -229,6 +252,12 @@ public class mainWindow extends JFrame {
         c_control.gridy = 4;
         c_control.gridwidth = 2;
         controlPanel.add(startButton, c_control);
+        loadButton = new JButton( new ActionLoadMap(this, "Load Map") );
+        c_control.gridx = 0;
+        c_control.gridy = 5;
+        //c_control.gridwidth = 2;   
+        controlPanel.add(loadButton, c_control);
+        
 
         ////////////////////////////////////////////////////////////////////////
         //creation et insertion du second onglet
@@ -265,10 +294,14 @@ public class mainWindow extends JFrame {
         GridBagLayout controlLayout2 = new GridBagLayout();
         GridBagConstraints c_control2 = new GridBagConstraints(); 
         controlPanel2.setLayout(controlLayout2);
+        
         // on construit les controles d'edition de map
         emptyBlocks = new JButton( new ActionSetPen(this, "empty blocks", 1) );
         c_control2.gridx = 0;
-        c_control2.gridy = 0;         
+        c_control2.gridy = 0;   
+        c_control2.gridwidth = 2;
+        c_control2.fill = GridBagConstraints.HORIZONTAL;        
+        c_control2.insets = new Insets(5, 15, 5, 15); //extern margin         
         controlPanel2.add(emptyBlocks, c_control2);
         wallBlocks = new JButton( new ActionSetPen(this, "wall blocks", 0) );        
         c_control2.gridx = 0;
@@ -318,7 +351,101 @@ public class mainWindow extends JFrame {
 
     }
 
-    public void saveMap(File f){
+    public void loadMap(File f){
+        /*
+        map.setStart(45, 60);
+        map.setEnd(12, 2);
+        map.setCaseValue( x, y, Map.CASE_OBSTACLE);
+        */
+        
+        try {
+            //create the reader
+            FileReader fr = new FileReader(f);
+            BufferedReader buff = new BufferedReader(fr);
+            try {
+                //read header (first line)
+                String header;
+                if ( (header = buff.readLine()) == null )
+                    {
+                    //choose anathor exception ?? see more about !
+                    throw new IllegalArgumentException("the file is empty. Can't load map.");                    
+                    }
+                
+                //split line to appropriate variables
+                String[] splittedHeader = header.split("\t");
+                if (splittedHeader.length != 3)
+                    {
+                    throw new IllegalArgumentException("header not in correct format");
+                    }
+                String loadedName = splittedHeader[0];
+                int loadedWidth   = Integer.parseInt(splittedHeader[1]);
+                int loadedHeight  = Integer.parseInt(splittedHeader[2]);
+                System.out.println("HEADER : name = " + loadedName + "\t width = " + loadedWidth + "\t height = " + loadedHeight);
+                
+                //build an empty grid with the appropriate size
+                buildEmptyMap(loadedWidth, loadedHeight);
+                
+                //read the body line by line and set the map with
+                String line;
+                int j =0; //track the current line number
+                while ( (line = buff.readLine()) != null ) 
+                    {
+                    for(int i=0; i<line.length(); i++)
+                        {
+                        if ( mapPanel.getComponent(j*loadedWidth+i) instanceof CasePanel )
+                            {
+                            CasePanel tempCase = (CasePanel)mapPanel.getComponent(j*loadedWidth+i);
+                            tempCase.setValue( Character.getNumericValue(line.charAt(i)) );
+                            }
+                        }
+                    j++;  
+                    }
+                }
+            finally
+                {
+                //release the reader
+                fr.close();
+                }
+            }        
+         catch (IOException e) 
+            {
+            e.printStackTrace();
+            }
+    }
+    
+    public void buildEmptyMap(int w, int h){
+        
+        // if incorrect size is passed, we do nothing
+        if ( w<0 || h<0 ) //TODO define MAX_SIZE constantes
+            {
+            System.out.println("error in buildEmptyMap(int, int) : arguments bad value !");
+            return;
+            }
+        
+        // delete previous grid
+        flushMap(); 
+        
+        // create a layout constraint object and build the map        
+        GridBagConstraints c_map = new GridBagConstraints();
+        for(int j=0; j<h; j++)
+            {
+            for (int i=0; i<w; i++)
+                {
+                CasePanel tempLabel = new CasePanel();
+                c_map.gridx = i;
+                c_map.gridy = j;
+                mapPanel.add(tempLabel, c_map);   
+                }
+            }
+        mapPanel.validate();
+    }
+    
+    public void flushMap(){
+        mapPanel.removeAll();
+        mapPanel.validate();
+    }
+    
+    public void saveEditedMap(File f){
     //this function may need to run under the AWT Clock ?!
         try {
             //create the writer
@@ -441,25 +568,28 @@ public class mainWindow extends JFrame {
     }
     
     public void buildEmptyGrid(int w, int h){
+        
         // if incorrect size is passed, we do nothing
         if ( w<0 || h<0 )
             {
             System.out.println("error in buildEmptyGrid(int, int) : arguments bad value !");
             return;
             }
+        
         // delete previous grid
         flushGrid();
+        
         // keep grid dimension
         gridWidth = w;
         gridHeight = h;
-        // create a layout constraint object
-        GridBagConstraints c_mapEditor = new GridBagConstraints();        
-        // build the new grid
+        
+        // create a layout constraint object and build the new grid
+        GridBagConstraints c_mapEditor = new GridBagConstraints();
         for(int j=0; j<h; j++)
             {
             for (int i=0; i<w; i++)
                 {
-                CasePanel tempLabel = new CasePanel();
+                CasePanel tempLabel = new CasePanel(new CasePanelMouseListener());
                 c_mapEditor.gridx = i;
                 c_mapEditor.gridy = j;
                 mapEditorPanel.add(tempLabel, c_mapEditor);   

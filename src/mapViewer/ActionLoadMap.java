@@ -15,50 +15,48 @@
  */
 
 package mapViewer;
-import javax.swing.AbstractAction;
+import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
-import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
 
 /**
  *
  */
-public class ActionSaveFile extends AbstractAction {
+public class ActionLoadMap extends AbstractAction {
 
 private mainWindow myMainWindow;
-
-    public ActionSaveFile(mainWindow W, String t){
+    
+    public ActionLoadMap(mainWindow W, String t){
         super(t);
         myMainWindow = W;
-    }    
+    }
 
     @Override
     public void actionPerformed(ActionEvent e){
-        
+
     File f = null;
     File currentFolder = null;
         
-        try { 
+        try {
             currentFolder = new File(".").getCanonicalFile();
-            System.out.println("current folder is : " + currentFolder);
+            System.out.println("Répertoire courant : " + currentFolder);
             } 
-        catch(IOException ex){
+        catch(IOException ex) {
             ex.printStackTrace();
             return;
-            }
-        
-        // open the "save to file" in working directory or home if is null        
+        }
+         
+        // open the "choose a file" in working directory or home if is null
         JFileChooser fileChooser = new JFileChooser(currentFolder);
-        fileChooser.setDialogTitle("Save map to file");
-        int choix = fileChooser.showSaveDialog(null);
-        
+        int choice = fileChooser.showOpenDialog(null);
+         
         // if user choose a file, callback appropriate treatment
-        if (choix == JFileChooser.APPROVE_OPTION)
+        if (choice == JFileChooser.APPROVE_OPTION)
             {
             f = fileChooser.getSelectedFile();        
-            myMainWindow.saveEditedMap(f);
-            }         
-    }
+            myMainWindow.loadMap(f);
+            }       
+    }    
 }

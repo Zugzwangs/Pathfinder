@@ -33,7 +33,6 @@ private static int currentPen = 0;
        this.setSize(20, 20);
        this.setBorder( BorderFactory.createLineBorder(Color.BLACK, 1) );
        this.setValue(1);
-       this.addMouseListener( new CasePanelMouseListener() );
     }
 
     public CasePanel(int _value){
@@ -41,9 +40,24 @@ private static int currentPen = 0;
        this.setSize(20, 20);
        this.setBorder( BorderFactory.createLineBorder(Color.BLACK, 1) );
        this.setValue(_value);
-       this.addMouseListener( new CasePanelMouseListener() );
     }
-
+    
+    public CasePanel(CasePanelMouseListener listener){
+       super();
+       this.setSize(20, 20);
+       this.setBorder( BorderFactory.createLineBorder(Color.BLACK, 1) );
+       this.setValue(1);
+       this.addMouseListener( listener );
+    }    
+    
+    public CasePanel(int _value, CasePanelMouseListener listener){
+       super();
+       this.setSize(20, 20);
+       this.setBorder( BorderFactory.createLineBorder(Color.BLACK, 1) );
+       this.setValue(_value);
+       this.addMouseListener( listener );
+    }  
+    
     public static int getCurrentPen() {
         return currentPen;
     }

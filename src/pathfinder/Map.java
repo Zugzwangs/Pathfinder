@@ -23,14 +23,13 @@ import java.util.ArrayList;
  */
 public class Map {
 
-    ArrayList<Integer> internalMap;
-    public int[][] computedPath;
     int width;
-    int height;
+    int height;    
+    public String name;
+    ArrayList<Integer> internalMap;
     Dimension startPos;
     Dimension endPos;
-    public String name;
-    
+
     public static final int CASE_OBSTACLE = 0;
     public static final int CASE_FREE  = 1;
     public static final int CASE_SLOW  = 2;
@@ -44,8 +43,7 @@ public class Map {
 
     
     public Map(){
-        internalMap = new ArrayList<Integer>(100);
-        computedPath = new int[10][10];  
+        internalMap = new ArrayList<Integer>(100); 
         width  = 10;
         height = 10;
         startPos = new Dimension(-1, -1);
@@ -55,7 +53,6 @@ public class Map {
     public Map(int w, int h){
         width  = w;
         height = h; 
-        computedPath = new int[w][h];
         internalMap = new ArrayList<>(w*h);
         for(int i=1; i<w*h; i++)
             internalMap.add(CASE_FREE);
@@ -67,7 +64,6 @@ public class Map {
     public Map(int w, int h, String mapName){
         width  = w;
         height = h; 
-        computedPath = new int[w][h];
         internalMap = new ArrayList<>(w*h);
         for(int i=1; i<w*h; i++)
             internalMap.add(CASE_FREE);
@@ -103,14 +99,6 @@ public class Map {
         return( (Integer)internalMap.get(y*width +x) == CASE_FREE );
     }
     
-    public void setPathStatus(int x, int y, int value){
-        computedPath[x][y] = value;
-    }
-    
-    public int getPathStatus(int x, int y){
-        return computedPath[x][y];
-    }
-
     public void setStart(int x, int y){
 
         if ( (x>=0 && x<width) && (y>=0 && y<height) && getCaseValue(x, y) != CASE_OBSTACLE )
@@ -149,15 +137,5 @@ public class Map {
     public Dimension getEndPos() {
         return endPos;
     }
-    
-    public void clearPathInfo(){
-        for(int i=0; i<1; i++)
-            {
-            for(int j=0; j<1; j++)
-                {
-                computedPath[i][j] = 0;
-                }
-            }
-        
-    }
+  
 }

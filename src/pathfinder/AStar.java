@@ -70,16 +70,18 @@ public int[][] searchStatus;
             }
     }
     
-    public boolean findPath(){
-        
+    public boolean findPath(Dimension _start, Dimension _end){
+
         // clean and check if start/end positions are valid.
         cleanPreviousSearch();
+        start = _start;
+        end   = _end;        
         if ( !isRouteValid() )
             return false;
         
-        System.out.println("********* begin path finding *********");         
+        /*System.out.println("********* begin path finding *********");         
         System.out.println( open_list.toString() );
-        System.out.println( closed_list.toString() );        
+        System.out.println( closed_list.toString() ); */       
         
         //create starting node and put it to open list
         Node startNode = nodeFactory(start.width, start.height);
@@ -99,9 +101,9 @@ public int[][] searchStatus;
                 exploreAdjacentNodes(tempNode);          
                 i++;
 
-                System.out.println( "apres le step " + i );        
+                /*System.out.println( "apres le step " + i );        
                 System.out.println( open_list.toString() );
-                System.out.println( closed_list.toString() ); 
+                System.out.println( closed_list.toString() ); */
                 }
             else
                 {
@@ -211,8 +213,7 @@ public int[][] searchStatus;
     }
     
     private boolean isRouteValid(){
-        start = map.getStartPos();
-        end   = map.getEndPos();
+
         // does start/end position are not out of bounds 
         if ( (start.height >=0 && start.width>=0) && (end.height >=0 && end.width>=0) ) 
             {

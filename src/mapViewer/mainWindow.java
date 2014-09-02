@@ -55,7 +55,9 @@ public class mainWindow extends JFrame {
     JMenuItem itemHeuristic;
     JMenuItem itemAStar;
     JMenuItem itemDStarLite;
-        
+    //popup menu
+    MapPopUpMenu myPopUp;
+                
     //containers components references
     JTabbedPane mainTabs;   //Top level container
     JPanel searchTab;       //First tab container
@@ -81,8 +83,11 @@ public class mainWindow extends JFrame {
     
     //data references
     private static final int DEFAULT_MAP_SIZE = 50;
+    private static final int MAX_MAP_SIZE = 1000;
     Map map;
-    AStar pathFinder;
+    AStar pathFinder;    
+    Dimension start;
+    Dimension end;
     private int gridWidth;
     private int gridHeight;
     
@@ -91,17 +96,17 @@ public class mainWindow extends JFrame {
         //init fields
         gridWidth = 0;
         gridHeight = 0;   
-        
+        start = null;
+        end = null;        
         //run setup methodes
         buildMenu();
         buildWindow();
         setupMap();
         
-        ////////////////////////////////////////
-        map.setStart(10, 10);
-        map.setEnd(40, 40);
-        refreshMapView();
-        ////////////////////////////////////////
+        ///////////////////////////
+        setStart(15, 15);
+        setEnd(36, 27);
+        //////////////////////////
         //finally show the main window
         this.setVisible(true);
     }
@@ -113,28 +118,41 @@ public class mainWindow extends JFrame {
         map = new Map(DEFAULT_MAP_SIZE, DEFAULT_MAP_SIZE); 
         pathFinder = new AStar(map);        
     }
-      
-    private void refreshMapView(){
-        
-        int bound = mapPanel.getComponentCount();
-        for (int i=0; i<bound-1; i++)
-            {
-            switch( map.getCaseValue(i%map.getWidth(), i/map.getWidth()) )
-                {
-                case Map.CASE_OBSTACLE: mapPanel.getComponent(i).setBackground(Color.BLACK);  break;
-                case Map.CASE_FREE:     mapPanel.getComponent(i).setBackground(Color.WHITE);  break;
-                case Map.CASE_START:    mapPanel.getComponent(i).setBackground(Color.BLUE);   break;
-                case Map.CASE_END:      mapPanel.getComponent(i).setBackground(Color.RED);    break;    
-                }
-            }
-        
-        startXField.setText("" + map.getStartPos().width);
-        startYField.setText("" + map.getStartPos().height);
 
-        endXField.setText("" + map.getEndPos().width);
-        endYField.setText("" + map.getEndPos().height);
+    public final void setStart(int x, int y){
+        
+        if ( map.isFreeCase(x, y) )
+            {
+            //unset previous start
+            if (start != null )
+                {
+                mapPanel.getComponent(start.height*map.getWidth()+start.width).setBackground(Color.WHITE);
+                }
+            //set new start
+            start = new Dimension(x, y);
+            startXField.setText("" + start.width);
+            startYField.setText("" + start.height);
+            mapPanel.getComponent(start.height*map.getWidth()+start.width).setBackground(Color.BLUE);            
+            }
     }
     
+    public final void setEnd(int x, int y){
+
+        if ( map.isFreeCase(x, y) )
+            {
+            //unset previous end
+            if (end != null )
+                {
+                mapPanel.getComponent(end.height*map.getWidth()+end.width).setBackground(Color.WHITE);
+                }
+            //set new start        
+        end = new Dimension(x, y);
+        endXField.setText("" + end.width);
+        endYField.setText("" + end.height);        
+        mapPanel.getComponent(end.height*map.getWidth()+end.width).setBackground(Color.RED);
+        }
+    } 
+      
     private void buildMenu(){
         
         menuBar      = new JMenuBar();
@@ -202,6 +220,10 @@ public class mainWindow extends JFrame {
         searchTab.add(mapPanel, c);
         GridBagLayout mapLayout = new GridBagLayout();
         mapPanel.setLayout(mapLayout);
+        
+        // pop up menu
+        myPopUp = new MapPopUpMenu(this);
+        mapPanel.setComponentPopupMenu(myPopUp);
 
         //conteneur de droite (contient les autres controles)
         controlPanel = new JPanel();
@@ -323,7 +345,7 @@ public class mainWindow extends JFrame {
     }
 
     public void runPathFinding(){
-        if ( pathFinder.findPath() )
+        if ( pathFinder.findPath(start, end) )
             {
             //show the path founded
             drawPath();
@@ -350,6 +372,9 @@ public class mainWindow extends JFrame {
                     }
                 }
             }
+        //redraw start/end case
+        mapPanel.getComponent(start.height*map.getWidth() + start.width).setBackground(Color.BLUE);
+        mapPanel.getComponent(end.height*map.getWidth() + end.width).setBackground(Color.RED);
     }
 
     public void loadMap(File f){
@@ -376,20 +401,20 @@ public class mainWindow extends JFrame {
                 String loadedName = splittedHeader[0];
                 int loadedWidth   = Integer.parseInt(splittedHeader[1]);
                 int loadedHeight  = Integer.parseInt(splittedHeader[2]);
-                //System.out.println("HEADER : name = " + loadedName + "\t width = " + loadedWidth + "\t height = " + loadedHeight);
+                System.out.println("HEADER : name = " + loadedName + "\t width = " + loadedWidth + "\t height = " + loadedHeight);
                 
                 //build an empty grid with the appropriate size AND the Map object
-        
                 flushMap();     // delete previous map               
                 buildEmptyMap(loadedWidth, loadedHeight);
                 map = new Map(loadedWidth, loadedHeight);
+                pathFinder = new AStar(map);
                 
                 //read the body line by line and set the map with
                 String line;
                 int j =0; //track the current line number
-                while ( (line = buff.readLine()) != null ) 
+                while ( (line = buff.readLine()) != null && j<loadedHeight ) 
                     {
-                    for(int i=0; i<line.length(); i++)
+                    for(int i=0; i<line.length()&&i<loadedWidth; i++)
                         {
                         if ( mapPanel.getComponent(j*loadedWidth+i) instanceof CasePanel )
                             {
@@ -440,6 +465,7 @@ public class mainWindow extends JFrame {
     public void flushMap(){
         mapPanel.removeAll();
         map = null;
+        pathFinder = null;
         mapPanel.validate();
     }
     
@@ -532,7 +558,7 @@ public class mainWindow extends JFrame {
                 String loadedName = splittedHeader[0];
                 int loadedWidth   = Integer.parseInt(splittedHeader[1]);
                 int loadedHeight  = Integer.parseInt(splittedHeader[2]);
-                System.out.println("HEADER : name = " + loadedName + "\t width = " + loadedWidth + "\t height = " + loadedHeight);
+                //System.out.println("HEADER : name = " + loadedName + "\t width = " + loadedWidth + "\t height = " + loadedHeight);
                 
                 //build an empty grid with the appropriate size
                 buildEmptyGrid(loadedWidth, loadedHeight);

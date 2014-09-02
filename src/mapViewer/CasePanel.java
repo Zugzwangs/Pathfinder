@@ -33,6 +33,7 @@ private static int currentPen = 0;
        this.setSize(20, 20);
        this.setBorder( BorderFactory.createLineBorder(Color.BLACK, 1) );
        this.setValue(1);
+       setInheritsPopupMenu(true);
     }
 
     public CasePanel(int _value){
@@ -40,6 +41,7 @@ private static int currentPen = 0;
        this.setSize(20, 20);
        this.setBorder( BorderFactory.createLineBorder(Color.BLACK, 1) );
        this.setValue(_value);
+       setInheritsPopupMenu(true);
     }
     
     public CasePanel(CasePanelMouseListener listener){

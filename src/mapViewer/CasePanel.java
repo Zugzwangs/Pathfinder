@@ -16,6 +16,7 @@
 
 package mapViewer;
 import java.awt.Color;
+import java.awt.Dimension;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
@@ -27,13 +28,14 @@ public final class CasePanel extends JPanel{
 
 private int value;
 private static int currentPen = 0;
+private Dimension index;
 
     public CasePanel(){
        super();
        this.setSize(20, 20);
        this.setBorder( BorderFactory.createLineBorder(Color.BLACK, 1) );
        this.setValue(1);
-       setInheritsPopupMenu(true);
+       //setInheritsPopupMenu(true);
     }
 
     public CasePanel(int _value){
@@ -41,7 +43,7 @@ private static int currentPen = 0;
        this.setSize(20, 20);
        this.setBorder( BorderFactory.createLineBorder(Color.BLACK, 1) );
        this.setValue(_value);
-       setInheritsPopupMenu(true);
+       //setInheritsPopupMenu(true);
     }
     
     public CasePanel(CasePanelMouseListener listener){
@@ -59,6 +61,14 @@ private static int currentPen = 0;
        this.setValue(_value);
        this.addMouseListener( listener );
     }  
+
+    public Dimension getIndex() {
+        return index;
+    }
+
+    public void setIndex(Dimension index) {
+        this.index = index;
+    }    
     
     public static int getCurrentPen() {
         return currentPen;
@@ -95,6 +105,18 @@ private static int currentPen = 0;
                 this.setBackground(Color.CYAN);
                 break;
                 }
+            case 8:
+                {
+                this.value = value;
+                this.setBackground(Color.BLUE);
+                break;
+                }
+            case 9:
+                {
+                this.value = value;
+                this.setBackground(Color.RED);
+                break;
+                }            
             default:
                 {
                 this.value = 1;

@@ -25,7 +25,7 @@ public class MainClass {
      */
     
     public static void main(String[] args) {
-        mainWindow testFenetre = new mainWindow();
+        mainWindow myWindow = new mainWindow();
     }
     
 }

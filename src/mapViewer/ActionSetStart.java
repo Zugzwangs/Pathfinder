@@ -19,6 +19,7 @@ package mapViewer;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
+import javax.swing.JMenuItem;
 
 /**
  *
@@ -35,14 +36,17 @@ private mainWindow mainWindow;
     
     @Override
     public void actionPerformed(ActionEvent e){
-        System.out.println("set start !");
-        System.out.println( e.getSource().toString() );
-        if ( e.getSource() instanceof MapPopUpMenu )
+        if ( e.getSource() instanceof JMenuItem )
             {
-            MapPopUpMenu popupMenu = (MapPopUpMenu)e.getSource();
-            Component invoker = popupMenu.getInvoker();
-            System.out.println( invoker.toString() );
+            JMenuItem tempItemMenuRef = (JMenuItem)e.getSource();
+            if ( tempItemMenuRef.getParent() instanceof MapPopUpMenu )
+                {
+                MapPopUpMenu popupMenu = (MapPopUpMenu)tempItemMenuRef.getParent();
+                CasePanel tempCase = (CasePanel)popupMenu.getInvoker();
+                int x = tempCase.getIndex().width;
+                int y = tempCase.getIndex().height;
+                mainWindow.setStart(x, y);
+                }
             }
-        //mainWindow.setStart(x, y);
     }
 }

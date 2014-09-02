@@ -77,12 +77,11 @@ public int[][] searchStatus;
         start = _start;
         end   = _end;        
         if ( !isRouteValid() )
+            {
+            System.out.println("route is invalid !");
             return false;
-        
-        /*System.out.println("********* begin path finding *********");         
-        System.out.println( open_list.toString() );
-        System.out.println( closed_list.toString() ); */       
-        
+            }
+    
         //create starting node and put it to open list
         Node startNode = nodeFactory(start.width, start.height);
         closed_list.add(startNode);
@@ -100,7 +99,6 @@ public int[][] searchStatus;
                 closed_list.add(tempNode);            
                 exploreAdjacentNodes(tempNode);          
                 i++;
-
                 /*System.out.println( "apres le step " + i );        
                 System.out.println( open_list.toString() );
                 System.out.println( closed_list.toString() ); */
@@ -108,7 +106,7 @@ public int[][] searchStatus;
             else
                 {
                 //open_list is empty => no path exists
-                System.out.println( "can't find path !" );
+                System.out.println( "no path founded !" );
                 return false;
                 }
             }
@@ -121,7 +119,7 @@ public int[][] searchStatus;
             }
         else
             {
-            System.out.println( "fail ! too much attemps !" ); 
+            System.out.println( "fail ! path too hard to compute !" ); 
             return false;
             }
     }
@@ -171,27 +169,34 @@ public int[][] searchStatus;
     private void pushNodetoOpenList(Node n){
         
         // push a node into open_list only if not already in open or closed list
-        switch( searchStatus[n.X][n.Y] )
-            {
-            case UNEXPLORED:
+        try{
+            switch( searchStatus[n.X][n.Y] )
                 {
-                if ( map.getCaseValue(n.X, n.Y) != Map.CASE_OBSTACLE )
+                case UNEXPLORED:
                     {
-                    open_list.insert( n );        
-                    searchStatus[n.X][n.Y] = IN_OPEN_LIST;                     
-                    }    
+                    if ( map.getCaseValue(n.X, n.Y) != Map.CASE_OBSTACLE )
+                        {
+                        open_list.insert( n );        
+                        searchStatus[n.X][n.Y] = IN_OPEN_LIST;                     
+                        }    
+                    }
+
+                case IN_OPEN_LIST:
+                    {
+                    //the node is already in open list => find it 'n recompute it
+                    // TODO !!!!!!!!!!!!
+                    
+                    return;
+                    }
+
+                case IN_CLOSED_LIST:
+                    //don't push the node
                 }
-                
-            case IN_OPEN_LIST:
-                {
-                //the node is already in open list => find it 'n recompute it
-                // TODO !!!!!!!!!!!!
-                return;
-                }
- 
-            case IN_CLOSED_LIST:
-                //don't push the node
-            }
+        } 
+        catch (ArrayIndexOutOfBoundsException e){
+            //happens whene A* want to explore a node that is out of bound of the map
+            //just catch and forgot this shit
+        }
     }
     
     private boolean isEnd(Node n){
@@ -215,7 +220,7 @@ public int[][] searchStatus;
     private boolean isRouteValid(){
 
         // does start/end position are not out of bounds 
-        if ( (start.height >=0 && start.width>=0) && (end.height >=0 && end.width>=0) ) 
+        if ( (start != null && end != null) && (start.height >=0 && start.width>=0) && (end.height >=0 && end.width>=0) ) 
             {
             // does start/end are reachable case
             if ( map.getCaseValue(start) != Map.CASE_OBSTACLE && map.getCaseValue(start) != Map.CASE_OBSTACLE )

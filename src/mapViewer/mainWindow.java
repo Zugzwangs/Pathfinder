@@ -56,7 +56,7 @@ public class mainWindow extends JFrame {
     JMenuItem itemAStar;
     JMenuItem itemDStarLite;
     //popup menu
-    MapPopUpMenu myPopUp;
+    MapPopUpMenu mapPopUpMenu;
                 
     //containers components references
     JTabbedPane mainTabs;   //Top level container
@@ -99,7 +99,7 @@ public class mainWindow extends JFrame {
         start = null;
         end = null;        
         //run setup methodes
-        buildMenu();
+        buildMenus();
         buildWindow();
         setupMap();
         
@@ -114,46 +114,56 @@ public class mainWindow extends JFrame {
     private void setupMap(){
         
         //we build an empty map       
-        buildEmptyMap(DEFAULT_MAP_SIZE, DEFAULT_MAP_SIZE);
         map = new Map(DEFAULT_MAP_SIZE, DEFAULT_MAP_SIZE); 
+        buildEmptyMap(DEFAULT_MAP_SIZE, DEFAULT_MAP_SIZE);
         pathFinder = new AStar(map);        
     }
 
     public final void setStart(int x, int y){
-        
+
+        CasePanel tempCase;
+            
         if ( map.isFreeCase(x, y) )
-            {
+            {             
             //unset previous start
-            if (start != null )
+            if ( start != null )
                 {
-                mapPanel.getComponent(start.height*map.getWidth()+start.width).setBackground(Color.WHITE);
+                tempCase = (CasePanel)mapPanel.getComponent(start.height*map.getWidth()+start.width);                     
+                tempCase.setValue(Map.CASE_FREE);
                 }
             //set new start
             start = new Dimension(x, y);
             startXField.setText("" + start.width);
             startYField.setText("" + start.height);
-            mapPanel.getComponent(start.height*map.getWidth()+start.width).setBackground(Color.BLUE);            
+            
+            tempCase = (CasePanel)mapPanel.getComponent(start.height*map.getWidth()+start.width);
+            tempCase.setValue(Map.CASE_START);     
             }
     }
     
     public final void setEnd(int x, int y){
 
+        CasePanel tempCase;       
+        
         if ( map.isFreeCase(x, y) )
             {
             //unset previous end
             if (end != null )
                 {
-                mapPanel.getComponent(end.height*map.getWidth()+end.width).setBackground(Color.WHITE);
+                tempCase = (CasePanel)mapPanel.getComponent(end.height*map.getWidth()+end.width);                    
+                tempCase.setValue(Map.CASE_FREE);
                 }
             //set new start        
         end = new Dimension(x, y);
         endXField.setText("" + end.width);
-        endYField.setText("" + end.height);        
-        mapPanel.getComponent(end.height*map.getWidth()+end.width).setBackground(Color.RED);
+        endYField.setText("" + end.height); 
+        
+        tempCase = (CasePanel)mapPanel.getComponent(end.height*map.getWidth()+end.width);          
+        tempCase.setValue(Map.CASE_END);  
         }
     } 
       
-    private void buildMenu(){
+    private void buildMenus(){
         
         menuBar      = new JMenuBar();
         menuFile     = new JMenu("File");
@@ -185,6 +195,9 @@ public class mainWindow extends JFrame {
         menuBar.add(menuFile);
         menuBar.add(menuSettings);          
         this.setJMenuBar(menuBar);
+        
+        // pop up menu
+        mapPopUpMenu = new MapPopUpMenu(this);
     }
     
     private void buildWindow(){
@@ -199,7 +212,7 @@ public class mainWindow extends JFrame {
         //creation et insertion du tab panel
         mainTabs = new JTabbedPane();
         this.add(mainTabs);
-
+       
         ////////////////////////////////////////////////////////////////////////        
         //creation et insertion du premier onglet                   ////////////
         ////////////////////////////////////////////////////////////////////////        
@@ -221,10 +234,6 @@ public class mainWindow extends JFrame {
         GridBagLayout mapLayout = new GridBagLayout();
         mapPanel.setLayout(mapLayout);
         
-        // pop up menu
-        myPopUp = new MapPopUpMenu(this);
-        mapPanel.setComponentPopupMenu(myPopUp);
-
         //conteneur de droite (contient les autres controles)
         controlPanel = new JPanel();
         controlPanel.setMinimumSize( new Dimension(180, 10) );
@@ -345,10 +354,27 @@ public class mainWindow extends JFrame {
     }
 
     public void runPathFinding(){
-        if ( pathFinder.findPath(start, end) )
+    
+    long startTime;
+    long endTime                        ;
+    boolean succes = false;
+    int iterations = 1;
+    
+        iterations = 10000;
+        startTime = System.currentTimeMillis(); 
+        for (int i=1; i<iterations; i++)
+            succes = pathFinder.findPath(start, end);
+        endTime = System.currentTimeMillis();
+        System.out.println("Total elapsed time in execution of method callMethod() is :"+ (endTime-startTime)/iterations);
+        if ( succes )
             {
-            //show the path founded
+            //clean then show the path founded
+            reDrawMap();                
             drawPath();
+            }
+        else
+            {
+            // fail
             }
     }
 
@@ -377,6 +403,24 @@ public class mainWindow extends JFrame {
         mapPanel.getComponent(end.height*map.getWidth() + end.width).setBackground(Color.RED);
     }
 
+    private void reDrawMap() {
+        CasePanel tempCase;
+        if (map == null)
+            return;
+        
+        for ( int i=0; i<map.getWidth(); i++)
+            {
+            for ( int j=0; j<map.getHeight(); j++)
+                {
+                tempCase = (CasePanel)mapPanel.getComponent(j*map.getWidth() + i);
+                tempCase.setValue( map.getCaseValue(i, j) );
+                }
+            }
+        //reset start/end identically only to force redraw 
+        setStart(start.width, start.height);
+        setEnd(end.width, end.height);
+    }
+    
     public void loadMap(File f){
 
         try {
@@ -454,6 +498,8 @@ public class mainWindow extends JFrame {
             for (int i=0; i<w; i++)
                 {
                 CasePanel tempLabel = new CasePanel();
+                tempLabel.setIndex(new Dimension(i,j));
+                tempLabel.setComponentPopupMenu(mapPopUpMenu);
                 c_map.gridx = i;
                 c_map.gridy = j;
                 mapPanel.add(tempLabel, c_map);   
@@ -467,6 +513,12 @@ public class mainWindow extends JFrame {
         map = null;
         pathFinder = null;
         mapPanel.validate();
+        start = null;
+        end = null;    
+        startXField.setText("");
+        startYField.setText("");
+        endXField.setText("");
+        endYField.setText("");         
     }
     
     public void saveEditedMap(File f){

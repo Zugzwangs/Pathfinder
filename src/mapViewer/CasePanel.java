@@ -74,9 +74,9 @@ private Dimension index;
         return currentPen;
     }
 
-    public static void setCurrentPen(int currentPen) {
-        //TODO set the currentPen only if value is in range
-        CasePanel.currentPen = currentPen;
+    public static void setCurrentPen(int pen) {
+        if ( 0 <= pen && pen < 10)
+            CasePanel.currentPen = pen;
     }
     
     public int getValue() {

@@ -20,15 +20,15 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-//import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
-//import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -78,12 +78,15 @@ public class mainWindow extends JFrame {
     //controls components references (second tab)    
     JButton emptyBlocks;
     JButton wallBlocks;
+    JButton waterBlocks;
     JButton saveMap;
     JButton loadMap;
+    JButton clearMap;
+    JButton newMap;
     
     //data references
     private static final int DEFAULT_MAP_SIZE = 50;
-    private static final int MAX_MAP_SIZE = 1000;
+    private static final int MAX_MAP_SIZE = 3000;
     Map map;
     AStar pathFinder;    
     Dimension start;
@@ -333,24 +336,45 @@ public class mainWindow extends JFrame {
         
         // on construit les controles d'edition de map
         emptyBlocks = new JButton( new ActionSetPen(this, "empty blocks", 1) );
+        emptyBlocks.setIcon( new ImageIcon("./pics/icone_1.gif") );
         c_control2.gridx = 0;
         c_control2.gridy = 0;   
         c_control2.gridwidth = 2;
         c_control2.fill = GridBagConstraints.HORIZONTAL;        
         c_control2.insets = new Insets(5, 15, 5, 15); //extern margin         
         controlPanel2.add(emptyBlocks, c_control2);
-        wallBlocks = new JButton( new ActionSetPen(this, "wall blocks", 0) );        
+        
+        wallBlocks = new JButton( new ActionSetPen(this, "wall blocks    ", 0) );
+        wallBlocks.setIcon( new ImageIcon("./pics/icone_0.gif") );
         c_control2.gridx = 0;
         c_control2.gridy = 1;         
         controlPanel2.add(wallBlocks, c_control2);
+        
+        waterBlocks = new JButton( new ActionSetPen(this, "water blocks", 2) );
+        waterBlocks.setIcon( new ImageIcon("./pics/icone_2.gif") );        
+        c_control2.gridx = 0;
+        c_control2.gridy = 2;     
+        controlPanel2.add(waterBlocks, c_control2);
+        
         saveMap = new JButton( new ActionSaveFile(this, "save map") );
         c_control2.gridx = 0;
-        c_control2.gridy = 2;
+        c_control2.gridy = 3;
         controlPanel2.add(saveMap, c_control2);
+        
         loadMap = new JButton( new ActionLoadMapForEditing(this, "load map") );
         c_control2.gridx = 0;
-        c_control2.gridy = 3;
-        controlPanel2.add(loadMap, c_control2);        
+        c_control2.gridy = 4;
+        controlPanel2.add(loadMap, c_control2); 
+        
+        clearMap = new JButton( new ActionCleanMap(this, "clear map") );
+        c_control2.gridx = 0;
+        c_control2.gridy = 5;
+        controlPanel2.add(clearMap, c_control2); 
+        
+        newMap = new JButton( new ActionNewMap(this, "new map") );
+        c_control2.gridx = 0;
+        c_control2.gridy = 6;
+        controlPanel2.add(newMap, c_control2); 
     }
 
     public void runPathFinding(){
@@ -365,7 +389,7 @@ public class mainWindow extends JFrame {
         for (int i=1; i<iterations; i++)
             succes = pathFinder.findPath(start, end);
         endTime = System.currentTimeMillis();
-        System.out.println("Total elapsed time in execution of method callMethod() is :"+ (endTime-startTime)/iterations);
+        System.out.println("Total elapsed time in execution of path finding (ms) :"+ (endTime-startTime));
         if ( succes )
             {
             //clean then show the path founded
@@ -673,6 +697,10 @@ public class mainWindow extends JFrame {
                 }
             }
         mapEditorPanel.validate();
+    }
+
+    public void cleanGrid(){
+        buildEmptyGrid(gridWidth, gridHeight);
     }
     
     public void flushGrid(){

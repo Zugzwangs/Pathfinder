@@ -113,7 +113,7 @@ public int[][] searchStatus;
         
         if ( isEnd(tempNode) )
             {
-            System.out.println( "pathfinding succefull !" );
+            //System.out.println( "pathfinding succefull !" );
             computePath();
             return true;        
             }

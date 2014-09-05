@@ -17,18 +17,16 @@
 package pathfinder;
 import java.awt.Dimension;
 import static java.lang.Math.abs;
-import static java.lang.Math.max;
-import static java.lang.Math.min;
-import java.util.ArrayList;
 
 /**
- * A* implementation
+ * Classic A* implementation
  */
 public class AStar {
 
 // const value used to test behavior
 // these value may need to be deported somewhere else later
 // need to design a TieBreaker Object ?
+public static final int MAX_ITERATIONS = 50000;
 public static final int COST_STRAIGHT = 10;
 public static final int COST_DIAG = 14;
 
@@ -44,36 +42,41 @@ private int mapHeight;
 private Dimension start;
 private Dimension end;
 
-// data structures used by A* research
+//data structures used by A* research
 private BinaryHeap open_list;
-private ArrayList<Node> closed_list;
-public int[][] searchStatus;
+public Node[][] searchStatus;
+
+//behaviors
+private Heuristic heuristic;
 
     public AStar(Map currentMap){
         map = currentMap;
         mapWidth  = map.getWidth();
         mapHeight = map.getHeight();        
         open_list = new BinaryHeap();
-        closed_list = new ArrayList<Node>();
-        searchStatus = new int[mapWidth][mapHeight];
+        heuristic = new Manhattan();
+        searchStatus = new Node[mapWidth][mapHeight]; //holds a reference for all nodes.
+    }
+
+    public void setHeuristic(Heuristic heuristic) {
+        this.heuristic = heuristic;
     }
     
     private void cleanPreviousSearch(){
         open_list.clear();
-        closed_list.clear();
+        //closed_list.clear();
         for (int i=0; i<mapWidth; i++)
             {
             for (int j=0; j<mapHeight; j++)
                 {
-                searchStatus[i][j] = 0;
+                searchStatus[i][j] = nodeFactory(i, j);
                 }
             }
     }
     
     public boolean findPath(Dimension _start, Dimension _end){
 
-        // clean and check if start/end positions are valid.
-        cleanPreviousSearch();
+        //check if start/end positions are valid.
         start = _start;
         end   = _end;        
         if ( !isRouteValid() )
@@ -81,27 +84,29 @@ public int[][] searchStatus;
             System.out.println("route is invalid !");
             return false;
             }
-    
+        
+        // clean before processing
+        cleanPreviousSearch(); 
+        
         //create starting node and put it to open list
         Node startNode = nodeFactory(start.width, start.height);
-        closed_list.add(startNode);
+        //closed_list.add(startNode);
+        startNode.status = Node.IN_CLOSED_LIST;
         exploreAdjacentNodes(startNode);
         
         // init main loop
         int i=1;
         Node tempNode = null;
-        // main loop : look for the best node and explore it's next nodes.
-        while( i<50000 && !isEnd(tempNode) )
+        // main loop : look for the best node and explore it's adjacents nodes.
+        while( i<MAX_ITERATIONS && !isEnd(tempNode) )
             {
             tempNode = open_list.extract();
             if ( tempNode != null )
                 {
-                closed_list.add(tempNode);            
+                //closed_list.add(tempNode); 
+                tempNode.status = Node.IN_CLOSED_LIST;
                 exploreAdjacentNodes(tempNode);          
                 i++;
-                /*System.out.println( "apres le step " + i );        
-                System.out.println( open_list.toString() );
-                System.out.println( closed_list.toString() ); */
                 }
             else
                 {
@@ -123,103 +128,103 @@ public int[][] searchStatus;
             return false;
             }
     }
-    
-    private int Manhattan(Dimension A, Dimension B){
-        return COST_STRAIGHT*( abs(A.width-B.width) + abs(A.height-B.height) );
-    } 
-    
-    private int birdFly(Dimension A, Dimension B){
-        int min_dist = min( abs(A.width-B.width) , abs(A.height-B.height) );
-        int max_dist = max( abs(A.width-B.width) , abs(A.height-B.height) );
-        return( COST_DIAG*min_dist + COST_STRAIGHT*(max_dist-min_dist) );       
-    }
-    
-    private int Chebyshev(Dimension A, Dimension B){
-        return( COST_STRAIGHT*max( abs(A.width-B.width) , abs(A.height-B.height) ) );
-    }
-    
-    private int someHeuristicMethode(Dimension A, Dimension B){
-        //code for new heuristic computation 
-        return 0;
-    }
-    
+           
     private void exploreAdjacentNodes(Node n){
-        pushNodetoOpenList( nodeFactory(n, n.X+1, n.Y-1) );
+        // 4-connexity
         pushNodetoOpenList( nodeFactory(n, n.X+1, n.Y) );
-        pushNodetoOpenList( nodeFactory(n, n.X+1, n.Y+1) );
         pushNodetoOpenList( nodeFactory(n, n.X, n.Y-1) );
         pushNodetoOpenList( nodeFactory(n, n.X, n.Y+1) );
-        pushNodetoOpenList( nodeFactory(n, n.X-1, n.Y-1) );
         pushNodetoOpenList( nodeFactory(n, n.X-1, n.Y) );
+        // 8-connexity
+        pushNodetoOpenList( nodeFactory(n, n.X+1, n.Y-1) );
+        pushNodetoOpenList( nodeFactory(n, n.X+1, n.Y+1) );        
+        pushNodetoOpenList( nodeFactory(n, n.X-1, n.Y-1) );
         pushNodetoOpenList( nodeFactory(n, n.X-1, n.Y+1) );      
     }
 
     private Node nodeFactory(int x, int y){
-        return( new Node(0, Manhattan(new Dimension(x,y), end), new Dimension(x,y)) );
+        return( new Node(0, heuristic.compute(new Dimension(x,y), end), new Dimension(x,y)) );
     }
 
     private Node nodeFactory(Node daddy, int x, int y){
         
         if ( daddy.X != x && daddy.Y != y )
-            return( new Node(daddy.cost+COST_DIAG, Manhattan(new Dimension(x,y), end), new Dimension(x,y), daddy) );
+            return( new Node(daddy.cost+COST_DIAG, heuristic.compute(new Dimension(x,y), end), new Dimension(x,y), daddy, Node.UNEXPLORED) );
         else
-            return( new Node(daddy.cost+COST_STRAIGHT, Manhattan(new Dimension(x,y), end), new Dimension(x,y), daddy) );
+            return( new Node(daddy.cost+COST_STRAIGHT, heuristic.compute(new Dimension(x,y), end), new Dimension(x,y), daddy, Node.UNEXPLORED) );
     }
 
     private void pushNodetoOpenList(Node n){
         
-        // push a node into open_list only if not already in open or closed list
         try{
-            switch( searchStatus[n.X][n.Y] )
+            switch( searchStatus[n.X][n.Y].status )
                 {
+                
+                //case where n is a completely new node
                 case UNEXPLORED:
                     {
+                    //check if this node is a free case
                     if ( map.getCaseValue(n.X, n.Y) != Map.CASE_OBSTACLE )
                         {
-                        open_list.insert( n );        
-                        searchStatus[n.X][n.Y] = IN_OPEN_LIST;                     
-                        }    
+                        n.status = Node.IN_OPEN_LIST;                            
+                        searchStatus[n.X][n.Y] = n;                         
+                        open_list.insert( n );                   
+                        }                 
+                    break;
                     }
-
+                
+                //the node is already in open list : adjust it if we found a less-costed way to reach it
                 case IN_OPEN_LIST:
                     {
-                    //the node is already in open list => find it 'n recompute it
-                    // TODO !!!!!!!!!!!!
-                    
-                    return;
+                    if ( n.cost < searchStatus[n.X][n.Y].cost )
+                        {
+                        n.status = Node.IN_OPEN_LIST;
+                        searchStatus[n.X][n.Y] = n;  
+                        }
+                    break;
                     }
-
+                
+                //don't push the node yet
                 case IN_CLOSED_LIST:
-                    //don't push the node
+                    {
+                    if ( n.cost < searchStatus[n.X][n.Y].cost )
+                        {
+                        n.status = Node.IN_OPEN_LIST;
+                        searchStatus[n.X][n.Y] = n;  
+                        }                        
+                    break;
+                    }
                 }
-        } 
-        catch (ArrayIndexOutOfBoundsException e){
-            //happens whene A* want to explore a node that is out of bound of the map
+        } catch (ArrayIndexOutOfBoundsException e)
+            {
+            // TODO : maybe try an implementation without error handling 'cause that may be too slow            
+            //happens when A* want to explore a node that is out of bound of the map
             //just catch and forgot this shit
-        }
+            }
     }
     
     private boolean isEnd(Node n){
         if ( n != null )
+            // TODO : use equalTo methode from node ?
             return(n.X==end.width && n.Y==end.height);
         else
             return false;
     }
     
     private void computePath(){
-        
-        Node tempNode = closed_list.get(closed_list.size()-1);
+        //get the end node
+        Node tempNode = searchStatus[end.width][end.height];
+        //backtrace the way
         while ( tempNode.daddy != null )
             {
-            searchStatus[tempNode.X][tempNode.Y] = ON_PATH;            
+            searchStatus[tempNode.X][tempNode.Y].status = ON_PATH;            
             tempNode = tempNode.daddy;
-            
             }  
     }
     
     private boolean isRouteValid(){
 
-        // does start/end position are not out of bounds 
+        // does start/end positions are valid
         if ( (start != null && end != null) && (start.height >=0 && start.width>=0) && (end.height >=0 && end.width>=0) ) 
             {
             // does start/end are reachable case

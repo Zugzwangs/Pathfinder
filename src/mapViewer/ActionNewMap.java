@@ -16,6 +16,7 @@
 
 package mapViewer;
 
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 
@@ -34,7 +35,11 @@ private mainWindow myMainWindow;
 
     @Override
     public void actionPerformed(ActionEvent e){
-        //TODO show a dialog who ask for map's size
-        myMainWindow.buildEmptyGrid(60, 30);
+        NewMapDialog d = new NewMapDialog(myMainWindow, "Please, choose the map's size.", true);
+        Dimension requestedSize = d.showDialog();
+        if (requestedSize != null)
+            myMainWindow.buildEmptyGrid(requestedSize.width, requestedSize.height);
+        else
+            return;
     }    
 }

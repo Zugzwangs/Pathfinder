@@ -1,0 +1,2900 @@
+<!DOCTYPE html>
+<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:fb="http://www.facebook.com/2008/fbml" lang="en"><head>
+                <meta http-equiv="X-UA-Compatible" content="IE=9"> 
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<meta content="True" name="HandheldFriendly">
+		
+
+		<title>A* Pathfinding for Beginners - Artificial Intelligence - Articles - Articles - GameDev.net</title>
+		<link rel="shortcut icon" href="http://www.gamedev.net/favicon.ico">
+		<link rel="image_src" href="http://public.gamedev5.net//public/style_images/master/gd_meta.png">
+		<script id="undefined" src="A%20%20Pathfinding%20for%20Beginners%20-%20Artificial%20Intelligence%20-%20Articles%20-%20Articles%20-%20GameDev.net_fichiers/inpage_linkid.js" async="" type="text/javascript"></script><script async="" src="A%20%20Pathfinding%20for%20Beginners%20-%20Artificial%20Intelligence%20-%20Articles%20-%20Articles%20-%20GameDev.net_fichiers/cbgapi.loaded_1"></script><script async="" src="A%20%20Pathfinding%20for%20Beginners%20-%20Artificial%20Intelligence%20-%20Articles%20-%20Articles%20-%20GameDev.net_fichiers/cbgapi.loaded_0"></script><script src="A%20%20Pathfinding%20for%20Beginners%20-%20Artificial%20Intelligence%20-%20Articles%20-%20Articles%20-%20GameDev.net_fichiers/all.js" id="facebook-jssdk"></script><script src="A%20%20Pathfinding%20for%20Beginners%20-%20Artificial%20Intelligence%20-%20Articles%20-%20Articles%20-%20GameDev.net_fichiers/ga.js" async="" type="text/javascript"></script><script src="A%20%20Pathfinding%20for%20Beginners%20-%20Artificial%20Intelligence%20-%20Articles%20-%20Articles%20-%20GameDev.net_fichiers/gpt.js" type="text/javascript" async=""></script><script type="text/javascript">
+		//<![CDATA[
+			jsDebug			= 0; /* Must come before JS includes */
+			USE_RTE			= 0;
+			DISABLE_AJAX	= parseInt(0); /* Disables ajax requests where text is sent to the DB; helpful for charset issues */
+			inACP			= false;
+			var isRTL		= false;
+			var rtlIe		= '';
+			var rtlFull		= '';
+		//]]>
+		</script>
+		
+	
+				
+	
+
+				
+	
+
+				
+	
+
+				
+	
+
+				
+	
+
+				
+	
+
+				
+	
+
+				
+	
+
+				
+	
+
+				
+	
+
+				
+	
+
+				
+	
+
+				
+	
+
+				
+	
+
+				
+	
+
+				
+<link rel="stylesheet" type="text/css" title="Main" media="print" href="A%20%20Pathfinding%20for%20Beginners%20-%20Artificial%20Intelligence%20-%20Articles%20-%20Articles%20-%20GameDev.net_fichiers/ipcontent_print.css">
+		
+	
+
+				
+	
+
+				
+	
+
+				
+	
+	
+		<link rel="stylesheet" type="text/css" media="screen,print" href="A%20%20Pathfinding%20for%20Beginners%20-%20Artificial%20Intelligence%20-%20Articles%20-%20Articles%20-%20GameDev.net_fichiers/index.css">
+	
+
+
+<!--[if lte IE 7]>
+	<link rel="stylesheet" type="text/css" title='Main' media="screen" href="http://public.gamedev5.net/public/style_css/css_20/ipb_ie.css" />
+<![endif]-->
+<!--[if lte IE 8]>
+	<style type='text/css'>
+		.ipb_table { table-layout: fixed; }
+		.ipsLayout_content { width: 99.5%; }
+	</style>
+<![endif]-->
+
+	<!-- Forces resized images to an admin-defined size -->
+	<style type="text/css">
+		img.bbc_img {
+			max-width: 640px !important;
+			max-height: 640px !important;
+		}
+	</style>
+
+
+<link href="A%20%20Pathfinding%20for%20Beginners%20-%20Artificial%20Intelligence%20-%20Articles%20-%20Articles%20-%20GameDev.net_fichiers/css.css" rel="stylesheet" type="text/css">
+		<meta property="og:title" content="A* Pathfinding for Beginners - Artificial Intelligence - Articles - Articles">
+		<meta property="og:site_name" content="GameDev.net">
+		<meta property="og:type" content="article">
+		
+	
+		
+		
+			<meta name="description" content="The purpose of this article is to describe the basic concepts of A* at a beginner's level and then give you a taste of some of the more advanced concepts.">
+		
+		
+		
+			<meta property="og:description" content="The purpose of this article is to describe the basic concepts of A* at a beginner's level and then give you a taste of some of the more advanced concepts.">
+		
+		
+	
+
+		
+		
+			<meta name="keywords" content="Pathfinding,Beginners,Updated,July,2005,This,article,translated,into,Albanian,Chinese,French,German,Portuguese,Russian,Spanish,Other,translations,are,welcome,See,email,address">
+		
+		
+		
+		
+	
+
+		
+		
+			<meta name="gdnet" content="game development, game, development, industry, games, gaming, gamer, make games, game programming, programming, game art, art, media, social gaming, game music, audio, design, publishing, publisher, publish, game books, graphics, gpu, networking, artificial intelligence, ai, physics, multiplayer, mmorpg, c++, lua, c, maya, 3dsmax, photoshop, visual studio, xna, windows, linux, xbox, ps3, wii">
+		
+		
+		
+		
+	
+
+		
+		
+			<meta name="identifier-url" content="http://www.gamedev.net/page/resources/_/technical/artificial-intelligence/a-pathfinding-for-beginners-r2003">
+		
+		
+			<meta property="og:url" content="http://www.gamedev.net/page/resources/_/technical/artificial-intelligence/a-pathfinding-for-beginners-r2003">
+		
+		
+		
+	
+
+<meta property="og:image" content="http://public.gamedev5.net//public/style_images/master/gd_meta.png">
+		
+		
+		<meta name="HandheldFriendly" content="true">
+		<meta name="viewport" content="width=device-width, height=device-height, user-scalable=no">
+
+		
+<!-- All resources can be remote -->
+<script src="A%20%20Pathfinding%20for%20Beginners%20-%20Artificial%20Intelligence%20-%20Articles%20-%20Articles%20-%20GameDev.net_fichiers/shCore.js" type="text/javascript"></script>
+<script src="A%20%20Pathfinding%20for%20Beginners%20-%20Artificial%20Intelligence%20-%20Articles%20-%20Articles%20-%20GameDev.net_fichiers/shAutoloader.js" type="text/javascript"></script>
+
+<!--[if IE]>
+		<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+
+<script type="text/javascript">
+var googletag = googletag || {};
+googletag.cmd = googletag.cmd || [];
+(function() {
+var gads = document.createElement('script');
+gads.async = true;
+gads.type = 'text/javascript';
+var useSSL = 'https:' == document.location.protocol;
+gads.src = (useSSL ? 'https:' : 'http:') +
+'//www.googletagservices.com/tag/js/gpt.js';
+var node = document.getElementsByTagName('script')[0];
+node.parentNode.insertBefore(gads, node);
+})();
+
+googletag.cmd.push(function() {
+googletag.defineSlot('/1004699/In-text_main', [1, 1], 'div-gpt-ad-1365724311420-0').addService(googletag.pubads());
+googletag.defineSlot('/1004699/Box_Main', [300, 250], 'div-gpt-ad-1365703926448-0').addService(googletag.pubads());
+googletag.defineSlot('/1004699/In-text_main', [800, 40], 'div-gpt-ad-1365703926448-1').addService(googletag.pubads());
+googletag.defineSlot('/1004699/Leaderboard_Main', [728, 90], 'div-gpt-ad-1365703926448-2').addService(googletag.pubads());
+googletag.defineSlot('/1004699/Spotlight_Main', [250, 250], 'div-gpt-ad-1365725906288-0').addService(googletag.pubads());
+
+googletag.defineSlot('/1004699/Topper_Main', [1, 1], 'div-gpt-ad-1365703926448-5').addService(googletag.pubads());
+
+
+
+
+googletag.pubads().enableSingleRequest();
+googletag.enableServices();
+});
+</script><script type="text/javascript" src="A%20%20Pathfinding%20for%20Beginners%20-%20Artificial%20Intelligence%20-%20Articles%20-%20Articles%20-%20GameDev.net_fichiers/prototype.js"></script>
+		<script type="text/javascript" src="A%20%20Pathfinding%20for%20Beginners%20-%20Artificial%20Intelligence%20-%20Articles%20-%20Articles%20-%20GameDev.net_fichiers/scriptaculous.js"></script><script type="text/javascript" src="A%20%20Pathfinding%20for%20Beginners%20-%20Artificial%20Intelligence%20-%20Articles%20-%20Articles%20-%20GameDev.net_fichiers/effects.js"></script><script type="text/javascript" src="A%20%20Pathfinding%20for%20Beginners%20-%20Artificial%20Intelligence%20-%20Articles%20-%20Articles%20-%20GameDev.net_fichiers/dragdrop.js"></script><script src="A%20%20Pathfinding%20for%20Beginners%20-%20Artificial%20Intelligence%20-%20Articles%20-%20Articles%20-%20GameDev.net_fichiers/pubads_impl_47.js" type="text/javascript" async=""></script><script type="text/javascript" src="A%20%20Pathfinding%20for%20Beginners%20-%20Artificial%20Intelligence%20-%20Articles%20-%20Articles%20-%20GameDev.net_fichiers/builder.js"></script>
+	<script type="text/javascript" src="A%20%20Pathfinding%20for%20Beginners%20-%20Artificial%20Intelligence%20-%20Articles%20-%20Articles%20-%20GameDev.net_fichiers/index.js" charset="UTF-8"></script><script type="text/javascript" src="A%20%20Pathfinding%20for%20Beginners%20-%20Artificial%20Intelligence%20-%20Articles%20-%20Articles%20-%20GameDev.net_fichiers/jsapi"></script>
+<script type="text/javascript" src="A%20%20Pathfinding%20for%20Beginners%20-%20Artificial%20Intelligence%20-%20Articles%20-%20Articles%20-%20GameDev.net_fichiers/jsapi"></script>
+  <script type="text/javascript" src="A%20%20Pathfinding%20for%20Beginners%20-%20Artificial%20Intelligence%20-%20Articles%20-%20Articles%20-%20GameDev.net_fichiers/ips.js"></script>
+  <script type="text/javascript">
+	if ( typeof ipb.googleSearch == 'object' )
+	{
+		ipb.googleSearch.cseKey = '015339353205569714001:onzj1byha_k';
+                ipb.googleSearch.linkTarget = 'new';
+                ipb.googleSearch.tabImage = '0';
+                ipb.googleSearch.tabBlog = '0';
+                ipb.googleSearch.tabVideo = '0';
+                ipb.googleSearch.tabWeb = '0';
+                ipb.googleSearch.tabBook = '0';
+                ipb.googleSearch.tabNews = '0';
+                ipb.googleSearch.popwidth = '800';
+                ipb.googleSearch.popheight = '480';
+                ipb.googleSearch.popupyn = '0';
+		ipb.googleSearch.alwaysDefault = true;
+	}
+	else
+	{
+		$( document ).observe( 'dom:loaded', function()
+		{
+			
+			$( 's_google' ).up( '.special' ).remove();
+		});
+	}
+</script><script type="text/javascript" src="A%20%20Pathfinding%20for%20Beginners%20-%20Artificial%20Intelligence%20-%20Articles%20-%20Articles%20-%20GameDev.net_fichiers/squote.js"></script>
+
+
+
+
+
+
+<script type="text/javascript" src="A%20%20Pathfinding%20for%20Beginners%20-%20Artificial%20Intelligence%20-%20Articles%20-%20Articles%20-%20GameDev.net_fichiers/MathJax.js"></script>
+<script type="text/javascript" src="A%20%20Pathfinding%20for%20Beginners%20-%20Artificial%20Intelligence%20-%20Articles%20-%20Articles%20-%20GameDev.net_fichiers/tabs.js"></script>
+<!--<script type='text/javascript' src='http://public.gamedev5.net/public/js/ratewidget.js?nck=fb99e14e49767998a66e3b7a9956074d2'></script>-->
+
+
+
+<script type="text/javascript"> 
+
+// see whether device supports touch events (a bit simplistic, but...)
+var hasTouch = ("ontouchstart" in window);
+var iOS5 = /iPad|iPod|iPhone/.test(navigator.platform) && "matchMedia" in window;
+
+document.observe("dom:loaded", function() {
+
+var viewport = document.viewport.getDimensions();
+
+if (viewport.width <= 640)
+{
+$("dark").hide();
+
+}
+ 
+// hook touch events for drop-down menus
+// NB: if has touch events, then has standards event handling too
+// but we don't want to run this code on iOS5+
+if (hasTouch && document.querySelectorAll && !iOS5) {
+    var i, len, element,
+        dropdowns = document.querySelectorAll("#dark li.drop > a");
+ 
+    function menuTouch(event) {
+        // toggle flag for preventing click for this link
+        var i, len, noclick = !(this.dataNoclick);
+ 
+        // reset flag on all links
+        for (i = 0, len = dropdowns.length; i < len; ++i) {
+            dropdowns[i].dataNoclick = false;
+        }
+ 
+        // set new flag value and focus on dropdown menu
+        this.dataNoclick = noclick;
+        this.focus();
+    }
+ 
+    function menuClick(event) {
+        // if click isn't wanted, prevent it
+        if (this.dataNoclick) {
+            event.preventDefault();
+        }
+    }
+ 
+    for (i = 0, len = dropdowns.length; i < len; ++i) {
+        element = dropdowns[i];
+        element.dataNoclick = false;
+        element.addEventListener("touchstart", menuTouch, false);
+        element.addEventListener("click", menuClick, false);
+    }
+}
+
+});document.observe("dom:loaded", function() {var FAVE_TEMPLATE = '';    
+var ajaxUrl = ipb.vars['base_url'] + "app=search&module=ajax&section=taginfo&md5check=" + ipb.vars['secure_hash'];
+ipb.hoverCardRegister.initialize( 'taginfo', { 'w' : '300px', 'delay': 750, 'position' : 'bottomLeft' ,  'getId': true, 'setIdParam': 'tag', /*'ajaxUrl' : ajaxUrl,*/ 'callback' : initTagLike } );
+function initTagLike(hoverCardObject, id)
+{
+var ajaxUrl = ipb.vars['base_url'] + "app=search&module=ajax&section=taginfo&md5check=" + ipb.vars['secure_hash'] + "&tag=" + encodeURIComponent($(id).readAttribute('hovercard-id'));
+     new Ajax.Request( ajaxUrl,
+						{
+				    		method: 'post',
+                            evalJS: 'true',
+							onSuccess: function(t)
+							{
+							    hoverCardObject.card.update(t.responseText);
+                    			ipb.delegate.register('.ftoggle' , ipb.like.clicked );
+                    			ipb.delegate.register('._fsubmit', ipb.like.save );
+                    			ipb.delegate.register('._funset' , ipb.like.remove );
+                    			ipb.delegate.register('._fmore'  , ipb.like.more );
+                    			
+                    			/* Make sure hcards work */
+                    			ipb.like.resetEvents();
+							}
+					       });	
+}
+
+});
+
+  var _gaq = _gaq || [];
+var pluginUrl =
+ '//www.google-analytics.com/plugins/ga/inpage_linkid.js';
+  _gaq.push(['_require', 'inpage_linkid', pluginUrl]);
+  _gaq.push(['_setAccount', 'UA-279474-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+	
+		
+			
+			
+			
+			
+				<link rel="canonical" href="http://www.gamedev.net/page/resources/_/technical/artificial-intelligence/a-pathfinding-for-beginners-r2003">
+			
+		
+	
+
+		
+			
+			
+				<link rel="alternate" type="application/rss+xml" title="GameDev.net Forums RSS" href="http://www.gamedev.net/rss/forums/1-gamedevnet-forums-rss/">
+			
+			
+			
+		
+
+			
+			
+				<link rel="alternate" type="application/rss+xml" title="GameDev.net Journals RSS feed " href="http://www.gamedev.net/rss/blog/">
+			
+			
+			
+		
+
+			
+			
+				<link rel="alternate" type="application/rss+xml" title="IP.Gallery Images RSS Feed" href="http://www.gamedev.net/rss/gallery/">
+			
+			
+			
+		
+
+			
+			
+				<link rel="alternate" type="application/rss+xml" title="Events Calendar" href="http://www.gamedev.net/rss/calendar/1-events-calendar/">
+			
+			
+			
+		
+
+			
+			
+				<link rel="alternate" type="application/rss+xml" title="Last 10 Submissions RSS Feed" href="http://www.gamedev.net/rss/downloads/">
+			
+			
+			
+		
+
+			
+			
+				<link rel="alternate" type="application/rss+xml" title="Articles" href="http://www.gamedev.net/rss/ccs/1-articles/">
+			
+			
+			
+		
+
+			
+			
+				<link rel="alternate" type="application/rss+xml" title="Books" href="http://www.gamedev.net/rss/ccs/3-books/">
+			
+			
+			
+		
+
+			
+			
+				<link rel="alternate" type="application/rss+xml" title="Contests" href="http://www.gamedev.net/rss/ccs/35-contests/">
+			
+			
+			
+		
+
+			
+			
+				<link rel="alternate" type="application/rss+xml" title="Events" href="http://www.gamedev.net/rss/ccs/16-events/">
+			
+			
+			
+		
+
+			
+			
+				<link rel="alternate" type="application/rss+xml" title="Indie Project" href="http://www.gamedev.net/rss/ccs/37-indie-project/">
+			
+			
+			
+		
+
+			
+			
+				<link rel="alternate" type="application/rss+xml" title="Indie Project Stories" href="http://www.gamedev.net/rss/ccs/38-indie-project-stories/">
+			
+			
+			
+		
+
+			
+			
+				<link rel="alternate" type="application/rss+xml" title="Jobs" href="http://www.gamedev.net/rss/ccs/4-jobs/">
+			
+			
+			
+		
+
+			
+			
+				<link rel="alternate" type="application/rss+xml" title="News" href="http://www.gamedev.net/rss/ccs/11-news/">
+			
+			
+			
+		
+
+			
+			
+				<link rel="alternate" type="application/rss+xml" title="Showdown" href="http://www.gamedev.net/rss/ccs/33-showdown/">
+			
+			
+			
+		
+
+			
+			
+				<link rel="alternate" type="application/rss+xml" title="Sweet Snippets" href="http://www.gamedev.net/rss/ccs/32-sweet-snippets/">
+			
+			
+			
+		
+
+			
+			
+				<link rel="alternate" type="application/rss+xml" title="Articles: Technical" href="http://www.gamedev.net/rss/ccs/1c940-technical/">
+			
+			
+			
+		
+
+			
+			
+				<link rel="alternate" type="application/rss+xml" title="Articles: Creative" href="http://www.gamedev.net/rss/ccs/1c941-creative/">
+			
+			
+			
+		
+
+			
+			
+				<link rel="alternate" type="application/rss+xml" title="Articles: Business" href="http://www.gamedev.net/rss/ccs/1c942-business/">
+			
+			
+			
+		
+
+			
+			
+				<link rel="alternate" type="application/rss+xml" title="Articles: Reviews" href="http://www.gamedev.net/rss/ccs/1c970-reviews/">
+			
+			
+			
+		
+
+			
+			
+				<link rel="alternate" type="application/rss+xml" title="Articles: GameDev.net Soapbox" href="http://www.gamedev.net/rss/ccs/1c969-gamedevnet-soapbox/">
+			
+			
+			
+		
+
+			
+			
+				<link rel="alternate" type="application/rss+xml" title="Articles: Closed Articles" href="http://www.gamedev.net/rss/ccs/1c968-closed-articles/">
+			
+			
+			
+		
+
+			
+			
+				<link rel="alternate" type="application/rss+xml" title="Articles: Game Programming" href="http://www.gamedev.net/rss/ccs/1c943-game-programming/">
+			
+			
+			
+		
+
+			
+			
+				<link rel="alternate" type="application/rss+xml" title="Articles: General Programming" href="http://www.gamedev.net/rss/ccs/1c944-general-programming/">
+			
+			
+			
+		
+
+			
+			
+				<link rel="alternate" type="application/rss+xml" title="Articles: Graphics Programming and Theory" href="http://www.gamedev.net/rss/ccs/1c945-graphics-programming-and-theory/">
+			
+			
+			
+		
+
+			
+			
+				<link rel="alternate" type="application/rss+xml" title="Articles: DirectX and XNA" href="http://www.gamedev.net/rss/ccs/1c946-directx-and-xna/">
+			
+			
+			
+		
+
+			
+			
+				<link rel="alternate" type="application/rss+xml" title="Articles: OpenGL" href="http://www.gamedev.net/rss/ccs/1c947-opengl/">
+			
+			
+			
+		
+
+			
+			
+				<link rel="alternate" type="application/rss+xml" title="Articles: Multiplayer and Network Programming" href="http://www.gamedev.net/rss/ccs/1c948-multiplayer-and-network-programming/">
+			
+			
+			
+		
+
+			
+			
+				<link rel="alternate" type="application/rss+xml" title="Articles: Artificial Intelligence" href="http://www.gamedev.net/rss/ccs/1c949-artificial-intelligence/">
+			
+			
+			
+		
+
+			
+			
+				<link rel="alternate" type="application/rss+xml" title="Articles: Math and Physics" href="http://www.gamedev.net/rss/ccs/1c950-math-and-physics/">
+			
+			
+			
+		
+
+			
+			
+				<link rel="alternate" type="application/rss+xml" title="Articles: Mobile Development" href="http://www.gamedev.net/rss/ccs/1c951-mobile-development/">
+			
+			
+			
+		
+
+			
+			
+				<link rel="alternate" type="application/rss+xml" title="Articles: APIs and Tools" href="http://www.gamedev.net/rss/ccs/1c952-apis-and-tools/">
+			
+			
+			
+		
+
+			
+			
+				<link rel="alternate" type="application/rss+xml" title="Articles: Game Design" href="http://www.gamedev.net/rss/ccs/1c953-game-design/">
+			
+			
+			
+		
+
+			
+			
+				<link rel="alternate" type="application/rss+xml" title="Articles: Music and Sound" href="http://www.gamedev.net/rss/ccs/1c954-music-and-sound/">
+			
+			
+			
+		
+
+			
+			
+				<link rel="alternate" type="application/rss+xml" title="Articles: Visual Arts" href="http://www.gamedev.net/rss/ccs/1c955-visual-arts/">
+			
+			
+			
+		
+
+			
+			
+				<link rel="alternate" type="application/rss+xml" title="Articles: Breaking Into the Industry" href="http://www.gamedev.net/rss/ccs/1c956-breaking-into-the-industry/">
+			
+			
+			
+		
+
+			
+			
+				<link rel="alternate" type="application/rss+xml" title="Articles: Business and Law" href="http://www.gamedev.net/rss/ccs/1c957-business-and-law/">
+			
+			
+			
+		
+
+			
+			
+				<link rel="alternate" type="application/rss+xml" title="Articles: Interviews" href="http://www.gamedev.net/rss/ccs/1c958-interviews/">
+			
+			
+			
+		
+
+			
+			
+				<link rel="alternate" type="application/rss+xml" title="Articles: Production and Management" href="http://www.gamedev.net/rss/ccs/1c963-production-and-management/">
+			
+			
+			
+		
+
+			
+			
+				<link rel="alternate" type="application/rss+xml" title="Books: Technical" href="http://www.gamedev.net/rss/ccs/3c959-technical/">
+			
+			
+			
+		
+
+			
+			
+				<link rel="alternate" type="application/rss+xml" title="Books: Creative" href="http://www.gamedev.net/rss/ccs/3c962-creative/">
+			
+			
+			
+		
+
+			
+			
+				<link rel="alternate" type="application/rss+xml" title="Books: Industry Related" href="http://www.gamedev.net/rss/ccs/3c966-industry-related/">
+			
+			
+			
+		
+
+			
+			
+				<link rel="alternate" type="application/rss+xml" title="Books: Business and Law" href="http://www.gamedev.net/rss/ccs/3c964-business-and-law/">
+			
+			
+			
+		
+
+			
+			
+				<link rel="alternate" type="application/rss+xml" title="Books: Production and Management" href="http://www.gamedev.net/rss/ccs/3c965-production-and-management/">
+			
+			
+			
+		
+
+			
+			
+				<link rel="alternate" type="application/rss+xml" title="Books: General Programming" href="http://www.gamedev.net/rss/ccs/3c960-general-programming/">
+			
+			
+			
+		
+
+			
+			
+				<link rel="alternate" type="application/rss+xml" title="Books: APIs and Tools" href="http://www.gamedev.net/rss/ccs/3c961-apis-and-tools/">
+			
+			
+			
+		
+
+			
+			
+				<link rel="alternate" type="application/rss+xml" title="Indie Project: Free to Play" href="http://www.gamedev.net/rss/ccs/37c971-free-to-play/">
+			
+			
+			
+		
+
+			
+			
+				<link rel="alternate" type="application/rss+xml" title="Indie Project: Action" href="http://www.gamedev.net/rss/ccs/37c972-action/">
+			
+			
+			
+		
+
+			
+			
+				<link rel="alternate" type="application/rss+xml" title="Indie Project: Adventure" href="http://www.gamedev.net/rss/ccs/37c973-adventure/">
+			
+			
+			
+		
+
+			
+			
+				<link rel="alternate" type="application/rss+xml" title="Indie Project: Strategy" href="http://www.gamedev.net/rss/ccs/37c974-strategy/">
+			
+			
+			
+		
+
+			
+			
+				<link rel="alternate" type="application/rss+xml" title="Indie Project: RPG" href="http://www.gamedev.net/rss/ccs/37c975-rpg/">
+			
+			
+			
+		
+
+			
+			
+				<link rel="alternate" type="application/rss+xml" title="Indie Project: Massively Multiplayer" href="http://www.gamedev.net/rss/ccs/37c976-massively-multiplayer/">
+			
+			
+			
+		
+
+			
+			
+				<link rel="alternate" type="application/rss+xml" title="Indie Project: Casual" href="http://www.gamedev.net/rss/ccs/37c977-casual/">
+			
+			
+			
+		
+
+			
+			
+				<link rel="alternate" type="application/rss+xml" title="Indie Project: Simulation" href="http://www.gamedev.net/rss/ccs/37c978-simulation/">
+			
+			
+			
+		
+
+			
+			
+				<link rel="alternate" type="application/rss+xml" title="Indie Project: Racing" href="http://www.gamedev.net/rss/ccs/37c979-racing/">
+			
+			
+			
+		
+
+			
+			
+				<link rel="alternate" type="application/rss+xml" title="Indie Project: Sports" href="http://www.gamedev.net/rss/ccs/37c980-sports/">
+			
+			
+			
+		
+
+			
+			
+				<link rel="alternate" type="application/rss+xml" title="Indie Project: Animation &amp;  Modeling" href="http://www.gamedev.net/rss/ccs/37c981-animation-modeling/">
+			
+			
+			
+		
+
+			
+			
+				<link rel="alternate" type="application/rss+xml" title="Indie Project: Audio Production" href="http://www.gamedev.net/rss/ccs/37c982-audio-production/">
+			
+			
+			
+		
+
+			
+			
+				<link rel="alternate" type="application/rss+xml" title="Indie Project: Design &amp; Illustration" href="http://www.gamedev.net/rss/ccs/37c983-design-illustration/">
+			
+			
+			
+		
+
+			
+			
+				<link rel="alternate" type="application/rss+xml" title="Indie Project: Education" href="http://www.gamedev.net/rss/ccs/37c984-education/">
+			
+			
+			
+		
+
+			
+			
+				<link rel="alternate" type="application/rss+xml" title="Indie Project: Photo Editing" href="http://www.gamedev.net/rss/ccs/37c985-photo-editing/">
+			
+			
+			
+		
+
+			
+			
+				<link rel="alternate" type="application/rss+xml" title="Indie Project: Software Training" href="http://www.gamedev.net/rss/ccs/37c986-software-training/">
+			
+			
+			
+		
+
+			
+			
+				<link rel="alternate" type="application/rss+xml" title="Indie Project: Utilities" href="http://www.gamedev.net/rss/ccs/37c987-utilities/">
+			
+			
+			
+		
+
+			
+			
+				<link rel="alternate" type="application/rss+xml" title="Indie Project: Video Production" href="http://www.gamedev.net/rss/ccs/37c988-video-production/">
+			
+			
+			
+		
+
+			
+			
+				<link rel="alternate" type="application/rss+xml" title="News: GDNet Marketplace News" href="http://www.gamedev.net/rss/ccs/11c920-gdnet-marketplace-news/">
+			
+			
+			
+		
+
+			
+			
+				<link rel="alternate" type="application/rss+xml" title="Classifieds RSS Feed" href="http://www.gamedev.net/rss/classifieds/">
+			
+			
+			
+		
+	
+
+	
+
+
+	
+
+
+
+		
+		<script type="text/javascript">
+	//<![CDATA[
+		/* ---- URLs ---- */
+		ipb.vars['base_url'] 			= 'http://www.gamedev.net/index.php?s=89ccfc48dc7cd4d3a352a63cbe1bf3c5&';
+		ipb.vars['board_url']			= 'http://www.gamedev.net';
+		ipb.vars['img_url'] 			= "http://public.gamedev5.net//public/style_images/master";
+		ipb.vars['loading_img'] 		= 'http://public.gamedev5.net//public/style_images/master/loading.gif';
+		ipb.vars['active_app']			= 'ccs';
+		ipb.vars['upload_url']			= 'http://uploads.gamedev.net';
+		/* ---- Member ---- */
+		ipb.vars['member_id']			= parseInt( 0 );
+		ipb.vars['is_supmod']			= parseInt( 0 );
+		ipb.vars['is_admin']			= parseInt( 0 );
+		ipb.vars['secure_hash'] 		= '880ea6a14ea49e853634fbdc5015a024';
+		ipb.vars['session_id']			= '89ccfc48dc7cd4d3a352a63cbe1bf3c5';
+		ipb.vars['twitter_id']			= 0;
+		ipb.vars['fb_uid']				= 0;
+		ipb.vars['auto_dst']			= parseInt( 0 );
+		ipb.vars['dst_in_use']			= parseInt(  );
+		ipb.vars['is_touch']			= false;
+		ipb.vars['member_group']		= {"g_mem_info":"1"}
+		/* ---- cookies ----- */
+		ipb.vars['cookie_id'] 			= 'gd_';
+		ipb.vars['cookie_domain'] 		= '.gamedev.net';
+		ipb.vars['cookie_path']			= '/';
+		/* ---- Rate imgs ---- */
+		ipb.vars['rate_img_on']			= 'http://public.gamedev5.net//public/style_images/master/star.png';
+		ipb.vars['rate_img_off']		= 'http://public.gamedev5.net//public/style_images/master/star_off.png';
+		ipb.vars['rate_img_rated']		= 'http://public.gamedev5.net//public/style_images/master/star_rated.png';
+		/* ---- Uploads ---- */
+		ipb.vars['swfupload_swf']		= 'http://www.gamedev.net/public/js/3rd_party/swfupload/swfupload.swf';
+		ipb.vars['swfupload_enabled']	= true;
+		ipb.vars['use_swf_upload']		= ( '' == 'flash' ) ? true : false;
+		ipb.vars['swfupload_debug']		= false;
+		/* ---- other ---- */
+		ipb.vars['highlight_color']     = "#ade57a";
+		ipb.vars['charset']				= "UTF-8";
+		ipb.vars['time_offset']			= "-6";
+		ipb.vars['hour_format']			= "12";
+		ipb.vars['seo_enabled']			= 1;
+		
+		ipb.vars['seo_params']			= {"start":"-","end":"\/","varBlock":"?","varPage":"page-","varSep":"&","varJoin":"="};
+		
+		/* Templates/Language */
+		ipb.templates['inlineMsg']		= "";
+		ipb.templates['ajax_loading'] 	= "<div id='ajax_loading'><img src='http://public.gamedev5.net//public/style_images/master/ajax_loading.gif' alt='" + ipb.lang['loading'] + "' /></div>";
+		ipb.templates['close_popup']	= "<img src='http://public.gamedev5.net//public/style_images/master/close_popup.png' alt='x' />";
+		ipb.templates['rss_shell']		= new Template("<ul id='rss_menu' class='ipbmenu_content'>#{items}</ul>");
+		ipb.templates['rss_item']		= new Template("<li><a href='#{url}' title='#{title}'>#{title}</a></li>");
+		
+		ipb.templates['autocomplete_wrap'] = new Template("<ul id='#{id}' class='ipb_autocomplete' style='width: 250px;'></ul>");
+		ipb.templates['autocomplete_item'] = new Template("<li id='#{id}' data-url='#{url}'><img src='#{img}' alt='' class='ipsUserPhoto ipsUserPhoto_mini' />&nbsp;&nbsp;#{itemvalue}</li>");
+		ipb.templates['page_jump']		= new Template("<div id='#{id}_wrap' class='ipbmenu_content'><h3 class='bar'>Jump to page</h3><p class='ipsPad'><input type='text' class='input_text' id='#{id}_input' size='8' /> <input type='submit' value='Go' class='input_submit add_folder' id='#{id}_submit' /></p></div>");
+		ipb.templates['global_notify'] 	= new Template("<div class='popupWrapper'><div class='popupInner'><div class='ipsPad'>#{message} #{close}</div></div></div>");
+		
+		
+		ipb.templates['header_menu'] 	= new Template("<div id='#{id}' class='ipsHeaderMenu boxShadow'></div>");
+		
+		Loader.boot();
+	//]]>
+	</script>
+	<style type="text/css">.MathJax_Hover_Frame {border-radius: .25em; -webkit-border-radius: .25em; -moz-border-radius: .25em; -khtml-border-radius: .25em; box-shadow: 0px 0px 15px #83A; -webkit-box-shadow: 0px 0px 15px #83A; -moz-box-shadow: 0px 0px 15px #83A; -khtml-box-shadow: 0px 0px 15px #83A; border: 1px solid #A6D ! important; display: inline-block; position: absolute}
+.MathJax_Hover_Arrow {position: absolute; width: 15px; height: 11px; cursor: pointer}
+</style><style type="text/css">#MathJax_About {position: fixed; left: 50%; width: auto; text-align: center; border: 3px outset; padding: 1em 2em; background-color: #DDDDDD; color: black; cursor: default; font-family: message-box; font-size: 120%; font-style: normal; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; border-radius: 15px; -webkit-border-radius: 15px; -moz-border-radius: 15px; -khtml-border-radius: 15px; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+.MathJax_Menu {position: absolute; background-color: white; color: black; width: auto; padding: 2px; border: 1px solid #CCCCCC; margin: 0; cursor: default; font: menu; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+.MathJax_MenuItem {padding: 2px 2em; background: transparent}
+.MathJax_MenuArrow {position: absolute; right: .5em; color: #666666}
+.MathJax_MenuActive .MathJax_MenuArrow {color: white}
+.MathJax_MenuArrow.RTL {left: .5em; right: auto}
+.MathJax_MenuCheck {position: absolute; left: .7em}
+.MathJax_MenuCheck.RTL {right: .7em; left: auto}
+.MathJax_MenuRadioCheck {position: absolute; left: 1em}
+.MathJax_MenuRadioCheck.RTL {right: 1em; left: auto}
+.MathJax_MenuLabel {padding: 2px 2em 4px 1.33em; font-style: italic}
+.MathJax_MenuRule {border-top: 1px solid #CCCCCC; margin: 4px 1px 0px}
+.MathJax_MenuDisabled {color: GrayText}
+.MathJax_MenuActive {background-color: Highlight; color: HighlightText}
+.MathJax_Menu_Close {position: absolute; width: 31px; height: 31px; top: -15px; left: -15px}
+</style><style type="text/css">#MathJax_Zoom {position: absolute; background-color: #F0F0F0; overflow: auto; display: block; z-index: 301; padding: .5em; border: 1px solid black; margin: 0; font-weight: normal; font-style: normal; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; box-shadow: 5px 5px 15px #AAAAAA; -webkit-box-shadow: 5px 5px 15px #AAAAAA; -moz-box-shadow: 5px 5px 15px #AAAAAA; -khtml-box-shadow: 5px 5px 15px #AAAAAA; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_ZoomOverlay {position: absolute; left: 0; top: 0; z-index: 300; display: inline-block; width: 100%; height: 100%; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+#MathJax_ZoomFrame {position: relative; display: inline-block; height: 0; width: 0}
+#MathJax_ZoomEventTrap {position: absolute; left: 0; top: 0; z-index: 302; display: inline-block; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+</style><style type="text/css">.MathJax_Preview {color: #888}
+#MathJax_Message {position: fixed; left: 1px; bottom: 2px; background-color: #E6E6E6; border: 1px solid #959595; margin: 0px; padding: 2px 8px; z-index: 102; color: black; font-size: 80%; width: auto; white-space: nowrap}
+#MathJax_MSIE_Frame {position: absolute; top: 0; left: 0; width: 0px; z-index: 101; border: 0px; margin: 0px; padding: 0px}
+.MathJax_Error {color: #CC0000; font-style: italic}
+</style><style type="text/css">.fb_hidden{position:absolute;top:-10000px;z-index:10001}.fb_invisible{display:none}.fb_reset{background:none;border:0;border-spacing:0;color:#000;cursor:auto;direction:ltr;font-family:"lucida grande", tahoma, verdana, arial, sans-serif;font-size:11px;font-style:normal;font-variant:normal;font-weight:normal;letter-spacing:normal;line-height:1;margin:0;overflow:visible;padding:0;text-align:left;text-decoration:none;text-indent:0;text-shadow:none;text-transform:none;visibility:visible;white-space:normal;word-spacing:normal}.fb_reset>div{overflow:hidden}.fb_link img{border:none}
+.fb_dialog{background:rgba(82, 82, 82, .7);position:absolute;top:-10000px;z-index:10001}.fb_reset .fb_dialog_legacy{overflow:visible}.fb_dialog_advanced{padding:10px;-moz-border-radius:8px;-webkit-border-radius:8px;border-radius:8px}.fb_dialog_content{background:#fff;color:#333}.fb_dialog_close_icon{background:url(http://static.ak.fbcdn.net/rsrc.php/v2/yq/r/IE9JII6Z1Ys.png) no-repeat scroll 0 0 transparent;_background-image:url(http://static.ak.fbcdn.net/rsrc.php/v2/yL/r/s816eWC-2sl.gif);cursor:pointer;display:block;height:15px;position:absolute;right:18px;top:17px;width:15px}.fb_dialog_mobile .fb_dialog_close_icon{top:5px;left:5px;right:auto}.fb_dialog_padding{background-color:transparent;position:absolute;width:1px;z-index:-1}.fb_dialog_close_icon:hover{background:url(http://static.ak.fbcdn.net/rsrc.php/v2/yq/r/IE9JII6Z1Ys.png) no-repeat scroll 0 -15px transparent;_background-image:url(http://static.ak.fbcdn.net/rsrc.php/v2/yL/r/s816eWC-2sl.gif)}.fb_dialog_close_icon:active{background:url(http://static.ak.fbcdn.net/rsrc.php/v2/yq/r/IE9JII6Z1Ys.png) no-repeat scroll 0 -30px transparent;_background-image:url(http://static.ak.fbcdn.net/rsrc.php/v2/yL/r/s816eWC-2sl.gif)}.fb_dialog_loader{background-color:#f2f2f2;border:1px solid #606060;font-size:24px;padding:20px}.fb_dialog_top_left,.fb_dialog_top_right,.fb_dialog_bottom_left,.fb_dialog_bottom_right{height:10px;width:10px;overflow:hidden;position:absolute}.fb_dialog_top_left{background:url(http://static.ak.fbcdn.net/rsrc.php/v2/ye/r/8YeTNIlTZjm.png) no-repeat 0 0;left:-10px;top:-10px}.fb_dialog_top_right{background:url(http://static.ak.fbcdn.net/rsrc.php/v2/ye/r/8YeTNIlTZjm.png) no-repeat 0 -10px;right:-10px;top:-10px}.fb_dialog_bottom_left{background:url(http://static.ak.fbcdn.net/rsrc.php/v2/ye/r/8YeTNIlTZjm.png) no-repeat 0 -20px;bottom:-10px;left:-10px}.fb_dialog_bottom_right{background:url(http://static.ak.fbcdn.net/rsrc.php/v2/ye/r/8YeTNIlTZjm.png) no-repeat 0 -30px;right:-10px;bottom:-10px}.fb_dialog_vert_left,.fb_dialog_vert_right,.fb_dialog_horiz_top,.fb_dialog_horiz_bottom{position:absolute;background:#525252;filter:alpha(opacity=70);opacity:.7}.fb_dialog_vert_left,.fb_dialog_vert_right{width:10px;height:100%}.fb_dialog_vert_left{margin-left:-10px}.fb_dialog_vert_right{right:0;margin-right:-10px}.fb_dialog_horiz_top,.fb_dialog_horiz_bottom{width:100%;height:10px}.fb_dialog_horiz_top{margin-top:-10px}.fb_dialog_horiz_bottom{bottom:0;margin-bottom:-10px}.fb_dialog_iframe{line-height:0}.fb_dialog_content .dialog_title{background:#6d84b4;border:1px solid #3b5998;color:#fff;font-size:14px;font-weight:bold;margin:0}.fb_dialog_content .dialog_title>span{background:url(http://static.ak.fbcdn.net/rsrc.php/v2/yd/r/Cou7n-nqK52.gif) no-repeat 5px 50%;float:left;padding:5px 0 7px 26px}body.fb_hidden{-webkit-transform:none;height:100%;margin:0;overflow:visible;position:absolute;top:-10000px;left:0;width:100%}.fb_dialog.fb_dialog_mobile.loading{background:url(http://static.ak.fbcdn.net/rsrc.php/v2/ya/r/3rhSv5V8j3o.gif) white no-repeat 50% 50%;min-height:100%;min-width:100%;overflow:hidden;position:absolute;top:0;z-index:10001}.fb_dialog.fb_dialog_mobile.loading.centered{max-height:590px;min-height:590px;max-width:500px;min-width:500px}#fb-root #fb_dialog_ipad_overlay{background:rgba(0, 0, 0, .45);position:absolute;left:0;top:0;width:100%;min-height:100%;z-index:10000}#fb-root #fb_dialog_ipad_overlay.hidden{display:none}.fb_dialog.fb_dialog_mobile.loading iframe{visibility:hidden}.fb_dialog_content .dialog_header{-webkit-box-shadow:white 0 1px 1px -1px inset;background:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#738ABA), to(#2C4987));border-bottom:1px solid;border-color:#1d4088;color:#fff;font:14px Helvetica, sans-serif;font-weight:bold;text-overflow:ellipsis;text-shadow:rgba(0, 30, 84, .296875) 0 -1px 0;vertical-align:middle;white-space:nowrap}.fb_dialog_content .dialog_header table{-webkit-font-smoothing:subpixel-antialiased;height:43px;width:100%}.fb_dialog_content .dialog_header td.header_left{font-size:12px;padding-left:5px;vertical-align:middle;width:60px}.fb_dialog_content .dialog_header td.header_right{font-size:12px;padding-right:5px;vertical-align:middle;width:60px}.fb_dialog_content .touchable_button{background:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#4966A6), color-stop(.5, #355492), to(#2A4887));border:1px solid #29447e;-webkit-background-clip:padding-box;-webkit-border-radius:3px;-webkit-box-shadow:rgba(0, 0, 0, .117188) 0 1px 1px inset, rgba(255, 255, 255, .167969) 0 1px 0;display:inline-block;margin-top:3px;max-width:85px;line-height:18px;padding:4px 12px;position:relative}.fb_dialog_content .dialog_header .touchable_button input{border:none;background:none;color:#fff;font:12px Helvetica, sans-serif;font-weight:bold;margin:2px -12px;padding:2px 6px 3px 6px;text-shadow:rgba(0, 30, 84, .296875) 0 -1px 0}.fb_dialog_content .dialog_header .header_center{color:#fff;font-size:16px;font-weight:bold;line-height:18px;text-align:center;vertical-align:middle}.fb_dialog_content .dialog_content{background:url(http://static.ak.fbcdn.net/rsrc.php/v2/y9/r/jKEcVPZFk-2.gif) no-repeat 50% 50%;border:1px solid #555;border-bottom:0;border-top:0;height:150px}.fb_dialog_content .dialog_footer{background:#f2f2f2;border:1px solid #555;border-top-color:#ccc;height:40px}#fb_dialog_loader_close{float:left}.fb_dialog.fb_dialog_mobile .fb_dialog_close_button{text-shadow:rgba(0, 30, 84, .296875) 0 -1px 0}.fb_dialog.fb_dialog_mobile .fb_dialog_close_icon{visibility:hidden}
+.fb_iframe_widget{display:inline-block;position:relative}.fb_iframe_widget span{display:inline-block;position:relative;text-align:justify}.fb_iframe_widget iframe{position:absolute}.fb_iframe_widget_lift{z-index:1}.fb_hide_iframes iframe{position:relative;left:-10000px}.fb_iframe_widget_loader{position:relative;display:inline-block}.fb_iframe_widget_fluid{display:inline}.fb_iframe_widget_fluid span{width:100%}.fb_iframe_widget_loader iframe{min-height:32px;z-index:2;zoom:1}.fb_iframe_widget_loader .FB_Loader{background:url(http://static.ak.fbcdn.net/rsrc.php/v2/y9/r/jKEcVPZFk-2.gif) no-repeat;height:32px;width:32px;margin-left:-16px;position:absolute;left:50%;z-index:4}
+.fbpluginrecommendationsbarleft,.fbpluginrecommendationsbarright{position:fixed !important;bottom:0;z-index:999}.fbpluginrecommendationsbarleft{left:10px}.fbpluginrecommendationsbarright{right:10px}</style></head>
+	<body id="ipboard_body"><div style="display: none;" id="MathJax_Message"></div><p id="content_jump" class="hide"><a id="top"></a><a href="#j_content" title="Jump to content" accesskey="m">Jump to content</a></p>
+		<div id="ipbwrapper">
+			<!-- ::: TOP BAR: Sign in / register or user drop down and notification alerts ::: -->
+			<div id="header_bar" class="clearfix">
+				<div class="main_width">
+					<ul id="admin_bar" class="ipsList_inline left">
+
+					
+                                           
+					</ul>
+
+					<div id="user_navigation" class="not_logged_in">
+							
+							<ul class="ipsList_inline right">
+								<li>
+									<span class="services">
+										
+											<a href="http://www.gamedev.net/index.php?app=core&amp;module=global&amp;section=login&amp;serviceClick=facebook"><span class="ip_facebook ip_sprite"></span></a>
+										
+										
+											<a href="http://www.gamedev.net/index.php?app=core&amp;module=global&amp;section=login&amp;serviceClick=twitter"><span class="ip_twitter ip_sprite"></span></a>
+										
+										
+										<a href="http://www.gamedev.net/index.php?app=core&amp;module=global&amp;section=login&amp;do=process&amp;use_google=1&amp;auth_key=880ea6a14ea49e853634fbdc5015a024" title="Log In with Google" id="googleIcon">
+<img src="A%20%20Pathfinding%20for%20Beginners%20-%20Artificial%20Intelligence%20-%20Articles%20-%20Articles%20-%20GameDev.net_fichiers/login-google-icon.png" alt="Log In with Google" style="margin-top:-10px">
+</a>
+<div id="googleOptions" style="display:none;">
+<h3>Google Sign in options</h3>
+	<form action="http://www.gamedev.net/index.php?app=core&amp;module=global&amp;section=login&amp;do=process&amp;use_google=1" method="post" id="googleLogin">
+<input name="auth_key" value="880ea6a14ea49e853634fbdc5015a024" type="hidden">
+<input value="http://www.gamedev.net/page/resources/_/technical/artificial-intelligence/a-pathfinding-for-beginners-r2003" name="referer" type="hidden">
+<fieldset id="googlesignin_options">
+				<ul class="ipsForm ipsForm_vertical ipsPad_double">
+					<li class="ipsField ipsField_checkbox clearfix">
+						<input id="remember" checked="checked" name="rememberMe" value="1" class="input_check" type="checkbox">
+						<p class="ipsField_content">
+							<label for="remember">Remember me</label><br>
+							<span class="desc lighter">This is not recommended for shared computers</span>
+						</p>
+					</li>
+					
+						<li class="ipsField ipsField_checkbox clearfix">
+							<input id="invisible" name="anonymous" value="1" class="input_check" type="checkbox">
+							<p class="ipsField_content">
+								<label for="invisible">Sign in anonymously</label><br>
+								<span class="desc lighter">Don't add me to the active users list</span>
+							</p>
+						</li>
+					
+					
+					<li class="ipsPad_top ipsForm_center desc ipsType_smaller">
+						<a rel="nofollow" href="http://www.gamedev.net/privacypolicy/">Privacy Policy</a>
+					</li>
+					
+				</ul>
+			</fieldset>
+<div class="ipsForm_submit ipsForm_center">
+					<input class="ipsButton" value="Sign In" type="submit">
+				</div>
+</form>
+</div>
+<script type="text/javascript">
+var _googleLogin = null;
+function googlePop()
+{
+if ( !$('googleOptions') )
+{
+return false;
+}
+if( !_googleLogin )
+{
+ _googleLogin = new ipb.Popup( 'google', { 
+type: 'pane',
+initial: $('googleOptions').innerHTML,
+hideAtStart: false,
+w: '600px',
+modal: 'true'
+} );
+}
+else
+{
+ _googleLogin.show();
+}
+}
+ $('googleIcon').observe( 'click', function(e) {
+googlePop();
+        Event.stop(e);
+        return false;
+  });
+</script>
+									</span>
+									&nbsp;&nbsp;&nbsp;&nbsp;
+									<a href="http://www.gamedev.net/index.php?app=core&amp;module=global&amp;section=login" title="Sign In">Sign In</a>&nbsp;&nbsp;&nbsp;<a href="#" id="sign_in"></a>
+								</li>
+								<li>
+									<a href="http://www.gamedev.net/index.php?app=core&amp;module=global&amp;section=register" title="Create Account" id="register_link">Create Account</a>
+								</li>
+							</ul>
+						</div>
+				</div>
+			</div>
+			<!-- ::: BRANDING STRIP: Logo and search box ::: -->
+			<div id="branding">
+				<div class="main_width">
+					<div id="logo">
+						
+
+<script type="text/javascript">
+// And then move
+document.observe("dom:loaded", function(){
+	var _thisHtml	= $('nav_app_ipchat').down('a').innerHTML;
+	_thisHtml = _thisHtml + $('chat-tab-count-wrap').innerHTML;
+	$('nav_app_ipchat').down('a').update( _thisHtml ).setStyle( { position: 'relative' } );
+	$('chat-tab-count-wrap').remove();
+	$('chat-tab-count').show();
+});
+</script>
+
+							<a href="http://www.gamedev.net/" title="Go to community index" rel="home" accesskey="1"><span class="gd_small_logo sprite"></span></a>
+						
+					</div>
+
+
+                                <div id="navmenu">
+                                   <a href="#" onclick="Effect.toggle('dark', 'appear', {duration: 0.1}); return false;" class="box-shadow-menu"></a>
+                                </div>
+
+                                <div id="leaderboard">
+<!-- Leaderboard_Main -->
+<div id="div-gpt-ad-1365703926448-2" style="width:728px; height:90px;">
+<script type="text/javascript">
+googletag.cmd.push(function() { googletag.display('div-gpt-ad-1365703926448-2'); });
+</script><div style="border: 0pt none;" id="google_ads_iframe_/1004699/Leaderboard_Main_0__container__"><iframe src="javascript:&quot;<html><body style='background:transparent'></body></html>&quot;" style="border: 0px none; vertical-align: bottom;" marginheight="0" marginwidth="0" scrolling="no" name="google_ads_iframe_/1004699/Leaderboard_Main_0" id="google_ads_iframe_/1004699/Leaderboard_Main_0" frameborder="0" height="90" width="728"></iframe></div><iframe src="javascript:&quot;<html><body style='background:transparent'></body></html>&quot;" style="border: 0px none; vertical-align: bottom; visibility: hidden; display: none;" marginheight="0" marginwidth="0" scrolling="no" name="google_ads_iframe_/1004699/Leaderboard_Main_0__hidden__" id="google_ads_iframe_/1004699/Leaderboard_Main_0__hidden__" frameborder="0" height="0" width="0"></iframe>
+</div>
+
+                                </div>
+					
+				</div>
+
+			</div>
+			<!-- ::: APPLICATION TABS ::: -->
+				<div class="main_width">
+        <div id="search" class="right">
+	<form action="http://www.gamedev.net/index.php?app=core&amp;module=search&amp;do=search&amp;fromMainBar=1" method="post" id="search-box">
+		<fieldset>
+			<label for="main_search" class="hide">Search</label>
+			<a href="http://www.gamedev.net/index.php?app=core&amp;module=search&amp;search_in=ccs" title="Advanced Search" accesskey="4" rel="search" id="adv_search" class="advanced_search sprite right">Advanced</a>
+			<span id="search_wrap" class="right">
+				<input placeholder="Search..." id="main_search" name="search_term" class="" size="17" tabindex="6" type="text">
+				<span class="choice ipbmenu clickable" id="search_options" style="">Google</span>
+				<ul id="search_options_menucontent" class="ipbmenu_content ipsPad" style="display: none; position: absolute; z-index: 9999; opacity: 0.0000274153;">
+					<li style="z-index: 10000;" class="title"><strong style="z-index: 10000;">Search section:</strong></li>
+					<li style="z-index: 10000;" class="special">
+	<label style="z-index: 10000;" for="s_google" title="Google">
+		<input checked="checked" style="z-index: 10000;" name="search_app" value="google" class="input_radio" id="s_google" type="radio">Google
+	</label>
+</li>
+					
+					
+							
+		<li style="z-index: 10000;" class="special"><label style="z-index: 10000;" for="s_ccs_db" title="This database"><input style="z-index: 10000;" name="search_app" value="ccs:database:1" class="input_radio" id="s_ccs_cat" type="radio"> <strong style="z-index: 10000;">This database</strong></label></li>
+	
+						
+					<li style="z-index: 10000;" class="app"><label style="z-index: 10000;" for="s_forums" title="Forums"><input style="z-index: 10000;" name="search_app" class="input_radio" id="s_forums" value="forums" type="radio">Forums</label></li><li style="z-index: 10000;" class="app"><label style="z-index: 10000;" for="s_members" title="Members"><input style="z-index: 10000;" name="search_app" class="input_radio" id="s_members" value="members" type="radio">Members</label></li><li style="z-index: 10000;" class="app"><label style="z-index: 10000;" for="s_core" title="Help Files"><input style="z-index: 10000;" name="search_app" class="input_radio" id="s_core" value="core" type="radio">Help Files</label></li>
+						
+					
+
+						
+					
+
+						
+					
+
+						<li style="z-index: 10000;" class="app"><label style="z-index: 10000;" for="s_blog" title="Developer Journals"><input style="z-index: 10000;" name="search_app" class="input_radio" id="s_blog" value="blog" type="radio">Developer Journals</label></li>
+					
+
+						<li style="z-index: 10000;" class="app"><label style="z-index: 10000;" for="s_gallery" title="Gallery"><input style="z-index: 10000;" name="search_app" class="input_radio" id="s_gallery" value="gallery" type="radio">Gallery</label></li>
+					
+
+						<li style="z-index: 10000;" class="app"><label style="z-index: 10000;" for="s_calendar" title="Calendar"><input style="z-index: 10000;" name="search_app" class="input_radio" id="s_calendar" value="calendar" type="radio">Calendar</label></li>
+					
+
+						<li style="z-index: 10000;" class="app"><label style="z-index: 10000;" for="s_downloads" title="Downloads"><input style="z-index: 10000;" name="search_app" class="input_radio" id="s_downloads" value="downloads" type="radio">Downloads</label></li>
+					
+
+						<li style="z-index: 10000;" class="app"><label style="z-index: 10000;" for="s_ccs" title="Resources"><input style="z-index: 10000;" name="search_app" class="input_radio" id="s_ccs" value="ccs" type="radio">Resources</label></li>
+					
+
+						<li style="z-index: 10000;" class="app"><label style="z-index: 10000;" for="s_nexus" title="Store"><input style="z-index: 10000;" name="search_app" class="input_radio" id="s_nexus" value="nexus" type="radio">Store</label></li>
+					
+
+						
+					
+
+						<li style="z-index: 10000;" class="app"><label style="z-index: 10000;" for="s_classifieds" title="Classifieds"><input style="z-index: 10000;" name="search_app" class="input_radio" id="s_classifieds" value="classifieds" type="radio">Classifieds</label></li>
+					
+
+						
+					
+
+						<li style="z-index: 10000;" class="app"><label style="z-index: 10000;" for="s_tracker" title="Tracker"><input style="z-index: 10000;" name="search_app" class="input_radio" id="s_tracker" value="tracker" type="radio">Tracker</label></li>
+					
+
+						
+					
+
+						
+					
+
+						
+					
+
+						
+					
+
+						<li style="z-index: 10000;" class="app"><label style="z-index: 10000;" for="s_links" title="Links"><input style="z-index: 10000;" name="search_app" class="input_radio" id="s_links" value="links" type="radio">Links</label></li>
+					
+
+						
+					
+
+						
+					
+				</ul>
+				<input class="submit_input clickable" value="" type="submit">
+			</span>
+			
+		</fieldset>
+	</form>
+</div>
+        <nav id="dark">
+            <ul>
+
+          
+                <li><a href="http://www.gamedev.net/">Home</a></li> 
+                <li><a href="http://www.gamedev.net/forum/31-for-beginners/">For Beginners</a></li> 
+                <li class="drop"><a href="http://www.gamedev.net/page/resources">Articles</a>
+                  <ul class="menu">
+                  <li><a href="http://www.gamedev.net/page/resources">All Articles</a></li>
+                  <li><a href="http://www.gamedev.net/page/resources/_/gdnethelp/how-to-publish-on-gamedevnet-r2927" style="background:#009900;color:white;border-top:solid 1px #00cc00">Post an Article</a></li>
+                  <li class="drop">
+                       <a href="http://www.gamedev.net/page/resources/_/technical/">Technical</a>
+                       <ul>
+                          <li><a href="http://www.gamedev.net/page/resources/_/technical/game-programming/">Game Programming</a></li>
+                          <li><a href="http://www.gamedev.net/page/resources/_/technical/general-programming/">General Programming</a></li>
+                          <li><a href="http://www.gamedev.net/page/resources/_/technical/graphics-programming-and-theory/">Graphics Programming and Theory</a></li>
+                          <li><a href="http://www.gamedev.net/page/resources/_/technical/directx-and-xna/">DirectX and XNA</a></li>
+                          <li><a href="http://www.gamedev.net/page/resources/_/technical/opengl/">OpenGL</a></li>
+                          <li><a href="http://www.gamedev.net/page/resources/_/technical/multiplayer-and-network-programming/">Multiplayer and Network Programming</a></li>
+                          <li><a href="http://www.gamedev.net/page/resources/_/technical/artificial-intelligence/">Artificial Intelligence</a></li>
+                          <li><a href="http://www.gamedev.net/page/resources/_/technical/math-and-physics/">Math and Physics</a></li>
+                          <li><a href="http://www.gamedev.net/page/resources/_/technical/mobile-development/">Mobile Development</a></li>
+                          <li><a href="http://www.gamedev.net/page/resources/_/technical/apis-and-tools/">APIs and Tools</a></li>
+                       </ul>
+                  </li>
+                  <li class="drop">
+                       <a href="http://www.gamedev.net/page/resources/_/creative/">Creative</a>
+                       <ul>
+                          <li><a href="http://www.gamedev.net/page/resources/_/creative/game-design/">Game Design</a></li>
+                          <li><a href="http://www.gamedev.net/page/resources/_/creative/music-and-sound/">Music and Sound</a></li>
+                          <li><a href="http://www.gamedev.net/page/resources/_/creative/visual-arts/">Visual Arts</a></li>
+                       </ul>
+                  </li>
+                  <li class="drop">
+                       <a href="http://www.gamedev.net/page/resources/_/business/">Business</a>
+                       <ul>
+                          <li><a href="http://www.gamedev.net/page/resources/_/business/breaking-into-the-industry/">Breaking into the Industry</a></li>
+                          <li><a href="http://www.gamedev.net/page/resources/_/business/production-and-management/">Production and Management</a></li>
+                          <li><a href="http://www.gamedev.net/page/resources/_/business/interviews/">Interviews</a></li>
+                          <li><a href="http://www.gamedev.net/page/resources/_/business/business-and-law/">Business and Law</a></li>
+                          <li><a href="http://www.gamedev.net/page/resources/_/business/435/">Event Coverage</a></li>
+                       </ul>
+                  </li>
+                  </ul>
+                </li>
+                <li class="drop"><a href="http://www.gamedev.net/index">Forums</a>
+                    <ul class="menu">
+                    <li><a href="http://www.gamedev.net/index">All Forums</a></li>
+                    <li class="drop">
+                        <a href="http://www.gamedev.net/forum/122-community-interaction/">Community Interaction</a>
+                        <ul>
+                        <li><a href="http://www.gamedev.net/forum/3-gdnet-lounge/">GDNet Lounge</a></li>
+                        <li><a href="http://www.gamedev.net/forum/157-coding-horrors/">Coding Horrors</a></li>
+                        <li><a href="http://www.gamedev.net/forum/158-article-writing/">Article Writing</a></li>
+                        <li><a href="http://www.gamedev.net/forum/4-gdnet-comments-suggestions-and-ideas/">GDNet Comments, Suggestions and Ideas</a></li>
+                        <li><a href="http://www.gamedev.net/forum/6-your-announcements/">Your Announcements</a></li>
+                        </ul>
+                    </li>
+                    <li class="drop">
+                        <a href="http://www.gamedev.net/forum/123-the-technical-side/">Technical</a>
+                        <ul>
+                        <li><a href="http://www.gamedev.net/forum/11-game-programming/">Game Programming</a></li>
+                        <li><a href="http://www.gamedev.net/forum/21-general-programming/">General Programming</a></li>
+                        <li><a href="http://www.gamedev.net/forum/12-graphics-programming-and-theory/">Graphics Programming and Theory</a></li>
+                        <li><a href="http://www.gamedev.net/forum/10-directx-and-xna/">DirectX and XNA</a></li>
+                        <li><a href="http://www.gamedev.net/forum/25-opengl/">OpenGL</a></li>
+                        <li><a href="http://www.gamedev.net/forum/15-multiplayer-and-network-programming/">Multiplayer and Network Programming</a></li>
+                        <li><a href="http://www.gamedev.net/forum/9-artificial-intelligence/">Artificial Intelligence</a></li>   
+                        <li><a href="http://www.gamedev.net/forum/20-math-and-physics/">Math and Physics</a></li>     
+                        <li><a href="http://www.gamedev.net/forum/39-mobile-and-console-development/">Mobile &amp; Console Development</a></li>    
+                        <li><a href="http://www.gamedev.net/forum/159-build-systems-and-source-control/">Build Systems &amp; Source Control</a></li>
+                        <li><a href="http://www.gamedev.net/forum/41-apis-and-tools/">APIs and Tools</a></li>                    
+                        </ul>                      
+                    </li>
+                    <li class="drop">
+
+                         <a href="http://www.gamedev.net/forum/124-the-creative-side/">Creative</a>
+                         <ul>
+                         <li><a href="http://www.gamedev.net/forum/17-game-design/">Game Design</a></li>
+                         <li><a href="http://www.gamedev.net/forum/32-writing-for-games/">Writing For Games</a></li>
+                         <li><a href="http://www.gamedev.net/forum/19-music-and-sound/">Music and Sound</a></li>
+                         <li><a href="http://www.gamedev.net/forum/18-visual-arts/">Visual Arts</a></li>
+                         <li><a href="http://www.gamedev.net/gallery">Gallery</a></li>
+                         </ul>                
+               
+  
+                    </li>
+
+                    <li class="drop"><a href="http://www.gamedev.net/forum/133-the-business-side/">Business</a>
+                          <ul>
+                          <li><a href="http://www.gamedev.net/forum/101-breaking-into-the-games-industry/">Breaking into the Industry</a></li>
+                          <li><a href="http://www.gamedev.net/forum/5-the-business-and-law-of-game-development/">Business &amp; Law</a></li>
+                          <li><a href="http://www.gamedev.net/forum/155-production-and-management/">Production &amp; Management</a></li>
+                          </ul>                
+                    </li>  
+               
+                    </ul>                
+                </li>              
+                <li class="drop"><a href="http://www.gamedev.net/blogs">Community</a>
+                    <ul class="menu">
+                    <li><a href="http://www.gamedev.net/blogs">Developer Journals</a></li>
+                    <li><a href="http://www.gamedev.net/page/showdown/">Screenshot Showdown</a></li>
+                    <li><a href="http://www.gamedev.net/subscribe">GDNet+ Subscriptions</a></li>                    
+                    <li><a href="http://www.gamedev.net/gallery">Gallery</a></li>
+                    <li><a href="http://www.gamedev.net/books">Books</a></li>           
+                    <li><a href="http://www.gamedev.net/store/">Store</a></li>  
+                    </ul>                
+                </li>
+                <li><a href="http://www.gamedev.net/sm/">Top Members</a></li> 
+                <li class="drop"><a href="http://www.gamedev.net/classifieds">Classifieds</a>
+                    <ul class="menu">
+                    <li><a href="http://www.gamedev.net/classifieds/category/4-job-offers/">Job Offers</a></li>
+                    <li><a href="http://www.gamedev.net/classifieds/category/2-contractors/">Contractors For Hire</a></li>
+                    <li><a href="http://www.gamedev.net/classifieds/category/21-contract-projects/">Contract Projects</a></li>
+                    <li><a href="http://www.gamedev.net/classifieds/category/5-hobbyist-projects/">Hobbyist Projects</a></li>     
+                    </ul>                
+                </li>
+                <li><a href="http://www.gamedev.net/files">Marketplace</a></li>
+
+                <!--<li><a href="/info/media">Advertise</a></li>-->
+            </ul>
+        </nav>
+
+
+				
+			</div>	
+			
+			<!-- ::: MAIN CONTENT AREA ::: -->
+			<div id="content" class="clearfix">
+				<!-- ::: NAVIGATION BREADCRUMBS ::: -->
+                                <div id="secondary_navigation" class="clearfix">
+				<ol class="breadcrumb top ipsList_inline left">
+														
+							
+								<li itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb">
+									
+									 <a href="http://www.gamedev.net/page/index.html/" title="Return to Home" itemprop="url"><span itemprop="title">Home</span></a>
+								</li>
+								
+							
+
+								<li itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb">
+									<span class="nav_sep">»</span>
+									 <a href="http://www.gamedev.net/page/resources" title="Return to Articles" itemprop="url"><span itemprop="title">Articles</span></a>
+								</li>
+								
+							
+
+								<li itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb">
+									<span class="nav_sep">»</span>
+									 <a href="http://www.gamedev.net/page/resources/_/technical/" title="Return to Technical" itemprop="url"><span itemprop="title">Technical</span></a>
+								</li>
+								
+							
+
+								<li itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb">
+									<span class="nav_sep">»</span>
+									 <a href="http://www.gamedev.net/page/resources/_/technical/artificial-intelligence/" title="Return to Artificial Intelligence" itemprop="url"><span itemprop="title">Artificial Intelligence</span></a>
+								</li>
+								
+							
+
+								<li itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb">
+									<span class="nav_sep">»</span>
+									 <span itemprop="title">Article: A* Pathfinding for Beginners</span>
+								</li>
+								
+							
+						</ol>
+
+<div class="desc right" style="margin-top: -7px">
+<div style="display: inline-block; position: relative; top: -6px;"> 
+<a href="http://www.gamedev.net/index.php?app=core&amp;module=search&amp;do=followed" data-tooltip="View the stuff you chose to follow" style="padding-right:10px; border-right: solid 1px black; margin-right: 5px">Watched Content</a>
+<a href="http://www.gamedev.net/index.php?app=core&amp;module=search&amp;do=viewNewContent&amp;search_app=forums&amp;search_app_filters[forums][searchInKey]=&amp;period=today&amp;userMode=&amp;followedItemsOnly=0" data-tooltip="View new stuff on the site" style="padding-right:10px; border-right: solid 1px black; margin-right: 5px">New Content</a>
+</div>
+
+<a href="http://www.facebook.com/GameDev.net" data-tooltip="Join our Facebook group!" target="new"><span class="Facebook sprite" style="margin-right: 3px"></span></a>
+<a href="http://twitter.com/gdevnet" data-tooltip="Follow us on Twitter!" target="new"><span class="Twitter sprite" style="margin-right: 3px"></span></a>
+<a href="http://www.linkedin.com/groups?about=&amp;gid=132271&amp;trk=anet_ug_grppro" data-tooltip="Join our Linkedin group!" target="new"><span class="Linkedin sprite" style="margin-right: 3px"></span></a>
+<a href="" id="rss_feed" class="clickable" alt="RSS Feed" target="new"><span class="Rss sprite" style="margin-right: 3px"></span></a><ul style="position: absolute; display: none; z-index: 9999; opacity: 0.0244717;" id="rss_menu" class="ipbmenu_content"><li style="z-index: 10000;"><a style="z-index: 10000;" href="http://www.gamedev.net/rss/forums/1-gamedevnet-forums-rss/" title="GameDev.net Forums RSS">GameDev.net Forums RSS</a></li>
+<li style="z-index: 10000;"><a style="z-index: 10000;" href="http://www.gamedev.net/rss/blog/" title="GameDev.net Journals RSS feed ">GameDev.net Journals RSS feed </a></li>
+<li style="z-index: 10000;"><a style="z-index: 10000;" href="http://www.gamedev.net/rss/gallery/" title="IP.Gallery Images RSS Feed">IP.Gallery Images RSS Feed</a></li>
+<li style="z-index: 10000;"><a style="z-index: 10000;" href="http://www.gamedev.net/rss/calendar/1-events-calendar/" title="Events Calendar">Events Calendar</a></li>
+<li style="z-index: 10000;"><a style="z-index: 10000;" href="http://www.gamedev.net/rss/downloads/" title="Last 10 Submissions RSS Feed">Last 10 Submissions RSS Feed</a></li>
+<li style="z-index: 10000;"><a style="z-index: 10000;" href="http://www.gamedev.net/rss/ccs/1-articles/" title="Articles">Articles</a></li>
+<li style="z-index: 10000;"><a style="z-index: 10000;" href="http://www.gamedev.net/rss/ccs/3-books/" title="Books">Books</a></li>
+<li style="z-index: 10000;"><a style="z-index: 10000;" href="http://www.gamedev.net/rss/ccs/35-contests/" title="Contests">Contests</a></li>
+<li style="z-index: 10000;"><a style="z-index: 10000;" href="http://www.gamedev.net/rss/ccs/16-events/" title="Events">Events</a></li>
+<li style="z-index: 10000;"><a style="z-index: 10000;" href="http://www.gamedev.net/rss/ccs/37-indie-project/" title="Indie Project">Indie Project</a></li>
+<li style="z-index: 10000;"><a style="z-index: 10000;" href="http://www.gamedev.net/rss/ccs/38-indie-project-stories/" title="Indie Project Stories">Indie Project Stories</a></li>
+<li style="z-index: 10000;"><a style="z-index: 10000;" href="http://www.gamedev.net/rss/ccs/4-jobs/" title="Jobs">Jobs</a></li>
+<li style="z-index: 10000;"><a style="z-index: 10000;" href="http://www.gamedev.net/rss/ccs/11-news/" title="News">News</a></li>
+<li style="z-index: 10000;"><a style="z-index: 10000;" href="http://www.gamedev.net/rss/ccs/33-showdown/" title="Showdown">Showdown</a></li>
+<li style="z-index: 10000;"><a style="z-index: 10000;" href="http://www.gamedev.net/rss/ccs/32-sweet-snippets/" title="Sweet Snippets">Sweet Snippets</a></li>
+<li style="z-index: 10000;"><a style="z-index: 10000;" href="http://www.gamedev.net/rss/ccs/1c940-technical/" title="Articles: Technical">Articles: Technical</a></li>
+<li style="z-index: 10000;"><a style="z-index: 10000;" href="http://www.gamedev.net/rss/ccs/1c941-creative/" title="Articles: Creative">Articles: Creative</a></li>
+<li style="z-index: 10000;"><a style="z-index: 10000;" href="http://www.gamedev.net/rss/ccs/1c942-business/" title="Articles: Business">Articles: Business</a></li>
+<li style="z-index: 10000;"><a style="z-index: 10000;" href="http://www.gamedev.net/rss/ccs/1c970-reviews/" title="Articles: Reviews">Articles: Reviews</a></li>
+<li style="z-index: 10000;"><a style="z-index: 10000;" href="http://www.gamedev.net/rss/ccs/1c969-gamedevnet-soapbox/" title="Articles: GameDev.net Soapbox">Articles: GameDev.net Soapbox</a></li>
+<li style="z-index: 10000;"><a style="z-index: 10000;" href="http://www.gamedev.net/rss/ccs/1c968-closed-articles/" title="Articles: Closed Articles">Articles: Closed Articles</a></li>
+<li style="z-index: 10000;"><a style="z-index: 10000;" href="http://www.gamedev.net/rss/ccs/1c943-game-programming/" title="Articles: Game Programming">Articles: Game Programming</a></li>
+<li style="z-index: 10000;"><a style="z-index: 10000;" href="http://www.gamedev.net/rss/ccs/1c944-general-programming/" title="Articles: General Programming">Articles: General Programming</a></li>
+<li style="z-index: 10000;"><a style="z-index: 10000;" href="http://www.gamedev.net/rss/ccs/1c945-graphics-programming-and-theory/" title="Articles: Graphics Programming and Theory">Articles: Graphics Programming and Theory</a></li>
+<li style="z-index: 10000;"><a style="z-index: 10000;" href="http://www.gamedev.net/rss/ccs/1c946-directx-and-xna/" title="Articles: DirectX and XNA">Articles: DirectX and XNA</a></li>
+<li style="z-index: 10000;"><a style="z-index: 10000;" href="http://www.gamedev.net/rss/ccs/1c947-opengl/" title="Articles: OpenGL">Articles: OpenGL</a></li>
+<li style="z-index: 10000;"><a style="z-index: 10000;" href="http://www.gamedev.net/rss/ccs/1c948-multiplayer-and-network-programming/" title="Articles: Multiplayer and Network Programming">Articles: Multiplayer and Network Programming</a></li>
+<li style="z-index: 10000;"><a style="z-index: 10000;" href="http://www.gamedev.net/rss/ccs/1c949-artificial-intelligence/" title="Articles: Artificial Intelligence">Articles: Artificial Intelligence</a></li>
+<li style="z-index: 10000;"><a style="z-index: 10000;" href="http://www.gamedev.net/rss/ccs/1c950-math-and-physics/" title="Articles: Math and Physics">Articles: Math and Physics</a></li>
+<li style="z-index: 10000;"><a style="z-index: 10000;" href="http://www.gamedev.net/rss/ccs/1c951-mobile-development/" title="Articles: Mobile Development">Articles: Mobile Development</a></li>
+<li style="z-index: 10000;"><a style="z-index: 10000;" href="http://www.gamedev.net/rss/ccs/1c952-apis-and-tools/" title="Articles: APIs and Tools">Articles: APIs and Tools</a></li>
+<li style="z-index: 10000;"><a style="z-index: 10000;" href="http://www.gamedev.net/rss/ccs/1c953-game-design/" title="Articles: Game Design">Articles: Game Design</a></li>
+<li style="z-index: 10000;"><a style="z-index: 10000;" href="http://www.gamedev.net/rss/ccs/1c954-music-and-sound/" title="Articles: Music and Sound">Articles: Music and Sound</a></li>
+<li style="z-index: 10000;"><a style="z-index: 10000;" href="http://www.gamedev.net/rss/ccs/1c955-visual-arts/" title="Articles: Visual Arts">Articles: Visual Arts</a></li>
+<li style="z-index: 10000;"><a style="z-index: 10000;" href="http://www.gamedev.net/rss/ccs/1c956-breaking-into-the-industry/" title="Articles: Breaking Into the Industry">Articles: Breaking Into the Industry</a></li>
+<li style="z-index: 10000;"><a style="z-index: 10000;" href="http://www.gamedev.net/rss/ccs/1c957-business-and-law/" title="Articles: Business and Law">Articles: Business and Law</a></li>
+<li style="z-index: 10000;"><a style="z-index: 10000;" href="http://www.gamedev.net/rss/ccs/1c958-interviews/" title="Articles: Interviews">Articles: Interviews</a></li>
+<li style="z-index: 10000;"><a style="z-index: 10000;" href="http://www.gamedev.net/rss/ccs/1c963-production-and-management/" title="Articles: Production and Management">Articles: Production and Management</a></li>
+<li style="z-index: 10000;"><a style="z-index: 10000;" href="http://www.gamedev.net/rss/ccs/3c959-technical/" title="Books: Technical">Books: Technical</a></li>
+<li style="z-index: 10000;"><a style="z-index: 10000;" href="http://www.gamedev.net/rss/ccs/3c962-creative/" title="Books: Creative">Books: Creative</a></li>
+<li style="z-index: 10000;"><a style="z-index: 10000;" href="http://www.gamedev.net/rss/ccs/3c966-industry-related/" title="Books: Industry Related">Books: Industry Related</a></li>
+<li style="z-index: 10000;"><a style="z-index: 10000;" href="http://www.gamedev.net/rss/ccs/3c964-business-and-law/" title="Books: Business and Law">Books: Business and Law</a></li>
+<li style="z-index: 10000;"><a style="z-index: 10000;" href="http://www.gamedev.net/rss/ccs/3c965-production-and-management/" title="Books: Production and Management">Books: Production and Management</a></li>
+<li style="z-index: 10000;"><a style="z-index: 10000;" href="http://www.gamedev.net/rss/ccs/3c960-general-programming/" title="Books: General Programming">Books: General Programming</a></li>
+<li style="z-index: 10000;"><a style="z-index: 10000;" href="http://www.gamedev.net/rss/ccs/3c961-apis-and-tools/" title="Books: APIs and Tools">Books: APIs and Tools</a></li>
+<li style="z-index: 10000;"><a style="z-index: 10000;" href="http://www.gamedev.net/rss/ccs/37c971-free-to-play/" title="Indie Project: Free to Play">Indie Project: Free to Play</a></li>
+<li style="z-index: 10000;"><a style="z-index: 10000;" href="http://www.gamedev.net/rss/ccs/37c972-action/" title="Indie Project: Action">Indie Project: Action</a></li>
+<li style="z-index: 10000;"><a style="z-index: 10000;" href="http://www.gamedev.net/rss/ccs/37c973-adventure/" title="Indie Project: Adventure">Indie Project: Adventure</a></li>
+<li style="z-index: 10000;"><a style="z-index: 10000;" href="http://www.gamedev.net/rss/ccs/37c974-strategy/" title="Indie Project: Strategy">Indie Project: Strategy</a></li>
+<li style="z-index: 10000;"><a style="z-index: 10000;" href="http://www.gamedev.net/rss/ccs/37c975-rpg/" title="Indie Project: RPG">Indie Project: RPG</a></li>
+<li style="z-index: 10000;"><a style="z-index: 10000;" href="http://www.gamedev.net/rss/ccs/37c976-massively-multiplayer/" title="Indie Project: Massively Multiplayer">Indie Project: Massively Multiplayer</a></li>
+<li style="z-index: 10000;"><a style="z-index: 10000;" href="http://www.gamedev.net/rss/ccs/37c977-casual/" title="Indie Project: Casual">Indie Project: Casual</a></li>
+<li style="z-index: 10000;"><a style="z-index: 10000;" href="http://www.gamedev.net/rss/ccs/37c978-simulation/" title="Indie Project: Simulation">Indie Project: Simulation</a></li>
+<li style="z-index: 10000;"><a style="z-index: 10000;" href="http://www.gamedev.net/rss/ccs/37c979-racing/" title="Indie Project: Racing">Indie Project: Racing</a></li>
+<li style="z-index: 10000;"><a style="z-index: 10000;" href="http://www.gamedev.net/rss/ccs/37c980-sports/" title="Indie Project: Sports">Indie Project: Sports</a></li>
+<li style="z-index: 10000;"><a style="z-index: 10000;" href="http://www.gamedev.net/rss/ccs/37c981-animation-modeling/" title="Indie Project: Animation &amp;  Modeling">Indie Project: Animation &amp;  Modeling</a></li>
+<li style="z-index: 10000;"><a style="z-index: 10000;" href="http://www.gamedev.net/rss/ccs/37c982-audio-production/" title="Indie Project: Audio Production">Indie Project: Audio Production</a></li>
+<li style="z-index: 10000;"><a style="z-index: 10000;" href="http://www.gamedev.net/rss/ccs/37c983-design-illustration/" title="Indie Project: Design &amp; Illustration">Indie Project: Design &amp; Illustration</a></li>
+<li style="z-index: 10000;"><a style="z-index: 10000;" href="http://www.gamedev.net/rss/ccs/37c984-education/" title="Indie Project: Education">Indie Project: Education</a></li>
+<li style="z-index: 10000;"><a style="z-index: 10000;" href="http://www.gamedev.net/rss/ccs/37c985-photo-editing/" title="Indie Project: Photo Editing">Indie Project: Photo Editing</a></li>
+<li style="z-index: 10000;"><a style="z-index: 10000;" href="http://www.gamedev.net/rss/ccs/37c986-software-training/" title="Indie Project: Software Training">Indie Project: Software Training</a></li>
+<li style="z-index: 10000;"><a style="z-index: 10000;" href="http://www.gamedev.net/rss/ccs/37c987-utilities/" title="Indie Project: Utilities">Indie Project: Utilities</a></li>
+<li style="z-index: 10000;"><a style="z-index: 10000;" href="http://www.gamedev.net/rss/ccs/37c988-video-production/" title="Indie Project: Video Production">Indie Project: Video Production</a></li>
+<li style="z-index: 10000;"><a style="z-index: 10000;" href="http://www.gamedev.net/rss/ccs/11c920-gdnet-marketplace-news/" title="News: GDNet Marketplace News">News: GDNet Marketplace News</a></li>
+<li style="z-index: 10000;"><a style="z-index: 10000;" href="http://www.gamedev.net/rss/classifieds/" title="Classifieds RSS Feed">Classifieds RSS Feed</a></li></ul>
+</div>
+				</div>
+				<br>
+
+				<!-- ::: CONTENT ::: -->
+				
+				<div class="message unspecific">
+	
+	<p class="bbc_center"><span class="bbc_underline"><a class="bbc_url" href="http://bit.ly/1ghvrO4"><span style="font-family: arial"><span style="font-size: 12px;">Bring your ideas to life with a Gaming Degree from Full Sail University</span></span></a></span></p>
+</div>
+<br><div class="clearfix">
+
+
+
+	<script type="text/javascript" src="A%20%20Pathfinding%20for%20Beginners%20-%20Artificial%20Intelligence%20-%20Articles%20-%20Articles%20-%20GameDev.net_fichiers/prettify_002.js"></script>
+	<script type="text/javascript" src="A%20%20Pathfinding%20for%20Beginners%20-%20Artificial%20Intelligence%20-%20Articles%20-%20Articles%20-%20GameDev.net_fichiers/lang-sql_002.js"></script>
+	<!-- By default we load generic code, php, css, sql and xml/html; load others here if desired -->
+	<script type="text/javascript">
+	//<![CDATA[
+		Event.observe( window, 'load', function(e){ prettyPrint() });
+	//]]>
+	</script><script language="javascript">
+<!--
+function confirmSubmit(prompt)
+{
+var agree=confirm(prompt);
+if (agree)
+	return true ;
+else
+	return false ;
+}
+// -->
+</script>
+
+
+<div class="ipsLayout ipsLayout_withright ipsLayout_largeright">
+  <div class="ipsLayout_right">
+        <div id="block_RelatedArticles" class="ipsSideBlock wide">
+  <h3>More Like This</h3>
+  <ul>
+<li style="margin-bottom:8px;font-size:13px;font-family:" droid="" sans',droid-sans,helvetica;padding-bottom:8px;border-bottom:dotted="" 1px="" #eee;'=""><a href="http://www.gamedev.net/page/resources/_/technical/game-programming/random-maze-generator-faq-r1637">Random maze-generator FAQ</a><br></li>
+
+
+<li style="margin-bottom:8px;font-size:13px;font-family:" droid="" sans',droid-sans,helvetica;padding-bottom:8px;border-bottom:dotted="" 1px="" #eee;'=""><a href="http://www.gamedev.net/page/resources/_/technical/game-programming/pathfinding-concepts-the-basics-r3109">Pathfinding concepts, the basics</a><br></li>
+
+
+<li style="margin-bottom:8px;font-size:13px;font-family:" droid="" sans',droid-sans,helvetica;padding-bottom:8px;border-bottom:dotted="" 1px="" #eee;'=""><a href="http://www.gamedev.net/page/resources/_/technical/artificial-intelligence/navigation-graph-generation-r2805">Navigation Graph Generation</a><br></li>
+
+
+<li style="margin-bottom:8px;font-size:13px;font-family:" droid="" sans',droid-sans,helvetica;padding-bottom:8px;border-bottom:dotted="" 1px="" #eee;'=""><a href="http://www.gamedev.net/page/resources/_/technical/artificial-intelligence/a-practical-guide-to-building-a-complete-game-a-r785">A Practical Guide to Building a Complete Game AI: Volume II</a><br></li>
+
+
+<li style="margin-bottom:8px;font-size:13px;font-family:" droid="" sans',droid-sans,helvetica;padding-bottom:8px;border-bottom:dotted="" 1px="" #eee;'=""><a href="http://www.gamedev.net/page/resources/_/technical/artificial-intelligence/precalculated-pathfinding-revisited-r1939">Precalculated Pathfinding Revisited</a><br></li>
+
+</ul></div>
+  
+        <!-- Box_Main -->
+<div id="div-gpt-ad-1365703926448-0" style="width:300px; height:250px;margin-bottom: 10px">
+<script type="text/javascript">
+googletag.cmd.push(function() { googletag.display('div-gpt-ad-1365703926448-0'); });
+</script><div style="border: 0pt none;" id="google_ads_iframe_/1004699/Box_Main_0__container__"><iframe src="javascript:&quot;<html><body style='background:transparent'></body></html>&quot;" style="border: 0px none; vertical-align: bottom;" marginheight="0" marginwidth="0" scrolling="no" name="google_ads_iframe_/1004699/Box_Main_0" id="google_ads_iframe_/1004699/Box_Main_0" frameborder="0" height="250" width="300"></iframe></div>
+</div>
+	       <div class="ipsSideBlock wide">
+
+	<h3>Categories <a href="http://www.gamedev.net/page/resources?view=categories"><u>(See All)</u></a></h3>
+	<ul style="margin-top: 10px;">
+		
+			
+			<li>
+					<a href="http://www.gamedev.net/page/resources/_/technical/">Technical</a>
+					
+						<ul style="margin-left: 15px;margin-top:5px; margin-bottom: 15px;">
+							
+								<li>
+									<a href="http://www.gamedev.net/page/resources/_/technical/game-programming/">Game Programming</a>
+								</li>
+							
+
+								<li>
+									<a href="http://www.gamedev.net/page/resources/_/technical/general-programming/">General Programming</a>
+								</li>
+							
+
+								<li>
+									<a href="http://www.gamedev.net/page/resources/_/technical/graphics-programming-and-theory/">Graphics Programming and Theory</a>
+								</li>
+							
+
+								<li>
+									<a href="http://www.gamedev.net/page/resources/_/technical/directx-and-xna/">DirectX and XNA</a>
+								</li>
+							
+
+								<li>
+									<a href="http://www.gamedev.net/page/resources/_/technical/opengl/">OpenGL</a>
+								</li>
+							
+
+								<li>
+									<a href="http://www.gamedev.net/page/resources/_/technical/multiplayer-and-network-programming/">Multiplayer and Network Programming</a>
+								</li>
+							
+
+								<li>
+									<a href="http://www.gamedev.net/page/resources/_/technical/artificial-intelligence/">Artificial Intelligence</a>
+								</li>
+							
+
+								<li>
+									<a href="http://www.gamedev.net/page/resources/_/technical/math-and-physics/">Math and Physics</a>
+								</li>
+							
+
+								<li>
+									<a href="http://www.gamedev.net/page/resources/_/technical/mobile-development/">Mobile Development</a>
+								</li>
+							
+
+								<li>
+									<a href="http://www.gamedev.net/page/resources/_/technical/apis-and-tools/">APIs and Tools</a>
+								</li>
+							
+						</ul>
+					
+				</li>
+			
+
+			<li>
+					<a href="http://www.gamedev.net/page/resources/_/creative/">Creative</a>
+					
+						<ul style="margin-left: 15px;margin-top:5px; margin-bottom: 15px;">
+							
+								<li>
+									<a href="http://www.gamedev.net/page/resources/_/creative/game-design/">Game Design</a>
+								</li>
+							
+
+								<li>
+									<a href="http://www.gamedev.net/page/resources/_/creative/music-and-sound/">Music and Sound</a>
+								</li>
+							
+
+								<li>
+									<a href="http://www.gamedev.net/page/resources/_/creative/visual-arts/">Visual Arts</a>
+								</li>
+							
+						</ul>
+					
+				</li>
+			
+
+			<li>
+					<a href="http://www.gamedev.net/page/resources/_/business/">Business</a>
+					
+						<ul style="margin-left: 15px;margin-top:5px; margin-bottom: 15px;">
+							
+								<li>
+									<a href="http://www.gamedev.net/page/resources/_/business/435/">Event Coverage</a>
+								</li>
+							
+
+								<li>
+									<a href="http://www.gamedev.net/page/resources/_/business/breaking-into-the-industry/">Breaking Into the Industry</a>
+								</li>
+							
+
+								<li>
+									<a href="http://www.gamedev.net/page/resources/_/business/business-and-law/">Business and Law</a>
+								</li>
+							
+
+								<li>
+									<a href="http://www.gamedev.net/page/resources/_/business/interviews/">Interviews</a>
+								</li>
+							
+
+								<li>
+									<a href="http://www.gamedev.net/page/resources/_/business/production-and-management/">Production and Management</a>
+								</li>
+							
+						</ul>
+					
+				</li>
+			
+
+			
+			
+
+			
+			
+
+			<li>
+					<a href="http://www.gamedev.net/page/resources/_/gdnethelp/">Gamedev.net Help</a>
+					
+				</li>
+			
+
+			
+			
+		
+	</ul>
+
+</div>
+	<div class="ipsSideBlock wide">
+
+						<h3><a href="http://www.gamedev.net/hub/resources/">Recent Resources</a></h3>
+						<ul>
+						
+						     
+							<li>
+								<a href="http://www.gamedev.net/page/resources/_/technical/apis-and-tools/making-a-game-with-blend4web-part-2-models-for-the-location-r3763">Making a Game with Blend4Web. Part 2: Models for the Location</a><br>
+								<p class="meta"><span class="postdate">Yesterday, 05:56 AM</span> | <a class="discussion" href="http://www.gamedev.net/page/resources/_/technical/apis-and-tools/making-a-game-with-blend4web-part-2-models-for-the-location-r3763">2 Comments</a></p>
+							</li>
+		                                     
+
+							<li>
+								<a href="http://www.gamedev.net/page/resources/_/creative/visual-arts/3ds-max-2015-review-r3755">3ds Max 2015 Review</a><br>
+								<p class="meta"><span class="postdate">Jul 22 2014 04:30 PM</span> | <a class="discussion" href="http://www.gamedev.net/page/resources/_/creative/visual-arts/3ds-max-2015-review-r3755">1 Comments</a></p>
+							</li>
+		                                     
+
+							<li>
+								<a href="http://www.gamedev.net/page/resources/_/technical/opengl/opengl-33-tutorials-r3754">OpenGL 3.3+ Tutorials</a><br>
+								<p class="meta"><span class="postdate">Jul 25 2014 10:29 PM</span> | <a class="discussion" href="http://www.gamedev.net/page/resources/_/technical/opengl/opengl-33-tutorials-r3754">11 Comments</a></p>
+							</li>
+		                                     
+
+							<li>
+								<a href="http://www.gamedev.net/page/resources/_/business/business-and-law/wildstar-credd-system-explained-r3750">WildStar CREDD System Explained</a><br>
+								<p class="meta"><span class="postdate">Jul 28 2014 10:04 AM</span> | <a class="discussion" href="http://www.gamedev.net/page/resources/_/business/business-and-law/wildstar-credd-system-explained-r3750">15 Comments</a></p>
+							</li>
+		                                     
+
+							<li>
+								<a href="http://www.gamedev.net/page/resources/_/business/production-and-management/mobile-game-crowdfunding-experience-from-two-kickstarter-campaigns-r3749">Mobile Game Crowdfunding Experience from Two Kickstarter Campaigns</a><br>
+								<p class="meta"><span class="postdate">Jul 21 2014 06:57 PM</span> | <a class="discussion" href="http://www.gamedev.net/page/resources/_/business/production-and-management/mobile-game-crowdfunding-experience-from-two-kickstarter-campaigns-r3749">6 Comments</a></p>
+							</li>
+		                                     
+
+							<li>
+								<a href="http://www.gamedev.net/page/resources/_/technical/apis-and-tools/making-a-game-with-blend4web-part-1-the-character-r3746">Making a Game with Blend4Web. Part 1: The Character</a><br>
+								<p class="meta"><span class="postdate">Yesterday, 12:45 AM</span> | <a class="discussion" href="http://www.gamedev.net/page/resources/_/technical/apis-and-tools/making-a-game-with-blend4web-part-1-the-character-r3746">10 Comments</a></p>
+							</li>
+		                                     
+
+							<li>
+								<a href="http://www.gamedev.net/page/resources/_/creative/visual-arts/the-art-of-feeding-time-animation-r3740">The Art of Feeding Time: Animation</a><br>
+								<p class="meta"><span class="postdate">Jul 24 2014 07:09 PM</span> | <a class="discussion" href="http://www.gamedev.net/page/resources/_/creative/visual-arts/the-art-of-feeding-time-animation-r3740">0 Comments</a></p>
+							</li>
+		                                     
+						
+						</ul>
+						<p class="more"><a href="http://www.gamedev.net/hub/resources/">Show more »</a> | <a href="http://www.gamedev.net/index.php?app=core&amp;module=search&amp;do=new_posts&amp;search_app=ccs">View all recent resources»</a></p>
+					
+				</div>	
+    </div>
+    <div class="ipsLayout_content">
+
+    
+              
+
+
+
+<div class="__like right" data-app="ccs" data-area="ccs_custom_database_1_records" data-relid="2003" data-isfave="">
+	<span class="ipsButton_extra right _fmore clickable" title="2 member(s) follow this" data-tooltip="2 member(s) follow this"><img src="A%20%20Pathfinding%20for%20Beginners%20-%20Artificial%20Intelligence%20-%20Articles%20-%20Articles%20-%20GameDev.net_fichiers/icon_users.png"> <strong>2</strong></span>
+
+</div>
+<script type="text/javascript">
+	var FAVE_TEMPLATE = new Template( "<h3>Unfollow</h3><div class='ipsPad'><span class='desc'>If you unfollow you will no longer receive any notifications</span><br /><p class='ipsForm_center'><input type='button' value='Unfollow' class='input_submit _funset' /></p></div>");
+</script>
+
+
+<script src="A%20%20Pathfinding%20for%20Beginners%20-%20Artificial%20Intelligence%20-%20Articles%20-%20Articles%20-%20GameDev.net_fichiers/ratewidget.js" type="text/javascript"></script>
+<script type="text/javascript">
+	ipb.ratewidget.database_id = 1;
+</script>
+
+
+	<div style="margin-left: -8px;">
+	<div style="position:absolute;">
+	<a class="voteaction_like  vdisabled" id="vote_2003" href="#" data-tooltip="&lt;b&gt;You must login to GameDev.net&lt;/b&gt;&lt;br/&gt;Login to vote on this post.&lt;br/&gt;">Like</a>	
+	<div class="votecard">
+		<div>
+			<em><strong>4</strong><span>Likes</span></em>
+		
+			<em><strong>5</strong><span>Likes</span></em>
+		</div>
+	</div>
+	<a class="voteaction_dislike  vdisabled" id="vote_2003" href="#" data-tooltip="&lt;b&gt;You must login to GameDev.net&lt;/b&gt;&lt;br/&gt;Login to vote on this post.&lt;br/&gt;">Dislike</a>	
+	</div>
+	</div>
+
+
+<div style="margin-left: 50px">
+	<h1 class="ipsType_pagetitle" style="font-size: 27px; font-weight: 700">
+	        
+	        
+	<!--ARTICLE TITLE-->
+	A* Pathfinding for Beginners
+	
+	 
+	
+	
+	</h1>
+	
+	<p class="ipsType_pagedesc">
+	
+	<!--ARTICLE AUTHOR/EMAIL-->
+	<b>By 
+	<!--email address?-->
+	  
+	   <a href="http://www.gamedev.net/user/6-dave-astle">Patrick Lester</a>
+	  
+	
+	<!--ARTICLE COMPANY NAME/WEBPAGE-->
+	
+	   
+	</b>
+	
+	| Published Oct 08 2003 08:33 PM in <a href="http://www.gamedev.net/page/resources/_/technical/artificial-intelligence/">Artificial Intelligence</a>
+	
+	
+		
+	</p>
+	
+	
+
+</div>
+
+<div id="article">
+
+	        
+
+      <div class="ipsBox" style="background: none; padding-left: 15px; border-top: dotted 1px #eee; margin-top: 4px">
+        <div class="ipsPad">
+
+
+
+<!--class="yui3-cssreset yui3-cssbase"-->
+	<div id="article_body" style="padding: 5px; min-height: 250px; ">
+
+<div id="artstats" style="display:none;">
+<span class="ipsButton secondary" onclick="$('artstats').hide();" style="float:right">Hide</span>
+<br><br>
+           <div style="height: 270px">
+           <div id="statgraph" style="height: 250px; min-width: 500px"></div>
+           </div>
+<br><br>
+</div>
+
+<!--ARTICLE REPORTING MESSAGE-->
+
+<table style="background-color:#FFE97F; border:1px solid #FFB200; border-collapse:collapse;">
+  <tbody><tr>
+    <td>
+      If you find this article contains errors or problems rendering it 
+unreadable (missing images or files, mangled code, improper text 
+formatting, etc) please <u><a href="mailto:dsikora@gamedev.net?Subject=Article%20issue%20for%20A*%20Pathfinding%20for%20Beginners">contact the editor</a></u> so corrections can be made. Thank you for helping us improve this resource
+    </td>
+  </tr>
+</tbody></table>  
+
+
+
+<!--ARTICLE ATTACHED RESOURCE FILE-->
+
+   <br>
+
+
+		
+
+<div class="ipsType_textblock ipsPad">
+Updated July 18, 2005<br><br> This article has been translated into <a href="http://www.policyalmanac.org/games/aStarTutorial_al.pdf" class="bbc_url" title="External link" rel="nofollow external">Albanian</a>, <a href="http://blog.vckbase.com/panic/archive/2005/03/20/3778.html" class="bbc_url" title="External link" rel="nofollow external">Chinese</a>, <a href="http://blog.lalex.com/archives/200309/49-traduction-article-sur-pathfinding.html" class="bbc_url" title="External link" rel="nofollow external">French</a>, <a href="http://www.policyalmanac.org/games/aStarTutorial_de.html" class="bbc_url" title="External link" rel="nofollow external">German</a>, <a href="http://www.policyalmanac.org/games/aStarTutorial_port.htm" class="bbc_url" title="External link" rel="nofollow external">Portuguese</a>, <a href="http://www.policyalmanac.org/games/aStarTutorial_rus.htm" class="bbc_url" title="External link" rel="nofollow external">Russian</a>, and <a href="http://www.policyalmanac.org/games/articulo1.htm" class="bbc_url" title="External link" rel="nofollow external">Spanish</a>. Other translations are welcome. See email address at the bottom of this article.<br><br>
+ The A* (pronounced A-star) algorithm can be complicated for beginners. 
+While there are many articles on the web that explain A*, most are 
+written for people who understand the basics already. This article is 
+for the true beginner.<br><br> This article does not try to be the 
+definitive work on the subject. Instead it describes the fundamentals 
+and prepares you to go out and read all of those other materials and 
+understand what they are talking about. Links to some of the best are 
+provided at the end of this article, under Further Reading.<br><br> 
+Finally, this article is not program-specific. You should be able to 
+adapt what's here to any computer language. As you might expect, 
+however, I have included a link to a sample program at the end of this 
+article. The sample package contains two versions: one in C++ and one in
+ Blitz Basic. It also contains executables if you just want to see A* in
+ action.<br><br> But we are getting ahead of ourselves. Let's start at the beginning ...<br><br> <br><strong class="bbc">Introduction: The Search Area</strong><br>
+ Let's assume that we have someone who wants to get from point A to 
+point B. Let's assume that a wall separates the two points. This is 
+illustrated below, with green being the starting point A, and red being 
+the ending point B, and the blue filled squares being the wall in 
+between.<br><br> <span rel="lightbox"><img class="bbc_img" src="A%20%20Pathfinding%20for%20Beginners%20-%20Artificial%20Intelligence%20-%20Articles%20-%20Articles%20-%20GameDev.net_fichiers/image001.jpg" alt="Posted Image"></span><br>[Figure 1]<br><br>
+ The first thing you should notice is that we have divided our search 
+area into a square grid. Simplifying the search area, as we have done 
+here, is the first step in pathfinding. This particular method reduces 
+our search area to a simple two dimensional array. Each item in the 
+array represents one of the squares on the grid, and its status is 
+recorded as walkable or unwalkable. The path is found by figuring out 
+which squares we should take to get from A to B. Once the path is found,
+ our person moves from the center of one square to the center of the 
+next until the target is reached.<br><br> These center points are called
+ "nodes". When you read about pathfinding elsewhere, you will often see 
+people discussing nodes. Why not just call them squares? Because it is 
+possible to divide up your pathfinding area into something other than 
+squares. They could be rectangles, hexagons, triangles, or any shape, 
+really. And the nodes could be placed anywhere within the shapes – in 
+the center or along the edges, or anywhere else. We are using this 
+system, however, because it is the simplest.<br><br> <br><strong class="bbc">Starting the Search</strong><br>
+ Once we have simplified our search area into a manageable number of 
+nodes, as we have done with the grid layout above, the next step is to 
+conduct a search to find the shortest path. We do this by starting at 
+point A, checking the adjacent squares, and generally searching outward 
+until we find our target.<br><br> We begin the search by doing the following:<br><br> <ul class="bbcol decimal"><li>Begin
+ at the starting point A and add it to an "open list" of squares to be 
+considered. The open list is kind of like a shopping list. Right now 
+there is just one item on the list, but we will have more later. It 
+contains squares that might fall along the path you want to take, but 
+maybe not. Basically, this is a list of squares that need to be checked 
+out. </li><li>Look at all the reachable or walkable squares adjacent to 
+the starting point, ignoring squares with walls, water, or other illegal
+ terrain. Add them to the open list, too. For each of these squares, 
+save point A as its "parent square". This parent square stuff is 
+important when we want to trace our path. It will be explained more 
+later. </li><li>Drop the starting square A from your open list, and add 
+it to a "closed list" of squares that you don't need to look at again 
+for now.</li></ul> At this point, you should have something like the 
+following illustration. In this illustration, the dark green square in 
+the center is your starting square. It is outlined in light blue to 
+indicate that the square has been added to the closed list. All of the 
+adjacent squares are now on the open list of squares to be checked, and 
+they are outlined in light green. Each has a gray pointer that points 
+back to its parent, which is the starting square.<br><br> <span rel="lightbox"><img class="bbc_img" src="A%20%20Pathfinding%20for%20Beginners%20-%20Artificial%20Intelligence%20-%20Articles%20-%20Articles%20-%20GameDev.net_fichiers/image002.jpg" alt="Posted Image"></span><br>[Figure 2]<br><br>
+ Next, we choose one of the adjacent squares on the open list and more 
+or less repeat the earlier process, as described below. But which square
+ do we choose? The one with the lowest F cost.<br><br> <br><strong class="bbc">Path Scoring</strong><br> The key to determining which squares to use when figuring out the path is the following equation:<br><br> F = G + H<br><br> where<br><br> <ul class="bbc"><li>G
+ = the movement cost to move from the starting point A to a given square
+ on the grid, following the path generated to get there. </li><li>H = 
+the estimated movement cost to move from that given square on the grid 
+to the final destination, point B. This is often referred to as the 
+heuristic, which can be a bit confusing. The reason why it is called 
+that is because it is a guess. We really don't know the actual distance 
+until we find the path, because all sorts of things can be in the way 
+(walls, water, etc.). You are given one way to calculate H in this 
+tutorial, but there are many others that you can find in other articles 
+on the web.</li></ul> Our path is generated by repeatedly going through 
+our open list and choosing the square with the lowest F score. This 
+process will be described in more detail a bit further in the article. 
+First let's look more closely at how we calculate the equation.<br><br> 
+As described above, G is the movement cost to move from the starting 
+point to the given square using the path generated to get there. In this
+ example, we will assign a cost of 10 to each horizontal or vertical 
+square moved, and a cost of 14 for a diagonal move. We use these numbers
+ because the actual distance to move diagonally is the square root of 2 
+(don't be scared), or roughly 1.414 times the cost of moving 
+horizontally or vertically. We use 10 and 14 for simplicity's sake. The 
+ratio is about right, and we avoid having to calculate square roots and 
+we avoid decimals. This isn't just because we are dumb and don't like 
+math. Using whole numbers like these is a lot faster for the computer, 
+too. As you will soon find out, pathfinding can be very slow if you 
+don't use short cuts like these.<br><br> Since we are calculating the G 
+cost along a specific path to a given square, the way to figure out the G
+ cost of that square is to take the G cost of its parent, and then add 
+10 or 14 depending on whether it is diagonal or orthogonal 
+(non-diagonal) from that parent square. The need for this method will 
+become apparent a little further on in this example, as we get more than
+ one square away from the starting square.<br><br> H can be estimated in
+ a variety of ways. The method we use here is called the Manhattan 
+method, where you calculate the total number of squares moved 
+horizontally and vertically to reach the target square from the current 
+square, ignoring diagonal movement, and ignoring any obstacles that may 
+be in the way. We then multiply the total by 10, our cost for moving one
+ square horizontally or vertically. This is (probably) called the 
+Manhattan method because it is like calculating the number of city 
+blocks from one place to another, where you can't cut across the block 
+diagonally.<br><br> Reading this description, you might guess that the 
+heuristic is merely a rough estimate of the remaining distance between 
+the current square and the target "as the crow flies." This isn't the 
+case. We are actually trying to estimate the remaining distance along 
+the path (which is usually farther). The closer our estimate is to the 
+actual remaining distance, the faster the algorithm will be. If we 
+overestimate this distance, however, it is not guaranteed to give us the
+ shortest path. In such cases, we have what is called an "inadmissible 
+heuristic."<br><br> Technically, in this example, the Manhattan method 
+is inadmissible because it slightly overestimates the remaining 
+distance. But we will use it anyway because it is a lot easier to 
+understand for our purposes, and because it is only a slight 
+overestimation. On the rare occasion when the resulting path is not the 
+shortest possible, it will be nearly as short. Want to know more? You 
+can find equations and additional notes on heuristics <a href="http://www.policyalmanac.org/games/heuristics.htm" class="bbc_url" title="External link" rel="nofollow external">here</a>.<br><br>
+ F is calculated by adding G and H. The results of the first step in our
+ search can be seen in the illustration below. The F, G, and H scores 
+are written in each square. As is indicated in the square to the 
+immediate right of the starting square, F is printed in the top left, G 
+is printed in the bottom left, and H is printed in the bottom right.<br><br> <span rel="lightbox"><img class="bbc_img" src="A%20%20Pathfinding%20for%20Beginners%20-%20Artificial%20Intelligence%20-%20Articles%20-%20Articles%20-%20GameDev.net_fichiers/image003.jpg" alt="Posted Image"></span><br>[Figure 3]<br><br>
+ So let's look at some of these squares. In the square with the letters 
+in it, G = 10. This is because it is just one square from the starting 
+square in a horizontal direction. The squares immediately above, below, 
+and to the left of the starting square all have the same G score of 10. 
+The diagonal squares have G scores of 14.<br><br> The H scores are 
+calculated by estimating the Manhattan distance to the red target 
+square, moving only horizontally and vertically and ignoring the wall 
+that is in the way. Using this method, the square to the immediate right
+ of the start is 3 squares from the red square, for a H score of 30. The
+ square just above this square is 4 squares away (remember, only move 
+horizontally and vertically) for an H score of 40. You can probably see 
+how the H scores are calculated for the other squares.<br><br> The F score for each square, again, is simply calculated by adding G and H together.<br><br> <br><strong class="bbc">Continuing the Search</strong><br>
+ To continue the search, we simply choose the lowest F score square from
+ all those that are on the open list. We then do the following with the 
+selected square:<br><br> <ul class="bbcol decimal"><li>Drop it from the open list and add it to the closed list. </li><li>Check
+ all of the adjacent squares. Ignoring those that are on the closed list
+ or unwalkable (terrain with walls, water, or other illegal terrain), 
+add squares to the open list if they are not on the open list already. 
+Make the selected square the "parent" of the new squares. </li><li>If an
+ adjacent square is already on the open list, check to see if this path 
+to that square is a better one. In other words, check to see if the G 
+score for that square is lower if we use the current square to get 
+there. If not, don't do anything.<br>
+On the other hand, if the G cost of the new path is lower, change the 
+parent of the adjacent square to the selected square (in the diagram 
+above, change the direction of the pointer to point at the selected 
+square). Finally, recalculate both the F and G scores of that square. If
+ this seems confusing, you will see it illustrated below.</li></ul> 
+Okay, so let's see how this works. Of our initial 9 squares, we have 8 
+left on the open list after the starting square was switched to the 
+closed list. Of these, the one with the lowest F cost is the one to the 
+immediate right of the starting square, with an F score of 40. So we 
+select this square as our next square. It is highlight in blue in the 
+following illustration.<br><br> <span rel="lightbox"><img class="bbc_img" src="A%20%20Pathfinding%20for%20Beginners%20-%20Artificial%20Intelligence%20-%20Articles%20-%20Articles%20-%20GameDev.net_fichiers/image004.jpg" alt="Posted Image"></span><br>[Figure 4]<br><br>
+ First, we drop it from our open list and add it to our closed list 
+(that's why it's now highlighted in blue). Then we check the adjacent 
+squares. Well, the ones to the immediate right of this square are wall 
+squares, so we ignore those. The one to the immediate left is the 
+starting square. That's on the closed list, so we ignore that, too.<br><br>
+ The other four squares are already on the open list, so we need to 
+check if the paths to those squares are any better using this square to 
+get there, using G scores as our point of reference. Let's look at the 
+square right above our selected square. Its current G score is 14. If we
+ instead went through the current square to get there, the G score would
+ be equal to 20 (10, which is the G score to get to the current square, 
+plus 10 more to go vertically to the one just above it). A G score of 20
+ is higher than 14, so this is not a better path. That should make sense
+ if you look at the diagram. It's more direct to get to that square from
+ the starting square by simply moving one square diagonally to get 
+there, rather than moving horizontally one square, and then vertically 
+one square.<br><br> When we repeat this process for all 4 of the 
+adjacent squares already on the open list, we find that none of the 
+paths are improved by going through the current square, so we don't 
+change anything. So now that we looked at all of the adjacent squares, 
+we are done with this square, and ready to move to the next square.<br><br>
+ So we go through the list of squares on our open list, which is now 
+down to 7 squares, and we pick the one with the lowest F cost. 
+Interestingly, in this case, there are two squares with a score of 54. 
+So which do we choose? It doesn't really matter. For the purposes of 
+speed, it can be faster to choose the <span class="bbc_underline">last</span>
+ one you added to the open list. This biases the search in favor of 
+squares that get found later on in the search, when you have gotten 
+closer to the target. But it doesn't really matter. (Differing treatment
+ of ties is why two versions of A* may find different paths of equal 
+length.)<br><br> So let's choose the one just below, and to the right of the starting square, as is shown in the following illustration.<br><br> <span rel="lightbox"><img class="bbc_img" src="A%20%20Pathfinding%20for%20Beginners%20-%20Artificial%20Intelligence%20-%20Articles%20-%20Articles%20-%20GameDev.net_fichiers/image005.jpg" alt="Posted Image"></span><br>[Figure 5]<br><br>
+ This time, when we check the adjacent squares we find that the one to 
+the immediate right is a wall square, so we ignore that. The same goes 
+for the one just above that. We also ignore the square just below the 
+wall. Why? Because you can't get to that square directly from the 
+current square without cutting across the corner of the nearby wall. You
+ really need to go down first and then move over to that square, moving 
+around the corner in the process. (Note: This rule on cutting corners is
+ optional. Its use depends on how your nodes are placed.)<br><br> That 
+leaves five other squares.  The other two squares below the current 
+square aren't already on the open list, so we add them and the current 
+square becomes their parent. Of the other three squares, two are already
+ on the closed list (the starting square, and the one just above the 
+current square, both highlighted in blue in the diagram), so we ignore 
+them. And the last square, to the immediate left of the current square, 
+is checked to see if the G score is any lower if you go through the 
+current square to get there. No dice. So we're done and ready to check 
+the next square on our open list.<br><br> We repeat this process until 
+we add the target square to the closed list, at which point it looks 
+something like the illustration below.<br><br> <span rel="lightbox"><img class="bbc_img" src="A%20%20Pathfinding%20for%20Beginners%20-%20Artificial%20Intelligence%20-%20Articles%20-%20Articles%20-%20GameDev.net_fichiers/image006.jpg" alt="Posted Image"></span><br>[Figure 6]<br><br>
+ Note that the parent square for the square two squares below the 
+starting square has changed from the previous illustration. Before it 
+had a G score of 28 and pointed back to the square above it and to the 
+right. Now it has a score of 20 and points to the square just above it. 
+This happened somewhere along the way on our search, where the G score 
+was checked and it turned out to be lower using a new path – so the 
+parent was switched and the G and F scores were recalculated. While this
+ change doesn't seem too important in this example, there are plenty of 
+possible situations where this constant checking will make all the 
+difference in determining the best path to your target.<br><br> So how 
+do we determine the path? Simple, just start at the red target square, 
+and work backwards moving from one square to its parent, following the 
+arrows. This will eventually take you back to the starting square, and 
+that's your path. It should look like the following illustration. Moving
+ from the starting square A to the destination square B is simply a 
+matter of moving from the center of each square (the node) to the center
+ of the next square on the path, until you reach the target.<br><br> <span rel="lightbox"><img class="bbc_img" src="A%20%20Pathfinding%20for%20Beginners%20-%20Artificial%20Intelligence%20-%20Articles%20-%20Articles%20-%20GameDev.net_fichiers/image007.jpg" alt="Posted Image"></span><br>[Figure 7]<br><br> <br><strong class="bbc">Summary of the A* Method</strong><br> Okay, now that you have gone through the explanation, let's lay out the step-by-step method all in one place:<br><br> <ul class="bbcol decimal"><li>Add the starting square (or node) to the open list. </li><li>Repeat the following:<br>
+a) Look for the lowest F cost square on the open list. We refer to this as the current square.<br>
+b) Switch it to the closed list.<br>
+c) For each of the 8 squares adjacent to this current square …<ul class="bbc"><li>If it is not walkable or if it is on the closed list, ignore it. Otherwise do the following. </li><li>If
+ it isn't on the open list, add it to the open list. Make the current 
+square the parent of this square. Record the F, G, and H costs of the 
+square. </li><li>If it is on the open list already, check to see if this
+ path to that square is better, using G cost as the measure. A lower G 
+cost means that this is a better path. If so, change the parent of the 
+square to the current square, and recalculate the G and F scores of the 
+square. If you are keeping your open list sorted by F score, you may 
+need to resort the list to account for the change.</li></ul>d) Stop when you: <ul class="bbc"><li>Add the target square to the closed list, in which case the path has been found (see note below), or </li><li>Fail to find the target square, and the open list is empty. In this case, there is no path.</li></ul>  </li><li>Save
+ the path. Working backwards from the target square, go from each square
+ to its parent square until you reach the starting square. That is your 
+path.</li></ul> <span class="bbc_underline">Note</span>: In earlier 
+versions of this article, it was suggested that you can stop when the 
+target square (or node) has been added to the open list, rather than the
+ closed list. Doing this will be faster and it will <span class="bbc_underline">almost</span>
+ always give you the shortest path, but not always. Situations where 
+doing this could make a difference are when the movement cost to move 
+from the second to the last node to the last (target) node can vary 
+significantly -- as in the case of a river crossing between two nodes, 
+for example.<br><br> <br><strong class="bbc">Small Rant</strong><br> 
+Forgive me for digressing, but it is worth pointing out that when you 
+read various discussions of A* pathfinding on the web and in assorted 
+forums, you will occasionally see someone refer to certain code as A* 
+when it isn't. For the A* method to be used, you need to include the 
+elements just discussed above -- specifically open and closed lists and 
+path scoring using F, G, and H. There are lots of other pathfinding 
+algorithms, but those other methods are not A*, which is generally 
+considered to be the best of the lot. Bryan Stout discusses many of them
+ in the article referenced at the end of this article, including some of
+ their pros and cons. Sometimes alternatives are better under certain 
+circumstances, but you should understand what you are getting into. 
+Okay, enough ranting. Back to the article.<br><br> <br><strong class="bbc">Notes on Implementation</strong><br>
+ Now that you understand the basic method, here are some additional 
+things to think about when you are writing your own program. Some of the
+ following materials reference the program I wrote in C++ and Blitz 
+Basic, but the points are equally valid in other languages.<br><br> <strong class="bbc"><em class="bbc">1. Other Units (collision avoidance):</em></strong>
+ If you happen to look closely at my example code, you will notice that 
+it completely ignores other units on the screen. The units pass right 
+through each other. Depending on the game, this may be acceptable or it 
+may not. If you want to consider other units in the pathfinding 
+algorithm and have them move around one another, I suggest that you only
+ consider units that are either stopped or adjacent to the pathfinding 
+unit at the time the path is calculated, treating their current 
+locations as unwalkable. For adjacent units that are moving, you can 
+discourage collisions by penalizing nodes that lie along their 
+respective paths, thereby encouraging the pathfinding unit to find an 
+alternate route (described more under #2).<br><br> If you choose to 
+consider other units that are moving and not adjacent to the pathfinding
+ unit, you will need to develop a method for predicting where they will 
+be at any given point in time so that they can be dodged properly. 
+Otherwise you will probably end up with strange paths where units 
+zig-zag to avoid other units that aren't there anymore.<br><br> You will
+ also, of course, need to develop some collision detection code because 
+no matter how good the path is at the time it is calculated, things can 
+change over time. When a collision occurs a unit must either calculate a
+ new path or, if the other unit is moving and it is not a head-on 
+collision, wait for the other unit to step out of the way before 
+proceeding with the current path.<br><br> These tips are probably enough to get you started. If you want to learn more, here are some links that you might find helpful:<br><br> <ul class="bbc"><li><a href="http://www.red3d.com/cwr/steer/" class="bbc_url" title="External link" rel="nofollow external">Steering Behavior for Autonomous Characters</a>:
+ Craig Reynold's work on steering is a bit different from pathfinding, 
+but it can be integrated with pathfinding to make a more complete 
+movement and collision avoidance system. </li><li><a href="http://ducati.doc.ntu.ac.uk/uksim/uksim%2704/Papers/Simon%20Tomlinson-%2004-20/paper04-20%20CR.pdf" class="bbc_url" title="External link" rel="nofollow external">The Long and Short of Steering in Computer Games</a>: An interesting survey of the literature on steering and pathfinding. This is a pdf file. </li><li><a href="http://www.gamasutra.com/features/game_design/19990122/movement_01.htm" class="bbc_url" title="External link" rel="nofollow external">Coordinated Unit Movement</a>: First in a two-part series of articles on formation and group-based movement by Age of Empires designer Dave Pottinger. </li><li><a href="http://www.gamasutra.com/features/19990129/implementing_01.htm" class="bbc_url" title="External link" rel="nofollow external">Implementing Coordinated Movement</a>: Second in Dave Pottinger's two-part series.</li></ul> <strong class="bbc"><em class="bbc">2. Variable Terrain Cost:</em></strong>
+ In this tutorial and my accompanying program, terrain is just one of 
+two things – walkable or unwalkable. But what if you have terrain that 
+is walkable, but at a higher movement cost? Swamps, hills, stairs in a 
+dungeon, etc. – these are all examples of terrain that is walkable, but 
+at a higher cost than flat, open ground. Similarly, a road might have a 
+lower movement cost than the surrounding terrain.<br><br> This problem 
+is easily handled by adding the terrain cost in when you are calculating
+ the G cost of any given node. Simply add a bonus cost to such nodes. 
+The A* pathfinding algorithm is already written to find the lowest cost 
+path and should handle this easily. In the simple example I described, 
+when terrain is only walkable or unwalkable, A* will look for the 
+shortest, most direct path. But in a variable-cost terrain environment, 
+the least cost path might involve traveling a longer distance – like 
+taking a road around a swamp rather than plowing straight through it.<br><br>
+ An interesting additional consideration is something the professionals 
+call "influence mapping." Just as with the variable terrain costs 
+described above, you could create an additional point system and apply 
+it to paths for AI purposes. Imagine that you have a map with a bunch of
+ units defending a pass through a mountain region. Every time the 
+computer sends somebody on a path through that pass, it gets whacked. If
+ you wanted, you could create an influence map that penalized nodes 
+where lots of carnage is taking place. This would teach the computer to 
+favor safer paths, and help it avoid dumb situations where it keeps 
+sending troops through a particular path, just because it is shorter 
+(but also more dangerous).<br><br> Yet another possible use is 
+penalizing nodes that lie along the paths of nearby moving units. One of
+ the downsides of A* is that when a group of units all try to find paths
+ to a similar location, there is usually a significant amount of 
+overlap, as one or more units try to take the same or similar routes to 
+their destinations. Adding a penalty to nodes already 'claimed' by other
+ units will help ensure a degree of separation, and reduce collisions. 
+Don't treat such nodes as unwalkable, however, because you still want 
+multiple units to be able to squeeze through tight passageways in single
+ file, if necessary. Also, you should only penalize the paths of units 
+that are near the pathfinding unit, not all paths, or you will get 
+strange dodging behavior as units avoid paths of units that are nowhere 
+near them at the time. Also, you should only penalize path nodes that 
+lie along the current and future portion of a path, not previous path 
+nodes that have already been visited and left behind.<br><br> <strong class="bbc"><em class="bbc">3. Handling Unexplored Areas:</em></strong>
+ Have you ever played a PC game where the computer always knows exactly 
+what path to take, even though the map hasn't been explored yet? 
+Depending upon the game, pathfinding that is too good can be 
+unrealistic. Fortunately, this is a problem that is can be handled 
+fairly easily.<br><br> The answer is to create a separate 
+"knownWalkability" array for each of the various players and computer 
+opponents (each player, not each unit -- that would require a lot more 
+computer memory). Each array would contain information about the areas 
+that the player has explored, with the rest of the map assumed to be 
+walkable until proven otherwise. Using this approach, units will wander 
+down dead ends and make similar wrong choices until they have learned 
+their way around. Once the map is explored, however, pathfinding would 
+work normally.<br><br> <strong class="bbc"><em class="bbc">4. Smoother Paths:</em></strong>
+ While A* will automatically give you the shortest, lowest cost path, it
+ won't automatically give you the smoothest looking path. Take a look at
+ the final path calculated in our example (in Figure 7). On that path, 
+the very first step is below, and to the right of the starting square. 
+Wouldn't our path be smoother if the first step was instead the square 
+directly below the starting square?<br><br> There are several ways to 
+address this problem. While you are calculating the path you could 
+penalize nodes where there is a change of direction, adding a penalty to
+ their G scores. Alternatively, you could run through your path after it
+ is calculated, looking for places where choosing an adjacent node would
+ give you a path that looks better. For more on the whole issue, check 
+out <a href="http://www.gamasutra.com/features/20010314/pinter_01.htm" class="bbc_url" title="External link" rel="nofollow external">Toward More Realistic Pathfinding</a>, a (free, but registration required) article at Gamasutra.com by Marco Pinter.<br><br> <strong class="bbc"><em class="bbc">5. Non-square Search Areas:</em></strong>
+ In our example, we used a simple 2D square layout. You don't need to 
+use this approach. You could use irregularly shaped areas. Think of the 
+board game Risk, and the countries in that game. You could devise a 
+pathfinding scenario for a game like that. To do this, you would need to
+ create a table for storing which countries are adjacent to which, and a
+ G cost associated with moving from one country to the next. You would 
+also need to come up with a method for estimating H. Everything else 
+would be handled the same as in the above example. Instead of using 
+adjacent squares, you would simply look up the adjacent countries in the
+ table when adding new items to your open list.<br><br> Similarly, you 
+could create a waypoint system for paths on a fixed terrain map. 
+Waypoints are commonly traversed points on a path, perhaps on a road or 
+key tunnel in a dungeon. As the game designer, you could pre-assign 
+these waypoints. Two waypoints would be considered "adjacent" to one 
+another if there were no obstacles on the direct line path between them.
+ As in the Risk example, you would save this adjacency information in a 
+lookup table of some kind and use it when generating your new open list 
+items. You would then record the associated G costs (perhaps by using 
+the direct line distance between the nodes) and H costs (perhaps using a
+ direct line distance from the node to the goal). Everything else would 
+proceed as usual.<br><br> Amit Patel has written a brief <a href="http://theory.stanford.edu/%7Eamitp/GameProgramming/MapRepresentations.html" class="bbc_url" title="External link" rel="nofollow external">article</a>
+ delving into some alternatives. For another example of searching on an 
+isometric RPG map using a non-square search area, check out my article <a href="http://www.policyalmanac.org/games/twoTiered.htm" class="bbc_url" title="External link" rel="nofollow external">Two-Tiered A* Pathfinding</a>.<br><br> <strong class="bbc"><em class="bbc">6. Some Speed Tips:</em></strong>
+ As you develop your own A* program, or adapt the one I wrote, you will 
+eventually find that pathfinding is using a hefty chunk of your CPU 
+time, particularly if you have a decent number of pathfinding units on 
+the board and a reasonably large map. If you read the stuff on the net, 
+you will find that this is true even for the professionals who design 
+games like Starcraft or Age of Empires. If you see things start to slow 
+down due to pathfinding, here are some ideas that may speed things up:<br><br> <ul class="bbc"><li>Consider a smaller map or fewer units. </li><li>Never
+ do path finding for more than a few units at a time. Instead put them 
+in a queue and spread them out over several game cycles. If your game is
+ running at, say, 40 cycles per second, no one will ever notice. But 
+they will notice if the game seems to slow down every once in a while 
+when a bunch of units are all calculating paths at the same time. </li><li>Consider
+ using larger squares (or whatever shape you are using) for your map. 
+This reduces the total number of nodes searched to find the path. If you
+ are ambitious, you can devise two or more pathfinding systems that are 
+used in different situations, depending upon the length of the path. 
+This is what the professionals do, using large areas for long paths, and
+ then switching to finer searches using smaller squares/areas when you 
+get close to the target. If you are interested in this concept, check 
+out my article <a href="http://www.policyalmanac.org/games/twoTiered.htm" class="bbc_url" title="External link" rel="nofollow external">Two-Tiered A* Pathfinding</a>. </li><li>For longer paths, consider devising precalculated paths that are hardwired into the game. </li><li>Consider
+ pre-processing your map to figure out what areas are inaccessible from 
+the rest of the map. I call these areas "islands." In reality, they can 
+be islands or any other area that is otherwise walled off and 
+inaccessible. One of the downsides of A* is that if you tell it to look 
+for paths to such areas, it will search the whole map, stopping only 
+when every accessible square/node has been processed through the open 
+and closed lists. That can waste a lot of CPU time. It can be prevented 
+by predetermining which areas are inaccessible (via a flood-fill or 
+similar routine), recording that information in an array of some kind, 
+and then checking it before beginning a path search. </li><li>In a 
+crowded, maze-like environment, consider tagging nodes that don't lead 
+anywhere as dead ends. Such areas can be manually pre-designated in your
+ map editor or, if you are ambitious, you could develop an algorithm to 
+identify such areas automatically. Any collection of nodes in a given 
+dead end area could be given a unique identifying number. Then you could
+ safely ignore all dead ends when pathfinding, pausing only to consider 
+nodes in a dead end area if the starting location or destination happen 
+to be in the particular dead end area in question.</li></ul> <strong class="bbc"><em class="bbc">7. Maintaining the Open List:</em></strong>
+ This is actually one of the most time consuming elements of the A* 
+pathfinding algorithm. Every time you access the open list, you need to 
+find the square that has the lowest F cost. There are several ways you 
+could do this. You could save the path items as needed, and simply go 
+through the whole list each time you need to find the lowest F cost 
+square. This is simple, but really slow for long paths. This can be 
+improved by maintaining a sorted list and simply grabbing the first item
+ off the list every time you need the lowest F-cost square. When I wrote
+ my program, this was the first method I used.<br><br> This will work 
+reasonably well for small maps, but it isn't the fastest solution. 
+Serious A* programmers who want real speed use something called a binary
+ heap, and this is what I use in my code. In my experience, this 
+approach will be at least 2-3 times as fast in most situations, and 
+geometrically faster (10+ times as fast) on longer paths. If you are 
+motivated to find out more about binary heaps, check out my article, <a href="http://www.policyalmanac.org/games/binaryHeaps.htm" class="bbc_url" title="External link" rel="nofollow external">Using Binary Heaps in A* Pathfinding</a>.<br><br>
+ Another possible bottleneck is the way you clear and maintain your data
+ structures between pathfinding calls. I personally prefer to store 
+everything in arrays. While nodes can be generated, recorded and 
+maintained in a dynamic, object-oriented manner, I find that the amount 
+of time needed to create and delete such objects adds an extra, 
+unnecessary level of overhead that slows things down. If you use arrays,
+ however, you will need to clean things up between calls. The last thing
+ you will want to do in such cases is spend time zero-ing everything out
+ after a pathfinding call, especially if you have a large map.<br><br> I
+ avoid this overhead by creating a 2d array called whichList(x,y) that 
+designates each node on my map as either on the open list or closed 
+list. After pathfinding attempts, I do not zero out this array. Instead I
+ reset the values of onClosedList and onOpenList in every pathfinding 
+call, incrementing both by +5 or something similar on each path finding 
+attempt. This way, the algorithm can safely ignore as garbage any data 
+left over from previous pathfinding attempts. I also store values like 
+F, G and H costs in arrays. In this case, I simply write over any 
+pre-existing values and don't bother clearing the arrays when I'm done.<br><br>
+ Storing data in multiple arrays consumes more memory, though, so there 
+is a trade off. Ultimately, you should use whatever method you are most 
+comfortable with.<br><br> <strong class="bbc"><em class="bbc">8. Dijkstra's Algorithm:</em></strong>
+ While A* is generally considered to be the best pathfinding algorithm 
+(see rant above), there is at least one other algorithm that has its 
+uses - Dijkstra's algorithm. Dijkstra's is essentially the same as A*, 
+except there is no heuristic (H is always 0). Because it has no 
+heuristic, it searches by expanding out equally in every direction. As 
+you might imagine, because of this Dijkstra's usually ends up exploring a
+ much larger area before the target is found. This generally makes it 
+slower than A*.<br><br> So why use it? Sometimes we don't know where our
+ target destination is. Say you have a resource-gathering unit that 
+needs to go get some resources of some kind. It may know where several 
+resource areas are, but it wants to go to the closest one. Here, 
+Dijkstra's is better than A* because we don't know which one is closest.
+ Our only alternative is to repeatedly use A* to find the distance to 
+each one, and then choose that path. There are probably countless 
+similar situations where we know the kind of location we might be 
+searching for, want to find the closest one, but not know where it is or
+ which one might be closest.<br><br> <br><strong class="bbc">Further Reading</strong><br>
+ Okay, now you have the basics and a sense of some of the advanced 
+concepts. At this point, I'd suggest wading into my source code. The 
+package contains two versions, one in C++ and one in Blitz Basic. Both 
+versions are heavily commented and should be fairly easy to follow, 
+relatively speaking. Here is the link.<br><br> <ul class="bbc"><li>&lt;a href="<a href="http://www.blitzcoder.com/cgi-bin/showcase/showcase_showentry.pl?id=turtle177604062002002208&amp;comments=no%22%3ESample" class="bbc_url" title="External link" rel="nofollow external">http://www.blitzcoder.com/cgi-bin/showcase/showcase_showentry.pl?id=turtle177604062002002208&amp;comments=no"&gt;Sample</a> Code: A* Pathfinder (2D) Version 1.9</li></ul>
+ If you do not have access to C++ or Blitz Basic, two small exe files 
+can be found in the C++ version. The Blitz Basic version can be run by 
+downloading the free demo version of Blitz Basic 3D (not Blitz Plus) at 
+the <a href="http://www.blitzbasic.com/" class="bbc_url" title="External link" rel="nofollow external">Blitz Basic</a> web site.<br><br>
+ You should also consider reading through the following web pages. They 
+should be much easier to understand now that you have read this 
+tutorial.<br><br> <ul class="bbc"><li><a href="http://www-cs-students.stanford.edu/%7Eamitp/gameprog.html#Paths" class="bbc_url" title="External link" rel="nofollow external">Amit's A* Pages</a>:
+ This is a very widely referenced page by Amit Patel, but it can be a 
+bit confusing if you haven't read this article first. Well worth 
+checking out. See especially Amit's own <a href="http://theory.stanford.edu/%7Eamitp/GameProgramming/" class="bbc_url" title="External link" rel="nofollow external">thoughts</a> on the topic. </li><li><a href="http://www.gamasutra.com/features/19970801/pathfinding.htm" class="bbc_url" title="External link" rel="nofollow external">Smart Moves: Intelligent Path Finding</a>:
+ This article by Bryan Stout at Gamasutra.com requires registration to 
+read. The registration is free and well worth it just to reach this 
+article, much less the other resources that are available there. The 
+program written in Delphi by Bryan helped me learn A*, and it is the 
+inspiration behind my A* program. It also describes some alternatives to
+ A*. </li><li><a href="http://www.gamasutra.com/features/gdcarchive/2000/pottinger.doc" class="bbc_url" title="External link" rel="nofollow external">Terrain Analysis</a>:
+ This is an advanced, but interesting, article by Dave Pottinger, a 
+professional at Ensemble Studios. This guy coordinated the development 
+of Age of Empires and Age of Kings. Don't expect to understand 
+everything here, but it is an interesting article that might give you 
+some ideas of your own. It includes some discussion of mip-mapping, 
+influence mapping, and some other advanced AI/pathfinding concepts.</li></ul> Some other sites worth checking out:<br><br> <ul class="bbc"><li><a href="http://www.aiguru.com/pathfinding.htm" class="bbc_url" title="External link" rel="nofollow external">aiGuru: Pathfinding</a> </li><li><a href="http://www.gameai.com/pathfinding.html" class="bbc_url" title="External link" rel="nofollow external">Game AI Resource: Pathfinding</a> </li><li><a href="http://www.gamedev.net/reference/list.asp?categoryid=18#94" class="bbc_url" title="">GameDev.net: Pathfinding</a></li></ul> Well, that's it. If you happen to write a program that uses any of these concepts, I'd love to see it. I can be reached at<br><br> <span rel="lightbox"><img class="bbc_img" src="A%20%20Pathfinding%20for%20Beginners%20-%20Artificial%20Intelligence%20-%20Articles%20-%20Articles%20-%20GameDev.net_fichiers/mail2.jpg" alt="Posted Image"></span><br><br> Until then, good luck!<br><br>
+</div>
+
+
+
+<!--ARTICLE ATTACHED RESOURCE FILE-->
+
+   <br>
+
+
+
+
+
+
+
+	</div>
+	
+	
+<br><br>
+
+
+
+
+        </div>
+    </div>
+  </div> <!-- end id=article -->
+
+
+
+<div class="ipsPad">
+        
+                <div style="float: left">
+                        
+                        
+
+	<ul class="topic_share left shareButtons ipsList_inline">
+	
+		<li><a href="http://www.gamedev.net/index.php?sharelink=twitter;aHR0cDovL3d3dy5nYW1lZGV2Lm5ldC9wYWdlL3Jlc291cmNlcy9fL3RlY2huaWNhbC9hcnRpZmljaWFsLWludGVsbGlnZW5jZS9hLXBhdGhmaW5kaW5nLWZvci1iZWdpbm5lcnMtcjIwMDM,;QSogUGF0aGZpbmRpbmcgZm9yIEJlZ2lubmVycw,,&amp;overrideApp=ccs" rel="nofollow" target="_blank" title="Share this link via Twitter" class="_slink" id="slink_twitter"><img src="A%20%20Pathfinding%20for%20Beginners%20-%20Artificial%20Intelligence%20-%20Articles%20-%20Articles%20-%20GameDev.net_fichiers/twitter.png"></a></li>
+	
+
+		
+				<li class="fbLike"><div fb-iframe-plugin-query="action=like&amp;app_id=128221277204697&amp;href=http%3A%2F%2Fwww.gamedev.net%2Fpage%2Fresources%2F_%2Ftechnical%2Fartificial-intelligence%2Fa-pathfinding-for-beginners-r2003&amp;layout=button_count&amp;locale=en_US&amp;sdk=joey&amp;send=false&amp;show_faces=false&amp;width=150" fb-xfbml-state="rendered" class="fb-like fb_iframe_widget" data-href="http://www.gamedev.net/page/resources/_/technical/artificial-intelligence/a-pathfinding-for-beginners-r2003" data-send="false" data-layout="button_count" data-width="150" data-show-faces="false" data-action="like"><span style="vertical-align: bottom; width: 77px; height: 20px;"><iframe class="" src="A%20%20Pathfinding%20for%20Beginners%20-%20Artificial%20Intelligence%20-%20Articles%20-%20Articles%20-%20GameDev.net_fichiers/like.htm" style="border: medium none; visibility: visible; width: 77px; height: 20px;" title="fb:like Facebook Social Plugin" scrolling="no" allowtransparency="true" name="f3a29e829120022" frameborder="0" height="1000px" width="150px"></iframe></span></div><div class=" fb_reset" id="fb-root"><div style="position: absolute; top: -10000px; height: 0px; width: 0px;"><div><iframe src="A%20%20Pathfinding%20for%20Beginners%20-%20Artificial%20Intelligence%20-%20Articles%20-%20Articles%20-%20GameDev.net_fichiers/FX-Xf5fQjUk.htm" style="border: medium none;" tabindex="-1" title="Facebook Cross Domain Communication Frame" aria-hidden="true" id="fb_xdm_frame_http" scrolling="no" allowtransparency="true" name="fb_xdm_frame_http" frameborder="0"></iframe><iframe src="A%20%20Pathfinding%20for%20Beginners%20-%20Artificial%20Intelligence%20-%20Articles%20-%20Articles%20-%20GameDev.net_fichiers/FX-Xf5fQjUk_002.htm" style="border: medium none;" tabindex="-1" title="Facebook Cross Domain Communication Frame" aria-hidden="true" id="fb_xdm_frame_https" scrolling="no" allowtransparency="true" name="fb_xdm_frame_https" frameborder="0"></iframe></div></div><div style="position: absolute; top: -10000px; height: 0px; width: 0px;"><div></div></div></div></li>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=128221277204697";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+			
+	
+
+		
+				<script gapi_processed="true" type="text/javascript" src="A%20%20Pathfinding%20for%20Beginners%20-%20Artificial%20Intelligence%20-%20Articles%20-%20Articles%20-%20GameDev.net_fichiers/plusone.js">
+	
+		{lang: 'en-GB'}
+	
+</script>
+<li><div class="googlePlusOne"><div id="___plusone_0" style="text-indent: 0px; margin: 0px; padding: 0px; background: none repeat scroll 0% 0% transparent; border-style: none; float: none; line-height: normal; font-size: 1px; vertical-align: baseline; display: inline-block; width: 24px; height: 15px;"><iframe title="+1" data-gapiattached="true" src="A%20%20Pathfinding%20for%20Beginners%20-%20Artificial%20Intelligence%20-%20Articles%20-%20Articles%20-%20GameDev.net_fichiers/fastbutton.htm" name="I0_1408658460691" id="I0_1408658460691" vspace="0" tabindex="0" style="position: static; top: 0px; width: 24px; margin: 0px; border-style: none; left: 0px; visibility: visible; height: 15px;" scrolling="no" marginwidth="0" marginheight="0" hspace="0" frameborder="0" width="100%"></iframe></div></div></li>
+			
+	
+
+		<li><a href="http://www.gamedev.net/index.php?sharelink=digg;aHR0cDovL3d3dy5nYW1lZGV2Lm5ldC9wYWdlL3Jlc291cmNlcy9fL3RlY2huaWNhbC9hcnRpZmljaWFsLWludGVsbGlnZW5jZS9hLXBhdGhmaW5kaW5nLWZvci1iZWdpbm5lcnMtcjIwMDM,;QSogUGF0aGZpbmRpbmcgZm9yIEJlZ2lubmVycw,,&amp;overrideApp=ccs" rel="nofollow" target="_blank" title="Share this link via Digg" class="_slink" id="slink_digg"><img src="A%20%20Pathfinding%20for%20Beginners%20-%20Artificial%20Intelligence%20-%20Articles%20-%20Articles%20-%20GameDev.net_fichiers/digg.png"></a></li>
+	
+
+		
+	
+
+		<li><a href="http://www.gamedev.net/index.php?sharelink=reddit;aHR0cDovL3d3dy5nYW1lZGV2Lm5ldC9wYWdlL3Jlc291cmNlcy9fL3RlY2huaWNhbC9hcnRpZmljaWFsLWludGVsbGlnZW5jZS9hLXBhdGhmaW5kaW5nLWZvci1iZWdpbm5lcnMtcjIwMDM,;QSogUGF0aGZpbmRpbmcgZm9yIEJlZ2lubmVycw,,&amp;overrideApp=ccs" rel="nofollow" target="_blank" title="Share this link via Reddit" class="_slink" id="slink_reddit"><img src="A%20%20Pathfinding%20for%20Beginners%20-%20Artificial%20Intelligence%20-%20Articles%20-%20Articles%20-%20GameDev.net_fichiers/reddit.png"></a></li>
+	
+
+		
+	
+
+		<li><a href="http://www.gamedev.net/index.php?sharelink=email;aHR0cDovL3d3dy5nYW1lZGV2Lm5ldC9wYWdlL3Jlc291cmNlcy9fL3RlY2huaWNhbC9hcnRpZmljaWFsLWludGVsbGlnZW5jZS9hLXBhdGhmaW5kaW5nLWZvci1iZWdpbm5lcnMtcjIwMDM,;QSogUGF0aGZpbmRpbmcgZm9yIEJlZ2lubmVycw,,&amp;overrideApp=ccs" rel="nofollow" target="_blank" title="Share this link via Email" class="_slink" id="slink_email"><img src="A%20%20Pathfinding%20for%20Beginners%20-%20Artificial%20Intelligence%20-%20Articles%20-%20Articles%20-%20GameDev.net_fichiers/email.png"></a></li>
+	
+
+		<li><a href="http://www.gamedev.net/index.php?sharelink=print;aHR0cDovL3d3dy5nYW1lZGV2Lm5ldC9wYWdlL3Jlc291cmNlcy9fL3RlY2huaWNhbC9hcnRpZmljaWFsLWludGVsbGlnZW5jZS9hLXBhdGhmaW5kaW5nLWZvci1iZWdpbm5lcnMtcjIwMDM,;QSogUGF0aGZpbmRpbmcgZm9yIEJlZ2lubmVycw,,&amp;overrideApp=ccs" rel="nofollow" target="_blank" title="Print" class="_slink" id="slink_print"><img src="A%20%20Pathfinding%20for%20Beginners%20-%20Artificial%20Intelligence%20-%20Articles%20-%20Articles%20-%20GameDev.net_fichiers/print.png"></a></li>
+	
+
+		<li><a href="http://www.gamedev.net/index.php?sharelink=download;aHR0cDovL3d3dy5nYW1lZGV2Lm5ldC9wYWdlL3Jlc291cmNlcy9fL3RlY2huaWNhbC9hcnRpZmljaWFsLWludGVsbGlnZW5jZS9hLXBhdGhmaW5kaW5nLWZvci1iZWdpbm5lcnMtcjIwMDM,;QSogUGF0aGZpbmRpbmcgZm9yIEJlZ2lubmVycw,,&amp;overrideApp=ccs" rel="nofollow" target="_blank" title="Download" class="_slink" id="slink_download"><img src="A%20%20Pathfinding%20for%20Beginners%20-%20Artificial%20Intelligence%20-%20Articles%20-%20Articles%20-%20GameDev.net_fichiers/download.png"></a></li>
+	
+
+		<li><a href="http://www.gamedev.net/index.php?sharelink=blogthis;aHR0cDovL3d3dy5nYW1lZGV2Lm5ldC9wYWdlL3Jlc291cmNlcy9fL3RlY2huaWNhbC9hcnRpZmljaWFsLWludGVsbGlnZW5jZS9hLXBhdGhmaW5kaW5nLWZvci1iZWdpbm5lcnMtcjIwMDM,;QSogUGF0aGZpbmRpbmcgZm9yIEJlZ2lubmVycw,,&amp;overrideApp=ccs" rel="nofollow" target="_blank" title="Share this link via Blog This" class="_slink" id="slink_blogthis"><img src="A%20%20Pathfinding%20for%20Beginners%20-%20Artificial%20Intelligence%20-%20Articles%20-%20Articles%20-%20GameDev.net_fichiers/blogthis.png"></a></li>
+	
+	</ul>
+	<script type="text/javascript">
+		ipb.sharelinks.url   = "http://www.gamedev.net/page/resources/_/technical/artificial-intelligence/a-pathfinding-for-beginners-r2003";
+		ipb.sharelinks.title = "A* Pathfinding for Beginners";
+		ipb.sharelinks.bname = "GameDev.net";
+	</script>
+
+                </div>
+        
+        
+        <br style="clear: both">
+</div>
+
+<br style="clear: both">
+<span style="font-size:18px; font-weight: bold">Comments</span> <a name="comments"></a><br> 
+
+<div class="ipsBox">
+	<div class="ipsBox_container ipsPad">
+	     <div class="comment_wrap">
+	                <script type="text/javascript">
+	ipb.templates['comment_moderation'] = new Template("<div id='comment_moderate_box' class='ipsFloatingAction' style='display: none'><span class='desc'>With <span id='comment_count'>#{count}</span> checked comments: </span><select name='modOptions' class='input_select' id='commentModAction'><option value='approve'>Approve</option><option value='hide'>Hide</option><option value='unhide'>Unhide</option><option value='delete'>Delete</option></select>&nbsp;&nbsp;<input type='button' class='input_submit' id='submitModAction' value='Go' /></div>");
+	
+	ipb.templates['comment_delete'] = new Template("<h3>Confirm Delete</h3><div class='ipsPad ipsForm_center desc'>Are you sure you want to delete this comment?<br /><br /><input type='button' class='input_submit' id='delPush' onclick='ipb.comments.deleteIt(event)' value='Delete comment now' />");
+	
+	ipb.templates['comment_hide'] = new Template("<form action='#{url}' method='post'><h3>Hide Comment</h3><div class='ipsPad ipsForm_center desc'>This option hides the comment, but moderators may still be able to view it.<br /><br /><input type='text' name='reason' id='hidePop_reason' value='' class='input_text' style='width: 60%' /> <input type='submit' class='input_submit' value='Hide Comment' /></form>");
+</script>
+
+<a id="commentsStart"></a>
+
+<div class="ipsComment_wrap" id="comment_wrap">
+	</div>
+
+
+<script type="text/javascript">
+	ipb.global.post_width			= 500;
+	document.observe("dom:loaded", function(){
+		ipb.comments.parentId = 2003;
+		ipb.comments.setData( {"counts":{"commentTotal":0,"thisPageCount":0,"perPage":25,"curStart":0},"settings":{"urls-showParent":"app=ccs&module=pages&section=pages&do=redirect&database=1&record=%s","urls-report":""},"canModerate":false,"fromApp":"ccs-records","thisApp":"ccs","repType":"comment_id","enableRep":true,"autoSaveKey":"comment-ccs_database_comments-2003","baseUrl":"app=ccs&amp;module=pages&amp;section=comments&amp;database=1&amp;record=2003","formUrl":"http:\/\/www.gamedev.net\/index.php?app=ccs&amp;database=1&amp;record=2003","formApp":"ccs","formModule":"pages","formSection":"comments","captcha":"<fieldset id='captcha' class='recaptcha'>\n\t<ul class='ipsForm ipsForm_vertical'>\n\t\t<li class='ipsField'>\n\t\t\t<label class='ipsField_title'>Security Check <span class='ipsForm_required'>*<\/span><\/label>\n\t\t\t<div class='ipsField_content'>\n\t\t\t\t<script type='text\/javascript'>\n\t\t\t\t\t\tvar RecaptchaOptions = { \n\t\t\t\t\t\t\t\t\t\t\t\tlang : 'en',\n\t\t\t\t\t\t\t\t\t\t\t\ttheme : 'clean',\n\t\t\t\t\t\t\t\t\t\t\t\ttabindex: 49\n\t\t\t\t\t\t\t\t\t\t\t\t};\n\t\t\t\t\t<\/script><script type=\"text\/javascript\" src=\"http:\/\/www.google.com\/recaptcha\/api\/challenge?k=6LcpWAMAAAAAAA4klDtDNuDH6LsGgBX5mBoJ3naK\"><\/script>\n\t\t\t\t\t<noscript>\n\t\t\t\t\t<iframe src=\"http:\/\/www.google.com\/recaptcha\/api\/noscript?k=6LcpWAMAAAAAAA4klDtDNuDH6LsGgBX5mBoJ3naK\" height=\"300\" width=\"500\" frameborder=\"0\"><\/iframe><br\/>\n\t\t\t\t\t<textarea name=\"recaptcha_challenge_field\" rows=\"3\" cols=\"40\"><\/textarea>\n\t\t\t\t\t<input type=\"hidden\" name=\"recaptcha_response_field\" value=\"manual_challenge\"\/>\n\t\t\t\t\t<\/noscript>\n\t\t\t<\/div>\n\t\t<\/li>\n\t<\/ul>\n<\/fieldset>","ajaxSaveUrl":"http:\/\/www.gamedev.net\/index.php?s=89ccfc48dc7cd4d3a352a63cbe1bf3c5&amp;app=ccs&module=ajax&section=comments&do=add&database=1&record=2003","ajaxDeleteUrl":"http:\/\/www.gamedev.net\/index.php?s=89ccfc48dc7cd4d3a352a63cbe1bf3c5&amp;app=ccs&module=ajax&section=comments&do=delete&database=1&record=2003","ajaxModerateUrl":"http:\/\/www.gamedev.net\/index.php?s=89ccfc48dc7cd4d3a352a63cbe1bf3c5&amp;app=ccs&module=ajax&section=comments&do=moderate&database=1&record=2003","ajaxShowEditUrl":"http:\/\/www.gamedev.net\/index.php?s=89ccfc48dc7cd4d3a352a63cbe1bf3c5&amp;app=ccs&module=ajax&section=comments&do=showEdit&database=1&record=2003","ajaxSaveEditUrl":"http:\/\/www.gamedev.net\/index.php?s=89ccfc48dc7cd4d3a352a63cbe1bf3c5&amp;app=ccs&module=ajax&section=comments&do=saveEdit&database=1&record=2003","ajaxFetchReplyUrl":"http:\/\/www.gamedev.net\/index.php?s=89ccfc48dc7cd4d3a352a63cbe1bf3c5&amp;app=ccs&module=ajax&section=comments&do=fetchReply&database=1&record=2003","findLastComment":"http:\/\/www.gamedev.net\/index.php?s=89ccfc48dc7cd4d3a352a63cbe1bf3c5&amp;app=ccs&module=pages&section=pages&do=redirect&database=1&record=2003&comment=_last_"} );
+	});
+</script>
+	     </div>
+	</div>
+</div>
+<br>
+Note: Please offer only <b>positive</b>, <b>constructive</b> comments - we are looking to promote a positive atmosphere where collaboration is valued above all else.<br>      
+<br><br><br><br>
+
+  </div>
+</div>
+
+<script type="text/javascript">
+
+ipb.vars['image_resize']		= 0;
+ipb.global.post_width			= 500;
+Event.observe( window, 'load', function(){
+	// Resize images
+	$$('.article_body').each( function(elem){
+		ipb.global.findImgs( $( elem ) );
+	});
+});
+</script>
+<script type="text/javascript" src="A%20%20Pathfinding%20for%20Beginners%20-%20Artificial%20Intelligence%20-%20Articles%20-%20Articles%20-%20GameDev.net_fichiers/prettify.js"></script>
+	<script type="text/javascript" src="A%20%20Pathfinding%20for%20Beginners%20-%20Artificial%20Intelligence%20-%20Articles%20-%20Articles%20-%20GameDev.net_fichiers/lang-sql.js"></script>
+	<!-- By default we load generic code, php, css, sql and xml/html; load others here if desired -->
+
+	<script type="text/javascript">
+	//<![CDATA[
+		Event.observe( window, 'load', function(e){ prettyPrint() });
+	//]]>
+	</script>
+	
+<script type="text/javascript" src="A%20%20Pathfinding%20for%20Beginners%20-%20Artificial%20Intelligence%20-%20Articles%20-%20Articles%20-%20GameDev.net_fichiers/jquery.js"></script>
+<script type="text/javascript">
+jQuery.noConflict();
+</script>
+<script src="A%20%20Pathfinding%20for%20Beginners%20-%20Artificial%20Intelligence%20-%20Articles%20-%20Articles%20-%20GameDev.net_fichiers/highstock.js"></script>
+<script src="A%20%20Pathfinding%20for%20Beginners%20-%20Artificial%20Intelligence%20-%20Articles%20-%20Articles%20-%20GameDev.net_fichiers/exporting.js"></script>
+	
+<script type="text/javascript"> 
+function ShowGraph() {
+ 
+ var requrl = ipb.vars['base_url'] + "app=ccs&module=ajax&section=getstats&md5check=" +ipb.vars['secure_hash'] + "&article_id=2003";
+ 
+    jQuery.getJSON(requrl, function(data) {
+        // Create the chart
+        window.chart = new Highcharts.StockChart({
+            chart : {
+                renderTo : 'statgraph'
+            },
+
+            title : {
+                text : 'Daily Article Views'
+            },
+
+            rangeSelector: {
+		        selected: 1
+		    },         
+		    
+	    exporting: {
+		buttons: {
+			exportButton: {
+				enabled: false
+			},
+			printButton: {
+				enabled: false
+			}
+		}
+	    },
+            
+	    navigator : {
+				enabled : false
+			},
+			            
+            series : [{
+                type : 'column',
+                name : 'Daily Views',
+                data : data,
+                dataGrouping: {
+                	enabled: true,
+                	forced: false,
+                	smoothed: false
+                },
+                tooltip: {
+                    valueDecimals: 0
+                }
+            }]
+        });
+    });
+
+
+};
+</script>
+
+
+</div>
+				
+
+				<ol class="breadcrumb bottom ipsList_inline left clearfix clear">
+															<li itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb">
+									<a href="http://www.gamedev.net/" itemprop="url">
+										<span itemprop="title">Home</span>
+									</a>
+								</li>
+								
+							
+
+							
+								<li itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb">
+									<span class="nav_sep"><b>»</b></span>
+									 <a href="http://www.gamedev.net/page/index.html/" title="Return to Home" itemprop="url"><span itemprop="title">Home</span></a>
+								</li>
+								
+							
+
+								<li itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb">
+									<span class="nav_sep"><b>»</b></span>
+									 <a href="http://www.gamedev.net/page/resources" title="Return to Articles" itemprop="url"><span itemprop="title">Articles</span></a>
+								</li>
+								
+							
+
+								<li itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb">
+									<span class="nav_sep"><b>»</b></span>
+									 <a href="http://www.gamedev.net/page/resources/_/technical/" title="Return to Technical" itemprop="url"><span itemprop="title">Technical</span></a>
+								</li>
+								
+							
+
+								<li itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb">
+									<span class="nav_sep"><b>»</b></span>
+									 <a href="http://www.gamedev.net/page/resources/_/technical/artificial-intelligence/" title="Return to Artificial Intelligence" itemprop="url"><span itemprop="title">Artificial Intelligence</span></a>
+								</li>
+								
+							
+
+								<li itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb">
+									<span class="nav_sep"><b>»</b></span>
+									 <span itemprop="title">Article: A* Pathfinding for Beginners</span>
+								</li>
+								
+							
+						</ol>
+
+			</div>
+
+
+			<!-- ::: FOOTER (Change skin, language, mark as read, etc) ::: -->
+
+			<div id="footer_utilities" class="main_width clearfix clear">
+				<a rel="nofollow" href="#top" id="backtotop" title="Go to top"><span class="gdtop sprite" style="margin-top:5px"></span></a>
+				<ul class="ipsList_inline left">
+
+					
+							
+					
+						<li>
+							<a class="" rel="nofollow" href="#" id="new_language">English (USA)</a>							
+							<ul id="new_language_menucontent" class="ipbmenu_content with_checks" style="display: none; position: absolute; z-index: 9999; opacity: 0.0000274153;">
+								
+									<li style="z-index: 10000;" class="selected">
+										<a style="z-index: 10000;" href="http://www.gamedev.net/index.php?app=ccs&amp;module=pages&amp;section=pages&amp;do=redirect&amp;page=2&amp;k=880ea6a14ea49e853634fbdc5015a024&amp;setlanguage=1&amp;langurlbits=app=ccs&amp;module=pages&amp;section=pages&amp;folder=/resources&amp;page=_&amp;cal_id=&amp;langid=1">English (USA)</a>
+									</li>
+								
+
+									<li style="z-index: 10000;">
+										<a style="z-index: 10000;" href="http://www.gamedev.net/index.php?app=ccs&amp;module=pages&amp;section=pages&amp;do=redirect&amp;page=2&amp;k=880ea6a14ea49e853634fbdc5015a024&amp;setlanguage=1&amp;langurlbits=app=ccs&amp;module=pages&amp;section=pages&amp;folder=/resources&amp;page=_&amp;cal_id=&amp;langid=2">English (USA) (COPY)</a>
+									</li>
+								
+							</ul>
+						</li>
+					
+					<li>
+						<a class="" rel="nofollow" id="mark_all_read" href="http://www.gamedev.net/index.php?app=forums&amp;module=forums&amp;section=markasread&amp;marktype=all&amp;k=880ea6a14ea49e853634fbdc5015a024" title="Mark all as read">Mark Community Read</a>
+						<ul id="mark_all_read_menucontent" class="ipbmenu_content" style="display: none; position: absolute; z-index: 9999; opacity: 0.0261158;">
+							
+								<li style="z-index: 10000;">
+									
+								</li>
+							
+
+								<li style="z-index: 10000;">
+									<a style="z-index: 10000;" href="http://www.gamedev.net/index.php?app=forums&amp;module=forums&amp;section=markasread&amp;marktype=app&amp;markApp=forums&amp;k=880ea6a14ea49e853634fbdc5015a024">Forums</a>
+								</li>
+							
+
+								<li style="z-index: 10000;">
+									<a style="z-index: 10000;" href="http://www.gamedev.net/index.php?app=forums&amp;module=forums&amp;section=markasread&amp;marktype=app&amp;markApp=members&amp;k=880ea6a14ea49e853634fbdc5015a024">Members</a>
+								</li>
+							
+
+								<li style="z-index: 10000;">
+									<a style="z-index: 10000;" href="http://www.gamedev.net/index.php?app=forums&amp;module=forums&amp;section=markasread&amp;marktype=app&amp;markApp=blog&amp;k=880ea6a14ea49e853634fbdc5015a024">Developer Journals</a>
+								</li>
+							
+
+								<li style="z-index: 10000;">
+									<a style="z-index: 10000;" href="http://www.gamedev.net/index.php?app=forums&amp;module=forums&amp;section=markasread&amp;marktype=app&amp;markApp=gallery&amp;k=880ea6a14ea49e853634fbdc5015a024">Gallery</a>
+								</li>
+							
+
+								<li style="z-index: 10000;">
+									<a style="z-index: 10000;" href="http://www.gamedev.net/index.php?app=forums&amp;module=forums&amp;section=markasread&amp;marktype=app&amp;markApp=downloads&amp;k=880ea6a14ea49e853634fbdc5015a024">Downloads</a>
+								</li>
+							
+
+								<li style="z-index: 10000;">
+									<a style="z-index: 10000;" href="http://www.gamedev.net/index.php?app=forums&amp;module=forums&amp;section=markasread&amp;marktype=app&amp;markApp=ccs&amp;k=880ea6a14ea49e853634fbdc5015a024">Resources</a>
+								</li>
+							
+
+								<li style="z-index: 10000;">
+									<a style="z-index: 10000;" href="http://www.gamedev.net/index.php?app=forums&amp;module=forums&amp;section=markasread&amp;marktype=app&amp;markApp=nexus&amp;k=880ea6a14ea49e853634fbdc5015a024">Store</a>
+								</li>
+							
+
+								<li style="z-index: 10000;">
+									<a style="z-index: 10000;" href="http://www.gamedev.net/index.php?app=forums&amp;module=forums&amp;section=markasread&amp;marktype=app&amp;markApp=classifieds&amp;k=880ea6a14ea49e853634fbdc5015a024">Classifieds</a>
+								</li>
+							
+
+								<li style="z-index: 10000;">
+									<a style="z-index: 10000;" href="http://www.gamedev.net/index.php?app=forums&amp;module=forums&amp;section=markasread&amp;marktype=app&amp;markApp=tracker&amp;k=880ea6a14ea49e853634fbdc5015a024">Tracker</a>
+								</li>
+							
+
+								<li style="z-index: 10000;">
+									<a style="z-index: 10000;" href="http://www.gamedev.net/index.php?app=forums&amp;module=forums&amp;section=markasread&amp;marktype=app&amp;markApp=links&amp;k=880ea6a14ea49e853634fbdc5015a024">Links</a>
+								</li>
+							
+							<li style="z-index: 10000;">
+								<a style="z-index: 10000;" href="http://www.gamedev.net/index.php?app=forums&amp;module=forums&amp;section=markasread&amp;marktype=all&amp;k=880ea6a14ea49e853634fbdc5015a024"><strong style="z-index: 10000;">Mark all as read</strong></a>
+							</li>
+						</ul>
+					</li>
+					<li>
+						<a href="http://www.gamedev.net/index.php?app=core&amp;module=help" title="View help" rel="help" accesskey="6">Help</a>
+					</li>				
+				</ul>
+			</div>
+
+<div id="partnercontainer">
+        <div class="partners">
+             <div style="margin-top:6px;">PARTNERS</div>
+             <div class="pNav">
+                <a href="http://www.design3.com/" target="new"><span class="design3_dark_tagline sprite"></span></a>
+             </div>
+             <div class="pNav" style="margin-top:3px; width:130px">
+                <a href="http://www.worldgamingexecutives.com/page/articles-2" target="new"><span class="wge sprite"></span></a>
+
+             </div>
+             <div class="pNav">
+                <a href="http://www.packtpub.com/" target="new"><span class="packt sprite"></span></a>
+             </div>
+<!--
+             <div class="pNav" style='margin: 12px 0 5px 0;width: 220px;'>
+                <a href="http://www.game-connection.com/gameconn/" target="new"><img src="http://public.gamedev.net/images/partners/gameconnection.png"  height="24" width="24" border="0"></a>
+             </div>
+-->
+
+             <div class="pNav" style="margin-top:3px; width:80px">
+                <a href="http://www.chinajoy.net/" target="new"><span class="chinajoy sprite"></span></a>
+</div>
+             <div class="pNav" style="margin: -10px 0 0 50px;">
+                <a href="http://www.assembla.com/plans?affiliate=GameDev" target="new"><span class="assembla-logo-small sprite"></span></a>
+             </div>
+
+<!--
+<div class="pNav" style="margin: -3px 0 0 50px;">
+                <a href="http://gdconf.com/" target="new"><span class="gdc_logo sprite"></span></a>
+             </div>
+-->
+
+             
+
+        </div>
+</div>		              
+             	
+<div id="footercontainer">
+	<div class="footer">
+			<div class="fRef">
+				<a href="http://www.gamedev.net/">
+					<span class="logo_small sprite"></span>
+				</a>
+				<div class="fRef-text">
+					Copyright © 1999-2014 GameDev.Net LLC
+                                        <p><br>GameDev.net™, the GameDev.net logo, and GDNet™ are trademarks of GameDev.net, LLC<br></p>
+				</div>
+
+			</div>
+
+			<div class="fNav">
+                        <h5>Navigation</h5>
+                        <ul>
+                        <li><a href="http://www.gamedev.net/">Home</a></li>
+                        <li><a href="http://www.gamedev.net/forum/31-for-beginners/">For Beginners</a></li>
+                        <li><a href="http://www.gamedev.net/forum/123-the-technical-side/">Technical</a></li>
+                        <li><a href="http://www.gamedev.net/forum/124-the-creative-side/">Creative</a></li>
+                        <li><a href="http://www.gamedev.net/forum/133-the-business-side/">Business</a></li>
+                        </ul>
+                        </div>
+
+			<div class="fNav">
+                        <h5>Customer Service</h5>
+                        <ul>
+                        <li><a href="http://www.gamedev.net/subscribe/">GDNet+ Subscriptions</a></li>
+                        <li><a href="http://www.gamedev.net/classifieds">Job Advertising</a></li>
+                        <li><a href="http://www.gamedev.net/info/legal/tos.htm">Terms of Service</a></li>
+                        <li><a href="http://www.gamedev.net/info/legal/tos.htm#privacy">Privacy Policy</a></li>
+                        </ul>
+                        </div>
+
+			<div class="fNav">
+                        <h5>Company Info</h5>
+                        <ul>
+                        <li><a href="http://www.gamedev.net/info/about">About Us</a></li>
+                        <li><a href="http://www.gamedev.net/info/media/">Advertise on Gamedev.net</a></li>
+                        <li><a href="http://www.gamedev.net/info/about/contact.html">Contact Us</a></li>
+                        </ul>
+                        </div>
+
+			<div style="clear:both"><!--empty--></div>
+			<!--empty-->
+	</div>
+</div>
+
+			
+			<div><img src="A%20%20Pathfinding%20for%20Beginners%20-%20Artificial%20Intelligence%20-%20Articles%20-%20Articles%20-%20GameDev.net_fichiers/index.gif" alt="" style="border: 0px;height:1px;width:1px;"></div>
+		</div>
+
+
+
+
+
+				<script type="text/javascript" src="A%20%20Pathfinding%20for%20Beginners%20-%20Artificial%20Intelligence%20-%20Articles%20-%20Articles%20-%20GameDev.net_fichiers/lightbox.js"></script>
+<script type="text/javascript">
+//<![CDATA[
+	// Lightbox Configuration
+	LightboxOptions = Object.extend({
+	    fileLoadingImage:        'http://public.gamedev5.net//public/style_images/master/lightbox/loading.gif',     
+	    fileBottomNavCloseImage: 'http://public.gamedev5.net//public/style_images/master/lightbox/closelabel.gif',
+	    overlayOpacity: 0.8,   // controls transparency of shadow overlay
+	    animate: true,         // toggles resizing animations
+	    resizeSpeed: 10,        // controls the speed of the image resizing animations (1=slowest and 10=fastest)
+	    borderSize: 10,         //if you adjust the padding in the CSS, you will need to update this variable
+		// When grouping images this is used to write: Image # of #.
+		// Change it for non-english localization
+		labelImage: "Image",
+		labelOf: "of"
+	}, window.LightboxOptions || {});
+/* Watch for a lightbox image and set up our downloadbutton watcher */
+document.observe('click', (function(event){
+    var target = event.findElement('a[rel*="lightbox"]') || event.findElement('area[rel*="lightbox"]') || event.findElement('span[rel*="lightbox"]');
+    if (target) {
+        event.stop();
+        gbl_addDownloadButton();
+    }
+}).bind(this));
+var _to    = '';
+var _last  = '';
+function gbl_addDownloadButton()
+{
+	if ( typeof( ipsLightbox.lightboxImage ) != 'undefined' && ipsLightbox.lightboxImage.src )
+	{
+		if ( _last != ipsLightbox.lightboxImage.src )
+		{
+			if ( ! $('gbl_d') )
+			{
+				$('bottomNav').insert( { top: "<div id='gbl_d' style='text-align:right;padding-bottom:4px;'></div>" } );
+			}
+			
+			$('gbl_d').update( "<a href='"+ ipsLightbox.lightboxImage.src + "' target='_blank'><img src='http://public.gamedev5.net//public/style_images/master/lightbox/download-icon.png' /></a>" );
+			
+			_last = ipsLightbox.lightboxImage.src;
+		}
+	}
+	
+	/* Check for init and then keep checking for new image */
+	_to = setTimeout( "gbl_addDownloadButton()", 1000 );
+}
+//]]>
+</script>
+            
+            <div id="inline_login_form" style="display: none">
+		<form action="http://www.gamedev.net/index.php?app=core&amp;module=global&amp;section=login&amp;do=process" method="post" id="login">
+				<input name="auth_key" value="880ea6a14ea49e853634fbdc5015a024" type="hidden">
+				<input name="referer" value="http://www.gamedev.net/page/resources/_/technical/artificial-intelligence/a-pathfinding-for-beginners-r2003" type="hidden">
+				<h3>Sign In</h3>
+				<div class="ipsBox_notice">
+                <ul class="ipsList_inline">
+                    <li><a href="http://www.gamedev.net/index.php?app=core&amp;module=global&amp;section=login&amp;do=process&amp;use_google=1&amp;auth_key=880ea6a14ea49e853634fbdc5015a024" class="ipsButton_secondary" id="googleAjax"><img src="A%20%20Pathfinding%20for%20Beginners%20-%20Artificial%20Intelligence%20-%20Articles%20-%20Articles%20-%20GameDev.net_fichiers/login-google-icon_002.png" alt="Google"> &nbsp; Use Google</a></li>
+                </ul>
+            </div>
+<script type="text/javascript">
+  $('googleAjax').observe( 'click', function(e) { 
+if ( $('inline_login_form') )
+{
+$('inline_login_form').hide();
+$('sign_in_popup_inner').hide();
+$('sign_in_popup_close').hide();
+}
+googlePop();
+Event.stop(e);
+
+return false;
+  });
+</script><div class="ipsBox_notice">
+						<ul class="ipsList_inline">
+							
+								<li><a href="http://www.gamedev.net/index.php?app=core&amp;module=global&amp;section=login&amp;serviceClick=facebook" class="ipsButton_secondary"><img src="A%20%20Pathfinding%20for%20Beginners%20-%20Artificial%20Intelligence%20-%20Articles%20-%20Articles%20-%20GameDev.net_fichiers/facebook.png" alt="Facebook"> &nbsp; Use Facebook</a></li>
+							
+							
+								<li><a href="http://www.gamedev.net/index.php?app=core&amp;module=global&amp;section=login&amp;serviceClick=twitter" class="ipsButton_secondary"><img src="A%20%20Pathfinding%20for%20Beginners%20-%20Artificial%20Intelligence%20-%20Articles%20-%20Articles%20-%20GameDev.net_fichiers/twitter_002.png" alt="Twitter"> &nbsp; Use Twitter</a></li>
+							
+							
+							
+						</ul>
+					</div>
+				<br>
+				<div class="ipsForm ipsForm_horizontal">
+					<fieldset>
+						<ul>
+							<li class="ipsField">
+								<div class="ipsField_content">
+									Need an account? <a href="http://www.gamedev.net/index.php?app=core&amp;module=global&amp;section=register" title="Register now!">Register now!</a>
+								</div>
+							</li>
+							<li class="ipsField ipsField_primary">
+								<label for="ips_username" class="ipsField_title">Username</label>
+								<div class="ipsField_content">
+									<input id="ips_username" class="input_text" name="ips_username" size="30" tabindex="0" type="text">
+								</div>
+							</li>
+							<li class="ipsField ipsField_primary">
+								<label for="ips_password" class="ipsField_title">Password</label>
+								<div class="ipsField_content">
+									<input id="ips_password" class="input_text" name="ips_password" size="30" tabindex="0" type="password"><br>
+									<a href="http://www.gamedev.net/index.php?app=core&amp;module=global&amp;section=lostpass" title="Retrieve password">I've forgotten my password</a>
+								</div>
+							</li>
+							<li class="ipsField ipsField_checkbox">
+								<input id="inline_remember" checked="checked" name="rememberMe" value="1" class="input_check" tabindex="0" type="checkbox">
+								<div class="ipsField_content">
+									<label for="inline_remember">
+										<strong>Remember me</strong><br>
+										<span class="desc lighter">This is not recommended for shared computers</span>
+									</label>
+								</div>
+							</li>
+							
+								<li class="ipsField ipsField_checkbox">
+									<input id="inline_invisible" name="anonymous" value="1" class="input_check" tabindex="0" type="checkbox">
+									<div class="ipsField_content">
+										<label for="inline_invisible">
+											<strong>Sign in anonymously</strong><br>
+											<span class="desc lighter">Don't add me to the active users list</span>
+										</label>
+									</div>
+								</li>
+							
+							
+							<li class="ipsPad_top ipsForm_center desc ipsType_smaller">
+								<a rel="nofollow" href="http://www.gamedev.net/privacypolicy/">Privacy Policy</a>
+							</li>
+							
+						</ul>
+					</fieldset>
+					
+					<div class="ipsForm_submit ipsForm_center">
+						<input class="ipsButton" value="Sign In" tabindex="0" type="submit">
+					</div>
+				</div>
+			</form>
+	</div>
+	
+		
+<div id="infobar" style="display:none"><div id="infobarmsg"></div></div>
+<div id="nav_app_ipchat" style="display:none"><a style="position: relative;" href=""><span id="chat-tab-count" class="ipsHasNotifications" title="" style="">11</span></a></div>
+	
+<div style="display: none;" id="overlay"></div><div style="display: none;" id="lightbox"><div style="width: 250px; height: 250px;" id="outerImageContainer"><div id="imageContainer"><img id="lightboxImage"><div id="hoverNav"><a id="prevLink" href="#"></a><a id="nextLink" href="#"></a></div><div id="loading"><a id="loadingLink" href="#"><img src="A%20%20Pathfinding%20for%20Beginners%20-%20Artificial%20Intelligence%20-%20Articles%20-%20Articles%20-%20GameDev.net_fichiers/loading.gif"></a></div></div></div><div id="imageDataContainer"><div id="imageData"><div id="imageDetails"><span id="caption"></span><span id="numberDisplay"></span></div><div id="bottomNav"><a id="bottomNavClose" href="#"><img src="A%20%20Pathfinding%20for%20Beginners%20-%20Artificial%20Intelligence%20-%20Articles%20-%20Articles%20-%20GameDev.net_fichiers/closelabel.gif"></a></div></div></div></div><iframe tabindex="-1" style="width: 1px; height: 1px; position: absolute; top: -100px;" src="A%20%20Pathfinding%20for%20Beginners%20-%20Artificial%20Intelligence%20-%20Articles%20-%20Articles%20-%20GameDev.net_fichiers/postmessageRelay.htm" id="oauth2relay1290321828" name="oauth2relay1290321828"></iframe></body></html>

@@ -19,17 +19,20 @@ import java.awt.Dimension;
 
 public class Node extends Object
 {
+    //constantes
+    public static final int UNEXPLORED = 0;    
+    public static final int IN_OPEN_LIST = 1;
+    public static final int IN_CLOSED_LIST = 2;
+
     //datas
     public int cost;
     public int heuristic;
     public int key;
+    public int status;
     public int X;
     public int Y;
     //links
     public Node daddy;
-    // useless links for the moment
-    //public Node leftSon;
-    //public Node rightSon;
 
     public Node() {
         cost = 0;
@@ -38,8 +41,7 @@ public class Node extends Object
         X = 0;
         Y = 0;
         daddy = null;
-        //leftSon = null;
-        //rightSon = null;
+        status = UNEXPLORED;
     }
     
     public Node(int c) {
@@ -49,6 +51,7 @@ public class Node extends Object
         X = 0;
         Y = 0;
         daddy = null;
+        status = UNEXPLORED;
     }
 
     public Node(int c, int h) {
@@ -58,6 +61,7 @@ public class Node extends Object
         X = 0;
         Y = 0;
         daddy = null;
+        status = UNEXPLORED;        
     }
 
     public Node(int c, int h, Dimension d) {
@@ -67,6 +71,7 @@ public class Node extends Object
         X = d.width;
         Y = d.height;
         daddy = null;
+        status = UNEXPLORED;        
     }
 
     public Node(int c, int h, Dimension d, Node parent) {
@@ -76,8 +81,19 @@ public class Node extends Object
         X = d.width;
         Y = d.height;
         daddy = parent;
+        status = UNEXPLORED;        
     }    
-    
+
+    public Node(int c, int h, Dimension d, Node parent, int s) {
+        cost = c;
+        heuristic = h;
+        key = cost+heuristic;        
+        X = d.width;
+        Y = d.height;
+        daddy = parent;
+        status = s;        
+    } 
+        
     @Override
     public String toString(){
         return ( "cost=" + cost + "  heuristic=" + heuristic + " key=" + key + "  X=" + X + "  Y=" + Y + "\n" );
@@ -87,4 +103,5 @@ public class Node extends Object
     public boolean equals(Node obj) {
         return (this.X==obj.X && this.Y==obj.Y);
     }
+    
 }

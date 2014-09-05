@@ -32,23 +32,21 @@ private Dimension index;
 
     public CasePanel(){
        super();
-       this.setSize(20, 20);
+       this.setSize(16, 16);
        this.setBorder( BorderFactory.createLineBorder(Color.BLACK, 1) );
        this.setValue(1);
-       //setInheritsPopupMenu(true);
     }
 
     public CasePanel(int _value){
        super();
-       this.setSize(20, 20);
+       this.setSize(16, 16);
        this.setBorder( BorderFactory.createLineBorder(Color.BLACK, 1) );
        this.setValue(_value);
-       //setInheritsPopupMenu(true);
     }
     
     public CasePanel(CasePanelMouseListener listener){
        super();
-       this.setSize(20, 20);
+       this.setSize(16, 16);
        this.setBorder( BorderFactory.createLineBorder(Color.BLACK, 1) );
        this.setValue(1);
        this.addMouseListener( listener );
@@ -56,7 +54,7 @@ private Dimension index;
     
     public CasePanel(int _value, CasePanelMouseListener listener){
        super();
-       this.setSize(20, 20);
+       this.setSize(16, 16);
        this.setBorder( BorderFactory.createLineBorder(Color.BLACK, 1) );
        this.setValue(_value);
        this.addMouseListener( listener );

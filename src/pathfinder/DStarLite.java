@@ -15,14 +15,26 @@
  */
 
 package pathfinder;
-
 import java.awt.Dimension;
 
 /**
  *
- * @author jr
+ * @author BELIN
  */
-public interface Connexity {
+public class DStarLite implements PathFindingAlgorithm{
+
+    @Override
+    public void setConnexity(Connexity connexity) {
+    }
+
+    @Override
+    public void setHeuristic(Heuristic heuristic) {
+        
+    }
+
+    @Override
+    public boolean findPath(Dimension _start, Dimension _end) {
+        return true;
+    }
     
-    public Dimension[] getNeighbours(Dimension centerCase);
 }

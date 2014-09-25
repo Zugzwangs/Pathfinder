@@ -3,10 +3,14 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/Dev/Java/PathFinder/src/mapViewer/mainWindow.java</file>
-            <file>file:/D:/Dev/Java/PathFinder/src/pathfinder/Map.java</file>
-            <file>file:/D:/Dev/Java/PathFinder/src/pathfinder/AStar.java</file>
-            <file>file:/D:/Dev/Java/PathFinder/src/pathfinder/Node.java</file>
+            <file>file:/C:/Users/BELIN/Dev/Pathfinder/src/pathfinder/PathFindingAlgorithm.java</file>
+            <file>file:/C:/Users/BELIN/Dev/Pathfinder/src/pathfinder/AStar.java</file>
+            <file>file:/C:/Users/BELIN/Dev/Pathfinder/src/pathfinder/Connexity.java</file>
+            <file>file:/C:/Users/BELIN/Dev/Pathfinder/src/pathfinder/FourConnexity.java</file>
+            <file>file:/C:/Users/BELIN/Dev/Pathfinder/src/pathfinder/Node.java</file>
+            <file>file:/C:/Users/BELIN/Dev/Pathfinder/src/pathfinder/HeightConnexity.java</file>
+            <file>file:/C:/Users/BELIN/Dev/Pathfinder/src/pathfinder/DStarLite.java</file>
+            <file>file:/C:/Users/BELIN/Dev/Pathfinder/src/mapViewer/mainWindow.java</file>
         </group>
     </open-files>
 </project-private>

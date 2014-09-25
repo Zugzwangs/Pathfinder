@@ -15,14 +15,18 @@
  */
 
 package pathfinder;
-
 import java.awt.Dimension;
 
 /**
  *
- * @author jr
+ * @author BELIN
  */
-public interface Connexity {
+public interface PathFindingAlgorithm {
     
-    public Dimension[] getNeighbours(Dimension centerCase);
+    public void setConnexity(Connexity connexity);
+    
+    public void setHeuristic(Heuristic heuristic);
+    
+    public boolean findPath(Dimension _start, Dimension _end)  ;  
+            
 }

@@ -16,14 +16,12 @@
 
 package pathfinder;
 import java.awt.Dimension;
-import static java.lang.Math.abs;
 
 /**
  * Classic A* implementation
  */
-public class AStar {
+public class AStar implements PathFindingAlgorithm{
 
-// const value used to test behavior
 // these value may need to be deported somewhere else later
 // need to design a TieBreaker Object ?
 public static final int MAX_ITERATIONS = 50000;
@@ -39,41 +37,39 @@ public static final int ON_PATH = 3;
 private Map map;
 private int mapWidth;
 private int mapHeight;
+//data structures used by A* research
 private Dimension start;
 private Dimension end;
-
-//data structures used by A* research
 private BinaryHeap open_list;
 public Node[][] searchStatus;
-
 //behaviors
 private Heuristic heuristic;
+private Connexity connexity;
 
     public AStar(Map currentMap){
+        //link algo to the map
         map = currentMap;
         mapWidth  = map.getWidth();
-        mapHeight = map.getHeight();        
+        mapHeight = map.getHeight();
+        //init research datas structures
         open_list = new BinaryHeap();
-        heuristic = new Manhattan();
         searchStatus = new Node[mapWidth][mapHeight]; //holds a reference for all nodes.
+        //init behavior and options by default
+        heuristic = new Manhattan();
+        connexity = new HeightConnexity();
     }
 
+    @Override
+    public void setConnexity(Connexity connexity) {
+        this.connexity = connexity;
+    }
+        
+    @Override
     public void setHeuristic(Heuristic heuristic) {
         this.heuristic = heuristic;
     }
-    
-    private void cleanPreviousSearch(){
-        open_list.clear();
-        //closed_list.clear();
-        for (int i=0; i<mapWidth; i++)
-            {
-            for (int j=0; j<mapHeight; j++)
-                {
-                searchStatus[i][j] = nodeFactory(i, j);
-                }
-            }
-    }
-    
+     
+    @Override
     public boolean findPath(Dimension _start, Dimension _end){
 
         //check if start/end positions are valid.
@@ -89,7 +85,7 @@ private Heuristic heuristic;
         cleanPreviousSearch(); 
         
         //create starting node and put it to open list
-        Node startNode = nodeFactory(start.width, start.height);
+        Node startNode = nodeFactory(start);
         //closed_list.add(startNode);
         startNode.status = Node.IN_CLOSED_LIST;
         exploreAdjacentNodes(startNode);
@@ -128,30 +124,25 @@ private Heuristic heuristic;
             return false;
             }
     }
-           
-    private void exploreAdjacentNodes(Node n){
-        // 4-connexity
-        pushNodetoOpenList( nodeFactory(n, n.X+1, n.Y) );
-        pushNodetoOpenList( nodeFactory(n, n.X, n.Y-1) );
-        pushNodetoOpenList( nodeFactory(n, n.X, n.Y+1) );
-        pushNodetoOpenList( nodeFactory(n, n.X-1, n.Y) );
-        // 8-connexity
-        pushNodetoOpenList( nodeFactory(n, n.X+1, n.Y-1) );
-        pushNodetoOpenList( nodeFactory(n, n.X+1, n.Y+1) );        
-        pushNodetoOpenList( nodeFactory(n, n.X-1, n.Y-1) );
-        pushNodetoOpenList( nodeFactory(n, n.X-1, n.Y+1) );      
-    }
 
-    private Node nodeFactory(int x, int y){
-        return( new Node(0, heuristic.compute(new Dimension(x,y), end), new Dimension(x,y)) );
-    }
-
-    private Node nodeFactory(Node daddy, int x, int y){
+    private void cleanPreviousSearch(){
         
-        if ( daddy.X != x && daddy.Y != y )
-            return( new Node(daddy.cost+COST_DIAG, heuristic.compute(new Dimension(x,y), end), new Dimension(x,y), daddy, Node.UNEXPLORED) );
-        else
-            return( new Node(daddy.cost+COST_STRAIGHT, heuristic.compute(new Dimension(x,y), end), new Dimension(x,y), daddy, Node.UNEXPLORED) );
+        open_list.clear();
+        for (int i=0; i<mapWidth; i++)
+            {
+            for (int j=0; j<mapHeight; j++)
+                {
+                searchStatus[i][j] = nodeFactory(i, j);
+                }
+            }
+    }
+    
+    private void exploreAdjacentNodes(Node n){
+        
+        for (Dimension temp: connexity.getNeighbours(n.getCoord()) )
+            {
+                pushNodetoOpenList( nodeFactory(n, temp) );
+            }     
     }
 
     private void pushNodetoOpenList(Node n){
@@ -198,11 +189,35 @@ private Heuristic heuristic;
         } catch (ArrayIndexOutOfBoundsException e)
             {
             // TODO : maybe try an implementation without error handling 'cause that may be too slow            
-            //happens when A* want to explore a node that is out of bound of the map
+            //happens when A* want to explore a node that is outside the map
             //just catch and forgot this shit
             }
     }
     
+    private Node nodeFactory(int x, int y){
+        return( new Node(0, heuristic.compute( new Dimension(x,y), end ), new Dimension(x,y)) );
+    }
+
+    private Node nodeFactory(Dimension d){
+        return( new Node(0, heuristic.compute( d, end ), d) );
+    }
+    
+    private Node nodeFactory(Node daddy, int x, int y){
+        
+        if ( daddy.X != x && daddy.Y != y )
+            return( new Node(daddy.cost+COST_DIAG, heuristic.compute(new Dimension(x,y), end), new Dimension(x,y), daddy, Node.UNEXPLORED) );
+        else
+            return( new Node(daddy.cost+COST_STRAIGHT, heuristic.compute(new Dimension(x,y), end), new Dimension(x,y), daddy, Node.UNEXPLORED) );
+    }
+    
+    private Node nodeFactory(Node daddy, Dimension d){
+        
+        if ( daddy.X != d.width && daddy.Y != d.height )
+            return( new Node(daddy.cost+COST_DIAG, heuristic.compute(d, end), d, daddy, Node.UNEXPLORED) );
+        else
+            return( new Node(daddy.cost+COST_STRAIGHT, heuristic.compute(d, end), d, daddy, Node.UNEXPLORED) );
+    }  
+  
     private boolean isEnd(Node n){
         if ( n != null )
             // TODO : use equalTo methode from node ?
@@ -210,18 +225,7 @@ private Heuristic heuristic;
         else
             return false;
     }
-    
-    private void computePath(){
-        //get the end node
-        Node tempNode = searchStatus[end.width][end.height];
-        //backtrace the way
-        while ( tempNode.daddy != null )
-            {
-            searchStatus[tempNode.X][tempNode.Y].status = ON_PATH;            
-            tempNode = tempNode.daddy;
-            }  
-    }
-    
+     
     private boolean isRouteValid(){
 
         // does start/end positions are valid
@@ -236,5 +240,16 @@ private Heuristic heuristic;
         else 
             return false;
     }
-     
+
+    private void computePath(){
+        //get the end node
+        Node tempNode = searchStatus[end.width][end.height];
+        //backtrace the way
+        while ( tempNode.daddy != null )
+            {
+            searchStatus[tempNode.X][tempNode.Y].status = ON_PATH;            
+            tempNode = tempNode.daddy;
+            }  
+    }
+    
 }

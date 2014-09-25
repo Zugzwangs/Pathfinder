@@ -94,6 +94,10 @@ public class Node extends Object
         status = s;        
     } 
         
+    public Dimension getCoord(){
+        return( new Dimension(X, Y) );
+    }
+    
     @Override
     public String toString(){
         return ( "cost=" + cost + "  heuristic=" + heuristic + " key=" + key + "  X=" + X + "  Y=" + Y + "\n" );
@@ -103,5 +107,9 @@ public class Node extends Object
     public boolean equals(Node obj) {
         return (this.X==obj.X && this.Y==obj.Y);
     }
+/*
+    private Dimension Dimension(int X, int Y) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }*/
     
 }
